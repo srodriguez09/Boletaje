@@ -1,0 +1,260 @@
+﻿@page
+@model Boletaje.Pages.Llamadas.NuevoModel
+@{
+    ViewData["Title"] = "Crear Llamada Servicio";
+}
+@section breadcrumb{
+
+    <li class="breadcrumb-item">
+        <a asp-page="./Index">Llamadas Servicios</a>
+    </li>
+    <li class="breadcrumb-item active">
+        <a>Agregar</a>
+    </li>
+
+}
+@section styles{
+
+
+}
+
+@section scripts{
+
+    <script>
+
+        function rellenaProductos(lista) {
+            var sOptions = '';
+
+            $("#productos").html('');
+            for (var i = 0; i < lista.length; i++)
+            {
+
+                sOptions += ' <option value="' + lista[i].itemCode + ' / ' + lista[i].manufSN + '">' + lista[i].itemName + ' - ' + lista[i].manufSN +'</option>';
+
+                }
+            $("#productos").html(sOptions);
+        }
+
+        function cambiarProducto() {
+
+            var CardCode = $("#cardcode").val();
+            CardCode = CardCode.split("/")[0];
+            $.ajax({
+                        type: 'GET',
+
+                        url: '@Url.Page("Nuevo", "Productos")',
+                        dataType: 'json',
+                data: { idB: CardCode },
+                        headers: {
+                            RequestVerificationToken: $('input:hidden[name="__RequestVerificationToken"]').val()
+                        },
+                        success: function (json) {
+
+                            console.log(json);
+
+                            rellenaProductos(json);
+
+                        },
+
+                        beforeSend: function (xhr) {
+
+
+                        },
+                        complete: function () {
+
+                        },
+                        error: function (error) {
+
+                        }
+                    });
+
+        }
+
+    </script>
+
+}
+
+<form method="post" id="formTipos" role="form" novalidate class="needs-validation " enctype="multipart/form-data">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <h5 class="title">Registro de Llamada</h5>
+                        </div>
+
+                        <div class="col-sm-6" style="text-align: right">
+
+                            <a asp-page="/Llamadas/Index" class="nav-link text-dark" style="text-decoration: underline;"><i class="fas fa-reply "></i>  Regresar</a>
+
+                        </div>
+                    </div>
+
+
+                </div>
+                <div class="card-body">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Cliente:</label>
+
+                                <input type="text" list="cardcodes" class="form-control form-control-lg" id="cardcode" placeholder="Nombre Cliente" asp-for="Input.CardCode" onchange="javascript: cambiarProducto();">
+
+                                <datalist id="cardcodes">
+                                    @foreach (var item in Model.Clientes.Clientes)
+                                    {
+                                        <option value="@item.CardCode / @item.CardName"> </option>
+                                    }
+                                </datalist>
+
+
+
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Producto:</label>
+                                <select id="productos" class="form-control" asp-for="Input.ItemCode" required>
+                                    <option value="0">Seleccione</option>
+
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label>Estado:</label>
+                                <select id="status" class="form-control" asp-for="Input.Status" required>
+                                    <option value="0">Seleccione</option>
+                                    @foreach (var item in Model.Status)
+                                    {
+                                        <option value="@item.idSAP">@item.Nombre</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label>Tipo de Caso:</label>
+                                <select id="tp" class="form-control" asp-for="Input.TipoCaso" required>
+                                    <option value="0">Seleccione</option>
+                                    @foreach (var item in Model.TP)
+                                    {
+                                        <option value="@item.idSAP">@item.Nombre</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label>Lugar Reparación:</label>
+                                <select id="lReparacion" class="form-control" asp-for="Input.LugarReparacion" required>
+                                    <option value="1">Taller</option>
+                                    <option value="2">Visita</option>
+
+                                </select>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label>Sucursal de Recibo:</label>
+                                <select id="sr" class="form-control" asp-for="Input.SucRecibo" required>
+                                    <option value="0">Seleccione</option>
+                                    @foreach (var item in Model.Sucursales)
+                                    {
+                                        <option value="@item.idSAP">@item.Nombre</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label>Sucursal de Retiro:</label>
+                                <select id="srt" class="form-control" asp-for="Input.SucRetiro" required>
+                                    <option value="0">Seleccione</option>
+                                    @foreach (var item in Model.Sucursales)
+                                    {
+                                        <option value="@item.idSAP">@item.Nombre</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label>Garantía:</label>
+                                <select id="garantia" class="form-control" asp-for="Input.Garantia" required>
+                                    <option value="0">Seleccione</option>
+                                    @foreach (var item in Model.Garantias)
+                                    {
+                                        <option value="@item.idSAP">@item.Nombre</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label>Técnico:</label>
+                                <select id="srt" class="form-control" asp-for="Input.Tecnico" required>
+                                    <option value="0">Seleccione</option>
+                                    @foreach (var item in Model.Tecnicos)
+                                    {
+                                        <option value="@item.idSAP">@item.Nombre</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+
+                    </div>
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label>Asunto:</label>
+
+                                <input type="text" class="form-control form-control-lg" id="asunto" placeholder="Asunto" asp-for="Input.Asunto">
+
+
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label>Comentarios:</label>
+
+                                <textarea  class="form-control form-control-lg" id="comentarios" placeholder="Comentarios" asp-for="Input.Comentarios"> </textarea>
+
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="form-group">
+                <button type="submit" id="Guardar" class="btn btn-rounded btn-outline-success">Guardar Cambios</button>
+            </div>
+        </div>
+    </div>
+</form>

@@ -1,0 +1,167 @@
+﻿@using Microsoft.AspNetCore.Http
+@using System;
+@using System.Collections.Generic;
+@using System.IO;
+@using System.Linq;
+@using System.Security.Claims;
+@using System.Threading.Tasks;
+@using Microsoft.AspNetCore.Mvc;
+@using Microsoft.AspNetCore.Mvc.RazorPages;
+@using Microsoft.Extensions.Configuration;
+@using Refit;
+@using Sicsoft.Checkin.Web.Models;
+@inject IHttpContextAccessor httpContextAccessor
+@{
+    var Roles = ((ClaimsIdentity)User.Identity).Claims.Where(d => d.Type == "Roles").Select(s1 => s1.Value).FirstOrDefault().Split("|");
+}
+
+
+
+
+
+<!-- left sidebar -->
+<!-- ============================================================== -->
+<div class="nav-left-sidebar sidebar-dark">
+    <div class="menu-list">
+        <nav class="navbar navbar-expand-lg navbar-light">
+            <a class="d-xl-none d-lg-none" href="#">Dashboard</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav flex-column">
+                    <li class="nav-divider">
+                        Menu ADM
+                    </li>
+                    <li class="nav-item ">
+                        <a class="nav-link active" href="#" data-toggle="collapse" aria-expanded="false" data-target="#submenu-1" aria-controls="submenu-1"><i class="fas fa-indent"></i>Administrativo <span class="badge badge-success">6</span></a>
+                        <div id="submenu-1" class="collapse submenu" style="">
+                            <ul class="nav flex-column">
+
+                                <li class="nav-item">
+                                    @{if (!string.IsNullOrEmpty(Roles.Where(a => a == "1").FirstOrDefault()))
+                                        {
+
+                                            <a class="nav-link" asp-page="/Usuarios/Index">Usuarios</a>
+                                        }
+
+                                    }
+
+                                </li>
+                                <li class="nav-item">
+                                    @{if (!string.IsNullOrEmpty(Roles.Where(a => a == "8").FirstOrDefault()))
+                                        {
+
+                                            <a class="nav-link" asp-page="/Bitacora/Index">Bitacora Errores</a>
+                                        }
+
+                                    }
+
+                                </li>
+                                <li class="nav-item">
+                                    @{if (!string.IsNullOrEmpty(Roles.Where(a => a == "6").FirstOrDefault()))
+                                        {
+
+                                            <a class="nav-link" asp-page="/Sucursales/Index">Sucursales</a>
+                                        }
+
+                                    }
+
+                                </li>
+
+
+                                <li class="nav-item">
+                                    @{if (!string.IsNullOrEmpty(Roles.Where(a => a == "9").FirstOrDefault()))
+                                        {
+
+                                            <a class="nav-link" asp-page="/Tecnicos/Index">Técnicos</a>
+                                        }
+
+                                    }
+
+                                </li>
+
+                                <li class="nav-item">
+                                    @{if (!string.IsNullOrEmpty(Roles.Where(a => a == "11").FirstOrDefault()))
+                                        {
+
+                                            <a class="nav-link" asp-page="/Status/Index">Status</a>
+                                        }
+
+                                    }
+
+                                </li>
+
+                                <li class="nav-item">
+                                    @{if (!string.IsNullOrEmpty(Roles.Where(a => a == "13").FirstOrDefault()))
+                                        {
+
+                                            <a class="nav-link" asp-page="/Garantias/Index">Garantias</a>
+                                        }
+
+                                    }
+
+                                </li>
+                                <li class="nav-item">
+                                    @{if (!string.IsNullOrEmpty(Roles.Where(a => a == "17").FirstOrDefault()))
+                                        {
+
+                                            <a class="nav-link" asp-page="/TiposCasos/Index">Tipos Casos</a>
+                                        }
+
+                                    }
+
+                                </li>
+
+                            </ul>
+                        </div>
+                    </li>
+
+
+
+                    <li class="nav-divider">
+                        Transacciones
+                    </li>
+
+                    <li class="nav-item ">
+                        <a class="nav-link active" href="#" data-toggle="collapse" aria-expanded="false" data-target="#submenu-2" aria-controls="submenu-2"><i class="fas fa-th"></i>Transaccional <span class="badge badge-success">6</span></a>
+                        <div id="submenu-2" class="collapse submenu" style="">
+                            <ul class="nav flex-column">
+
+                                <li class="nav-item">
+                                    @{if (!string.IsNullOrEmpty(Roles.Where(a => a == "15").FirstOrDefault()))
+                                        {
+
+                                            <a class="nav-link" asp-page="/Llamadas/Index">Llamadas Servicio</a>
+                                        }
+
+                                    }
+
+                                </li>
+
+
+                            </ul>
+                        </div>
+                    </li>
+
+                </ul>
+            </div>
+        </nav>
+    </div>
+</div>
+<!-- ============================================================== -->
+<!-- end left sidebar -->
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 

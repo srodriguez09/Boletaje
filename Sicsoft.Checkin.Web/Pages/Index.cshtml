@@ -1,0 +1,153 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Inicio";
+    var Roles = ((ClaimsIdentity)User.Identity).Claims.Where(d => d.Type == "Roles").Select(s1 => s1.Value).FirstOrDefault().Split("|");
+}
+
+@section breadcrumb{
+
+    <li class="breadcrumb-item active" aria-current="page">Inicio</li>
+
+
+}
+@using System.Globalization;
+@{
+    NumberFormatInfo formato = new CultureInfo("en-US").NumberFormat;
+    formato.CurrencyGroupSeparator = ",";
+    formato.NumberDecimalSeparator = ".";
+
+
+}
+
+
+@section styles{
+    <link rel="stylesheet" href="~/css/assets/vendor/charts/c3charts/c3.css" />
+
+    <style>
+        .tableFixHead th {
+            position: sticky;
+            top: 0;
+            background: white;
+        }
+    </style>
+
+}
+@section scripts{
+
+    <script src="~/css/assets/vendor/charts/c3charts/c3.min.js"></script>
+    <script src="~/css/assets/vendor/charts/c3charts/d3-5.4.0.min.js"></script>
+
+    <script>
+
+        function pintarGrafico() {
+
+        }
+
+        if ($('#c3chart_pie').length) {
+            var chart = c3.generate({
+                bindto: "#c3chart_pie",
+                data: {
+                    columns: [
+                        ['data1', 30],
+                        ['data2', 60]
+                    ],
+                    type: 'pie',
+
+                    colors: {
+                        data1: '#5969ff',
+                        data2: '#ff407b'
+
+
+                    }
+                },
+                pie: {
+                    label: {
+                        format: function (value, ratio, id) {
+                            return d3.format('$')(value);
+                        }
+                    }
+                }
+            });
+        }
+    </script>
+
+}
+@using Microsoft.AspNetCore.Http
+@using System;
+@using System.Collections.Generic;
+@using System.IO;
+@using System.Linq;
+@using System.Security.Claims;
+@using System.Threading.Tasks;
+@using Microsoft.AspNetCore.Mvc;
+@using Microsoft.AspNetCore.Mvc.RazorPages;
+@using Microsoft.Extensions.Configuration;
+@using Refit;
+@using Sicsoft.Checkin.Web.Models;
+@using Newtonsoft.Json;
+@inject IHttpContextAccessor httpContextAccessor
+
+<div class="row">
+    <div class="col-md-12   ">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="card-title">Filtro</h4>
+
+            </div>
+            <div class="card-body">
+                <form method="get">
+                    <div class="row">
+                        <div class="col-sm-4 pr-1">
+                            <div class="form-group">
+                                <label>Fecha Inicial</label>
+                                <input class="form-control" id="FecInicial" type="date" asp-for="filtro.FechaInicial">
+                            </div>
+
+
+                        </div>
+
+                        <div class="col-sm-4 pr-1">
+                            <div class="form-group">
+                                <label>Fecha Final</label>
+                                <input class="form-control" id="FecFinal" type="date" asp-for="filtro.FechaFinal">
+                            </div>
+                        </div>
+
+                        <div class="col-md-4 pl-1">
+
+                        </div>
+
+                        <div class="col-sm-12">
+                            <br />
+                        </div>
+
+
+                        <div class="col-sm-6 pr-1">
+                        </div>
+                        <div class="col-sm-6 pl-1" style="text-align: right;">
+                            <button title="Buscar" type="submit" class="btn btn-rounded btn-outline-primary"> <i class="fas fa-search"></i></button>
+
+                        </div>
+
+                    </div>
+
+                </form>
+
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+<div class="row">
+    <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
+        <div class="card">
+            <h5 class="card-header">Pie Chart </h5>
+            <div class="card-body">
+                <div id="c3chart_pie"></div>
+            </div>
+        </div>
+    </div>
+</div>
