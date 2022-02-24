@@ -14,11 +14,123 @@
 
 }
 @section styles{
-
+    <style>
+        canvas {
+            width: 300px;
+            height: 300px;
+            background-color: #0D0909;
+        }
+    </style>
 
 }
 
 @section scripts{
+
+    <script>
+        //======================================================================
+        // VARIABLES
+        //======================================================================
+        let miCanvas = document.querySelector('#pizarra');
+        let lineas = [];
+        let correccionX = 0;
+        let correccionY = 0;
+        let pintarLinea = false;
+        // Marca el nuevo punto
+        let nuevaPosicionX = 0;
+        let nuevaPosicionY = 0;
+
+        let posicion = miCanvas.getBoundingClientRect()
+        correccionX = posicion.x;
+        correccionY = posicion.y;
+
+        miCanvas.width = 300;
+        miCanvas.height = 300;
+
+        //======================================================================
+        // FUNCIONES
+        //======================================================================
+        //document.getElementById("pizarra").toDataURL("&#39;image/png&#39;");
+        /**
+         * Funcion que empieza a dibujar la linea
+         */
+        function empezarDibujo() {
+            pintarLinea = true;
+            lineas.push([]);
+        };
+
+        /**
+         * Funcion que guarda la posicion de la nueva línea
+         */
+        function guardarLinea() {
+            lineas[lineas.length - 1].push({
+                x: nuevaPosicionX,
+                y: nuevaPosicionY
+            });
+        }
+
+        /**
+         * Funcion dibuja la linea
+         */
+        function dibujarLinea(event) {
+            event.preventDefault();
+            if (pintarLinea) {
+                let ctx = miCanvas.getContext('2d')
+                // Estilos de linea
+                ctx.lineJoin = ctx.lineCap = 'round';
+                ctx.lineWidth = 5;
+                // Color de la linea
+                ctx.strokeStyle = '#fff';
+                // Marca el nuevo punto
+                if (event.changedTouches == undefined) {
+                    // Versión ratón
+                    nuevaPosicionX = event.layerX;
+                    nuevaPosicionY = event.layerY;
+                } else {
+                    // Versión touch, pantalla tactil
+                    nuevaPosicionX = event.changedTouches[0].pageX - correccionX;
+                    nuevaPosicionY = event.changedTouches[0].pageY - correccionY;
+                }
+                // Guarda la linea
+                guardarLinea();
+                // Redibuja todas las lineas guardadas
+                ctx.beginPath();
+                lineas.forEach(function (segmento) {
+                    ctx.moveTo(segmento[0].x, segmento[0].y);
+                    segmento.forEach(function (punto, index) {
+                        ctx.lineTo(punto.x, punto.y);
+                    });
+                });
+                ctx.stroke();
+            }
+
+
+            $("#Firma").val(document.getElementById("pizarra").toDataURL("&#39;image/png&#39;"));
+        }
+
+        /**
+         * Funcion que deja de dibujar la linea
+         */
+        function pararDibujar() {
+            pintarLinea = false;
+            guardarLinea();
+
+        }
+
+        //======================================================================
+        // EVENTOS
+        //======================================================================
+
+        // Eventos raton
+        miCanvas.addEventListener('mousedown', empezarDibujo, false);
+        miCanvas.addEventListener('mousemove', dibujarLinea, false);
+        miCanvas.addEventListener('mouseup', pararDibujar, false);
+
+        // Eventos pantallas táctiles
+        miCanvas.addEventListener('touchstart', empezarDibujo, false);
+        miCanvas.addEventListener('touchmove', dibujarLinea, false);
+
+    </script>
+
 
     <script>
 
@@ -29,7 +141,7 @@
             for (var i = 0; i < lista.length; i++)
             {
 
-                sOptions += ' <option value="' + lista[i].itemCode + ' / ' + lista[i].manufSN + '">' + lista[i].itemName + ' - ' + lista[i].manufSN +'</option>';
+                sOptions += ' <option value="' + lista[i].itemCode + ' / ' + lista[i].manufSN + '">' + lista[i].itemCode  + ' - '+lista[i].itemName + ' - ' + lista[i].manufSN +'</option>';
 
                 }
             $("#productos").html(sOptions);
@@ -106,7 +218,7 @@
                                 <datalist id="cardcodes">
                                     @foreach (var item in Model.Clientes.Clientes)
                                     {
-                                        <option value="@item.CardCode / @item.CardName"> </option>
+                                    <option value="@item.CardCode / @item.CardName"> </option>
                                     }
                                 </datalist>
 
@@ -131,7 +243,7 @@
                                     <option value="0">Seleccione</option>
                                     @foreach (var item in Model.Status)
                                     {
-                                        <option value="@item.idSAP">@item.Nombre</option>
+                                    <option value="@item.idSAP">@item.Nombre</option>
                                     }
                                 </select>
                             </div>
@@ -143,7 +255,7 @@
                                     <option value="0">Seleccione</option>
                                     @foreach (var item in Model.TP)
                                     {
-                                        <option value="@item.idSAP">@item.Nombre</option>
+                                    <option value="@item.idSAP">@item.Nombre</option>
                                     }
                                 </select>
                             </div>
@@ -169,7 +281,7 @@
                                     <option value="0">Seleccione</option>
                                     @foreach (var item in Model.Sucursales)
                                     {
-                                        <option value="@item.idSAP">@item.Nombre</option>
+                                    <option value="@item.idSAP">@item.Nombre</option>
                                     }
                                 </select>
                             </div>
@@ -181,35 +293,45 @@
                                     <option value="0">Seleccione</option>
                                     @foreach (var item in Model.Sucursales)
                                     {
-                                        <option value="@item.idSAP">@item.Nombre</option>
+                                    <option value="@item.idSAP">@item.Nombre</option>
                                     }
                                 </select>
                             </div>
                         </div>
 
                         <div class="col-sm-6">
-                            <div class="form-group">
-                                <label>Garantía:</label>
-                                <select id="garantia" class="form-control" asp-for="Input.Garantia" required>
-                                    <option value="0">Seleccione</option>
-                                    @foreach (var item in Model.Garantias)
-                                    {
-                                        <option value="@item.idSAP">@item.Nombre</option>
-                                    }
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-sm-6">
+                            @*<div class="form-group">
+                                    <label>Garantía:</label>
+                                    <select id="garantia" class="form-control" asp-for="Input.Garantia" required>
+                                        <option value="0">Seleccione</option>
+                                        @foreach (var item in Model.Garantias)
+                                        {
+                                            <option value="@item.idSAP">@item.Nombre</option>
+                                        }
+                                    </select>
+                                </div>*@
                             <div class="form-group">
                                 <label>Técnico:</label>
                                 <select id="srt" class="form-control" asp-for="Input.Tecnico" required>
                                     <option value="0">Seleccione</option>
                                     @foreach (var item in Model.Tecnicos)
                                     {
-                                        <option value="@item.idSAP">@item.Nombre</option>
+                                    <option value="@item.idSAP">@item.Nombre</option>
                                     }
                                 </select>
                             </div>
+                        </div>
+                        <div class="col-sm-6">
+                            @*<div class="form-group">
+                                    <label>Técnico:</label>
+                                    <select id="srt" class="form-control" asp-for="Input.Tecnico" required>
+                                        <option value="0">Seleccione</option>
+                                        @foreach (var item in Model.Tecnicos)
+                                        {
+                                            <option value="@item.idSAP">@item.Nombre</option>
+                                        }
+                                    </select>
+                                </div>*@
                         </div>
 
                     </div>
@@ -239,7 +361,7 @@
                             <div class="form-group">
                                 <label>Comentarios:</label>
 
-                                <textarea  class="form-control form-control-lg" id="comentarios" placeholder="Comentarios" asp-for="Input.Comentarios"> </textarea>
+                                <textarea class="form-control form-control-lg" id="comentarios" placeholder="Comentarios" asp-for="Input.Comentarios"> </textarea>
 
 
                             </div>
@@ -249,6 +371,35 @@
             </div>
         </div>
     </div>
+
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-title">
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <h5 class="title">Firma</h5>
+                        </div>
+
+                        <div class="col-sm-6" style="text-align: right">
+
+                             
+
+                        </div>
+                    </div>
+
+                </div>
+                <div class="card-body">
+                    <canvas id="pizarra"></canvas>
+                    <input hidden type="text" id="Firma" asp-for="Input.Firma"  />
+
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
 
     <div class="row">
         <div class="col-md-12">

@@ -52,5 +52,6 @@ namespace Boletaje.Models
         public int? Tecnico { get; set; }
 
         public bool? ProcesadaSAP { get; set; }
+        public string Firma { get; set; }
     }
 }
