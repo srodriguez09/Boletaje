@@ -50,7 +50,7 @@
                         <div class="col-md-4">
                             <div class="form-group">
                                 <label>Cliente:</label>
-                                <input type="text" class="form-control form-control-lg" id="cardcode1" placeholder="Nombre Cliente" asp-for="Cliente" readonly> 
+                                <input type="text" class="form-control form-control-lg" id="cardcode1" placeholder="Nombre Cliente" asp-for="Cliente" readonly>
 
                                 <input type="text" class="form-control form-control-lg" id="cardcode" placeholder="Nombre Cliente" asp-for="Input.CardCode" hidden>
                             </div>
@@ -68,9 +68,9 @@
                         <div class="col-md-4">
                             <div class="form-group">
                                 <label>Fecha SISO:</label>
-                                <input type="date" class="form-control form-control-lg" id="fecsiso" placeholder="" asp-for="Input.FechaSISO" >
+                                <input type="date" class="form-control form-control-lg" id="fecsiso" placeholder="" asp-for="Input.FechaSISO">
 
-                               
+
 
                             </div>
                         </div>
@@ -139,15 +139,15 @@
 
                         <div class="col-sm-6">
                             @*<div class="form-group">
-            <label>Garantía:</label>
-            <select id="garantia" class="form-control" asp-for="Input.Garantia" required>
-                <option value="0">Seleccione</option>
-                @foreach (var item in Model.Garantias)
-                {
-                    <option value="@item.idSAP">@item.Nombre</option>
-                }
-            </select>
-        </div>*@
+                                    <label>Garantía:</label>
+                                    <select id="garantia" class="form-control" asp-for="Input.Garantia" required>
+                                        <option value="0">Seleccione</option>
+                                        @foreach (var item in Model.Garantias)
+                                        {
+                                            <option value="@item.idSAP">@item.Nombre</option>
+                                        }
+                                    </select>
+                                </div>*@
                             <div class="form-group">
                                 <label>Técnico:</label>
                                 <select id="srt" class="form-control" asp-for="Input.Tecnico" required>
@@ -162,15 +162,15 @@
                         </div>
                         <div class="col-sm-6">
                             @*<div class="form-group">
-                                <label>Técnico:</label>
-                                <select id="srt" class="form-control" asp-for="Input.Tecnico" required>
-                                    <option value="0">Seleccione</option>
-                                    @foreach (var item in Model.Tecnicos)
-                                    {
-                                        <option value="@item.idSAP">@item.Nombre</option>
-                                    }
-                                </select>
-                            </div>*@
+                                    <label>Técnico:</label>
+                                    <select id="srt" class="form-control" asp-for="Input.Tecnico" required>
+                                        <option value="0">Seleccione</option>
+                                        @foreach (var item in Model.Tecnicos)
+                                        {
+                                            <option value="@item.idSAP">@item.Nombre</option>
+                                        }
+                                    </select>
+                                </div>*@
                         </div>
 
                     </div>
@@ -210,7 +210,21 @@
             </div>
         </div>
     </div>
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card">
 
+                <div class="card-body">
+                   <center>
+                        <img src="@Model.Input.Firma" width="300" height="300" />
+
+                   </center>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
     <div class="row">
         <div class="col-md-12">
             <div class="form-group">

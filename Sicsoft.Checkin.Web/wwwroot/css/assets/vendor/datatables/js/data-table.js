@@ -4,7 +4,9 @@ jQuery(document).ready(function($) {
     if ($("table.first").length) {
 
         $(document).ready(function() {
-            $('table.first').DataTable();
+            $('table.first').DataTable({
+                "order": [[0, "desc"]]
+            });
         });
     }
 
@@ -34,7 +36,7 @@ jQuery(document).ready(function($) {
                         { "visible": false, "targets": groupColumn }
                     ],
                     "order": [
-                        [groupColumn, 'asc']
+                        [groupColumn, 'desc']
                     ],
                     "displayLength": 25,
                     "drawCallback": function(settings) {
