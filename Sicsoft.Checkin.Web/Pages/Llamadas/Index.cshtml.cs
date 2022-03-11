@@ -19,18 +19,20 @@ namespace Boletaje.Pages.Llamadas
     {
         private readonly IConfiguration configuration;
         private readonly ICrudApi<LlamadasViewModel, int> service;
+        private readonly ICrudApi<ClientesViewModel, int> clientes;
 
         [BindProperty]
         public LlamadasViewModel[] Objeto { get; set; }
-
+        [BindProperty]
+        public ClientesViewModel Clientes { get; set; }
 
         [BindProperty(SupportsGet = true)]
         public ParametrosFiltros filtro { get; set; }
 
-        public IndexModel(ICrudApi<LlamadasViewModel, int> service)
+        public IndexModel(ICrudApi<LlamadasViewModel, int> service, ICrudApi<ClientesViewModel, int> clientes)
         {
             this.service = service;
-
+            this.clientes = clientes;
         }
         public async Task<IActionResult> OnGetAsync()
         {
@@ -63,6 +65,7 @@ namespace Boletaje.Pages.Llamadas
 
 
                 }
+                Clientes = await clientes.ObtenerListaEspecial("");
 
                 Objeto = await service.ObtenerLista(filtro);
 

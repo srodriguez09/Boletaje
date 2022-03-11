@@ -33,6 +33,14 @@
     <Folder Include="wwwroot\css\tablas\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Include="wwwroot\css\assets\vendor\html2pdf\html2pdf.bundle.js" />
+    <None Include="wwwroot\css\assets\vendor\jspf\Excel.js" />
+    <None Include="wwwroot\css\assets\vendor\jspf\jspdf.min.js" />
+    <None Include="wwwroot\css\assets\vendor\jspf\jspdf.plugin.autotable.js" />
+    <None Include="wwwroot\css\assets\vendor\jspf\jspdf.plugin.autotable.min.js" />
+  </ItemGroup>
+
   <ProjectExtensions><VisualStudio><UserProperties appsettings_1json__JsonSchema="" /></VisualStudio></ProjectExtensions>
 
 
