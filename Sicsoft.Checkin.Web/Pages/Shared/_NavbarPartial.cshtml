@@ -113,6 +113,38 @@
 
                                 </li>
 
+                                <li class="nav-item">
+                                    @{if (!string.IsNullOrEmpty(Roles.Where(a => a == "19").FirstOrDefault()))
+                                        {
+
+                                            <a class="nav-link" asp-page="/ProductosPadres/Index">Productos Padres</a>
+                                        }
+
+                                    }
+
+                                </li>
+
+                                <li class="nav-item">
+                                    @{if (!string.IsNullOrEmpty(Roles.Where(a => a == "27").FirstOrDefault()))
+                                        {
+
+                                            <a class="nav-link" asp-page="/Diagnosticos/Index">Diagnóstico</a>
+                                        }
+
+                                    }
+
+                                </li>
+                                <li class="nav-item">
+                                    @{if (!string.IsNullOrEmpty(Roles.Where(a => a == "29").FirstOrDefault()))
+                                        {
+
+                                            <a class="nav-link" asp-page="/TiposErrores/Index">Tipos Errores</a>
+                                        }
+
+                                    }
+
+                                </li>
+
                             </ul>
                         </div>
                     </li>
@@ -139,6 +171,48 @@
 
                                 </li>
 
+
+                            </ul>
+                        </div>
+                    </li>
+
+                    <li class="nav-item ">
+                        <a class="nav-link active" href="#" data-toggle="collapse" aria-expanded="false" data-target="#submenu-3" aria-controls="submenu-3"><i class="fas fa-wrench"></i>Taller <span class="badge badge-success">6</span></a>
+                        <div id="submenu-3" class="collapse submenu" style="">
+                            <ul class="nav flex-column">
+
+
+                                <li class="nav-item">
+                                    @{if (!string.IsNullOrEmpty(Roles.Where(a => a == "21").FirstOrDefault()))
+                                        {
+
+                                            <a class="nav-link" asp-page="/Reparacion/Index">Reparaciones</a>
+                                        }
+
+                                    }
+
+                                </li>
+
+                            </ul>
+                        </div>
+                    </li>
+
+                    <li class="nav-item ">
+                        <a class="nav-link active" href="#" data-toggle="collapse" aria-expanded="false" data-target="#submenu-4" aria-controls="submenu-4"><i class="fas fa-truck-loading"></i>Bodega <span class="badge badge-success">6</span></a>
+                        <div id="submenu-4" class="collapse submenu" style="">
+                            <ul class="nav flex-column">
+
+
+                                <li class="nav-item">
+                                    @{if (!string.IsNullOrEmpty(Roles.Where(a => a == "25").FirstOrDefault()))
+                                        {
+
+                                            <a class="nav-link" asp-page="/Bodega/Index">Bodega</a>
+                                        }
+
+                                    }
+
+                                </li>
 
                             </ul>
                         </div>

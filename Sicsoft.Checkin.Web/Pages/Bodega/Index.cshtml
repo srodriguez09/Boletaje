@@ -1,13 +1,13 @@
 ﻿@page
-@model Boletaje.Pages.Llamadas.IndexModel
+@model Boletaje.Pages.Bodega.IndexModel
 @{
-    ViewData["Title"] = "Llamadas de Servicio";
+    ViewData["Title"] = "Movimientos en Bodegas";
 }
 
 @section breadcrumb{
 
     <li class="breadcrumb-item">
-        <a asp-page="./Index">Llamadas de Servicio</a>
+        <a asp-page="./Index">Bodega</a>
     </li>
 
 
@@ -56,8 +56,8 @@
 
         });
 
-        function enviarSAP(id) {
-           
+         function enviarSAP(id) {
+
             var modale = $("#divProcesando");
               $.ajax({
                         type: 'GET',
@@ -73,7 +73,7 @@
                             modale.hide();
                             $('body').removeClass('modal-open');//eliminamos la clase del body para poder hacer scroll
                             $('.modal-backdrop').remove();//eliminamos el backdrop del modal
-                       
+
 
                             console.log(json);
                             if (json.procesadaSAP) {
@@ -100,7 +100,7 @@
 
                                 })
                             }
-                          
+
 
                         },
 
@@ -108,7 +108,7 @@
                       modale.modal("show");
                         },
                         complete: function () {
-                            
+
                         },
                         error: function (error) {
                             modale.hide();
@@ -116,43 +116,6 @@
                     });
         }
 
-        function ImprimeEtiqueta(boleta, cliente) {
-            var html = '<html> <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">';
-            html += '<body>'
-          
-            html += '<div class="row"> <div class="col-sm-12"> <br> </div> </div>';
-          //  html += $("#idHtml2").html();
-            html += ' <div class="row" style="text-align: center;">';
-            html += '  <div class="col-sm-1"></div>';
-            html += '  <div class="col-sm-10"> ';
-
-            html += '<h6>No. Boleta: </h6>' + '<p>'+ boleta + '</p>';
-            html += '<h6>Cliente: </h6>' + '<p>' + cliente + '</p>';
-
-            html += ' </div>';
-            html += '  <div class="col-sm-1"></div>';
-
-            html += ' </div>';
-
-            html += "</body></html>"
-            var item = html;
-
-            var opt = {
-                margin: [10, 5, 15, 5],
-                pagebreak: { before: '.cuidado' },
-
-                image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: { scale: 2 },
-                jsPDF: { format: 'letter', orientation: 'portrait' }
-            };
-
-
-
-            html2pdf().set(opt)
-                .from(item)
-                .save("Boleta"+boleta+".pdf");
-        
-        }
 
     </script>
 
@@ -172,7 +135,7 @@
 @inject IHttpContextAccessor httpContextAccessor
 
 <div class="row">
-    <div class="col-md-12   ">
+    <div class="col-md-12">
         <div class="card">
             <div class="card-header">
                 <h4 class="card-title">Filtro</h4>
@@ -199,18 +162,30 @@
 
                         <div class="col-md-4 pl-1">
 
-                        </div>
+                            <div class="form-group">
+                                <label>Técnico</label>
+                                <select id="heard" class="form-control" asp-for="filtro.Codigo2">
+                                    <option value="0">Seleccione</option>
+                                    @foreach (var item in Model.Tecnicos)
+                                    {
+                                        <option value="@item.idSAP">@item.idSAP - @item.Nombre </option>
+                                    }
+                                </select>
 
-                        <div class="col-sm-12">
-                            <br />
-                        </div>
+
+                            </div>
+
+                            <div class="col-sm-12">
+                                <br />
+                            </div>
 
 
-                        <div class="col-sm-6 pr-1">
-                        </div>
-                        <div class="col-sm-6 pl-1" style="text-align: right;">
-                            <button title="Buscar" type="submit" class="btn btn-rounded btn-outline-primary"> <i class="fas fa-search"></i></button>
+                            <div class="col-sm-6 pr-1">
+                            </div>
+                            <div class="col-sm-6 pl-1" style="text-align: right;">
+                                <button title="Buscar" type="submit" class="btn btn-rounded btn-outline-primary"> <i class="fas fa-search"></i></button>
 
+                            </div>
                         </div>
 
                     </div>
@@ -223,17 +198,16 @@
 
 </div>
 
-
 <div class="row">
     <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
         <div class="card">
             <div class="card-header">
                 <div class="row">
                     <div class="col-md-8">
-                        <h5>Llamadas de Servicio</h5>
+                        <h5>Movimientos Solicitados</h5>
                     </div>
                     <div class="col-md-4">
-                        <a asp-page="Nuevo" class="btn btn-rounded btn-outline-primary" title="Agregar">+  Agregar</a>
+                       
 
                     </div>
                 </div>
@@ -246,10 +220,14 @@
                             <tr>
                                 <th>ID</th>
                                 <th>No. Llamada</th>
-                                
-                                <th>Cliente</th>
-                                <th>Item</th>
-                                <th>Asunto</th>
+                                <th>Técnico</th>
+
+                                <th>Fecha</th>
+                                <th>Tipo Movimiento</th>
+                                <th>Bodega Inicial</th>
+                                <th>Bodega Final</th>
+                                <th>Status</th>
+
 
                                 <th width="150">Acción</th>
 
@@ -258,28 +236,30 @@
                         <tbody>
                             @foreach (var item in Model.Objeto)
                             {
-                                <tr>
-                                    <td>@item.id</td>
-                                    <td>@item.DocEntry</td>
-                             
-                                    <td>@item.CardCode - @Model.Clientes.Clientes.Where(a => a.CardCode == item.CardCode).FirstOrDefault().CardName</td>
-                                    <td>@item.ItemCode - @item.SerieFabricante</td>
-                                    <td>@item.Asunto</td>
+                            <tr>
+                                <td>@item.id</td>
+                                <td>@item.idLlamada</td>
+                                @{var id = item.idTecnico.ToString();}
+                                <td>@(Model.Tecnicos.Where(a => a.idSAP == id).FirstOrDefault() == null ? "" :Model.Tecnicos.Where(a => a.idSAP == id).FirstOrDefault().Nombre)</td>
+                                <td>@item.Fecha</td>
+                                <td>@((item.TipoMovimiento == 1 ? "Solicitud" : "Devolución"))</td>
+                                <td>@item.BodegaInicial</td>
+                                <td>@item.BodegaFinal</td>
+                                <td>@((item.Status == "0" ? "En espera" : item.Status == "1" ? "Aceptado" : "Rechazado"))</td>
 
 
-                                    <td>
 
-                                        <a asp-page="./Editar" asp-route-id="@item.id" title="Editar" class="btn btn-rounded btn-outline-warning"> Editar</a> &nbsp;
-                                        @if (string.IsNullOrEmpty(item.DocEntry.ToString()))
-                                        {
+                                <td>
+                                    @if (item.ProcesadaSAP == false && item.Status == "1")
+                                    {
 
-                                            <a onclick="javascript: enviarSAP('@item.id')" title="Enviar a SAP"> <img src="~/sap.png" style="width: 40%;height: 50%;border-radius: 30%; cursor: pointer;" /></a>
-                                        }&nbsp;
-                                        <button title="PDF" type="button" class="btn btn-rounded btn-outline-danger" onclick="javascript: ImprimeEtiqueta('@item.DocEntry', '@item.CardCode - @Model.Clientes.Clientes.Where(a => a.CardCode == item.CardCode).FirstOrDefault().CardName')">PDF</button>
+                                        <a onclick="javascript: enviarSAP('@item.id')" title="Enviar a SAP"> <img src="~/sap.png" style="width: 40%;height: 50%;border-radius: 30%; cursor: pointer;" /></a>
+                                    }&nbsp;
+                                    <a asp-page="./Observar" asp-route-id="@item.id" title="Observar" class="btn btn-rounded btn-outline-primary"> Observar</a>
 
 
-                                    </td>
-                                </tr>
+                                </td>
+                            </tr>
                             }
 
 
@@ -288,13 +268,17 @@
                             <tr>
                                 <th>ID</th>
                                 <th>No. Llamada</th>
-               
+                                <th>Técnico</th>
 
-                                <th>Cliente</th>
-                                <th>Item</th>
-                                <th>Asunto</th>
+                                <th>Fecha</th>
+                                <th>Tipo Movimiento</th>
+                                <th>Bodega Inicial</th>
+                                <th>Bodega Final</th>
+                                <th>Status</th>
 
-                                <th>Acción</th>
+
+
+                                <th width="150">Acción</th>
 
                             </tr>
                         </tfoot>

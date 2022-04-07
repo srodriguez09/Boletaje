@@ -1,0 +1,74 @@
+﻿@page "{id}"
+@model Boletaje.Pages.Diagnosticos.EditarModel
+@{
+    ViewData["Title"] = "Diagnostico";
+}
+@section breadcrumb{
+
+    <li class="breadcrumb-item">
+        <a asp-page="./Index">Diagnóstico</a>
+    </li>
+    <li class="breadcrumb-item active">
+        <a>Edición de Diagnóstico</a>
+    </li>
+
+}
+@section styles{
+
+
+}
+
+@section scripts{
+
+
+
+}
+
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-sm-6">
+                        <h5 class="title">Editando Diagnóstico: @Model.Input.id</h5>
+                    </div>
+
+                    <div class="col-sm-6" style="text-align: right">
+
+                        <a asp-page="./Index" class="nav-link text-dark" style="text-decoration: underline;"><i class="fas fa-reply"></i>  Regresar</a>
+
+                    </div>
+                </div>
+
+            </div>
+            <div class="card-body">
+                <form method="post" id="formTipos" role="form" novalidate class="needs-validation " enctype="multipart/form-data">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <input hidden asp-for="Input.id" />
+
+                    <div class="row">
+                        <div class="col-md-8 pr-1">
+                            <div class="form-group">
+                                <label>Descripción</label>
+                                <input type="text" class="form-control form-control-lg" id="desc" placeholder="Nombre" asp-for="Input.Descripcion" required>
+                            </div>
+                        </div>
+
+                    </div>
+
+
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <button type="submit" id="Guardar" class="btn btn-rounded btn-outline-success">Guardar Cambios</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+

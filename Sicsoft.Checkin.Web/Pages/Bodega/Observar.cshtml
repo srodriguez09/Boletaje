@@ -1,0 +1,294 @@
+﻿@page
+@model Boletaje.Pages.Bodega.ObservarModel
+@{
+}
+
+@{
+    ViewData["Title"] = "Observar Movimiento";
+}
+
+@section breadcrumb{
+
+    <li class="breadcrumb-item">
+        <a asp-page="./Index">Bodega</a>
+    </li>
+
+
+}
+
+@using System.Globalization;
+@{
+    NumberFormatInfo formato = new CultureInfo("en-US").NumberFormat;
+    formato.CurrencyGroupSeparator = ",";
+    formato.NumberDecimalSeparator = ".";
+
+
+}
+
+
+@section styles{
+
+    <style>
+        .tableFixHead th {
+            position: sticky;
+            top: 0;
+            background: white;
+        }
+    </style>
+
+}
+@section scripts{
+
+
+    <script>
+        $(document).ready(function () {
+            jQuery(document).ready(function ($) {
+
+            });
+
+
+
+            $(document).ready(function () {
+                $('#tablita').DataTable();
+            });
+
+
+        });
+
+
+
+
+
+    </script>
+
+}
+@using Microsoft.AspNetCore.Http
+@using System;
+@using System.Collections.Generic;
+@using System.IO;
+@using System.Linq;
+@using System.Security.Claims;
+@using System.Threading.Tasks;
+@using Microsoft.AspNetCore.Mvc;
+@using Microsoft.AspNetCore.Mvc.RazorPages;
+@using Microsoft.Extensions.Configuration;
+@using Refit;
+@using Sicsoft.Checkin.Web.Models;
+@inject IHttpContextAccessor httpContextAccessor
+<form method="post" id="formTipos" role="form" novalidate class="needs-validation " enctype="multipart/form-data">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <input type="text" class="form-control form-control-lg" id="id" asp-for="BTS.id" hidden>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <h5 class="title">Observar Movimiento</h5>
+
+                        </div>
+
+                        <div class="col-sm-6" style="text-align: right">
+
+                            <a asp-page="./Index" class="nav-link text-dark" style="text-decoration: underline;"><i class="fas fa-reply "></i>  Regresar</a>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+
+                    <div class="row">
+                        <div class="col-md-4 pr-1">
+
+                            <div class="form-group">
+                                <label>Producto</label>
+                                <input type="text" class="form-control form-control-lg" id="desc" asp-for="Producto" readonly>
+
+                            </div>
+
+
+                        </div>
+
+
+
+
+                        <div class="col-md-4 pr-1">
+
+                            <div class="form-group">
+                                <label>Aceptar / Rechazar</label>
+                                @if (Model.BTS.ProcesadaSAP)
+                                {
+                                    <select id="status" class="form-control" asp-for="BTS.Status" disabled="disabled" readonly>
+                                        <option value="0" selected>Sin Acción</option>
+
+
+                                        <option value="1">Aceptado </option>
+                                        <option value="2">Rechazado </option>
+
+
+
+                                    </select>
+                                }
+                                else
+                                {
+                                    <select id="status" class="form-control" asp-for="BTS.Status">
+                                        <option value="0" selected>Sin Acción</option>
+
+
+                                        <option value="1">Aceptado </option>
+                                        <option value="2">Rechazado </option>
+
+
+
+                                    </select>
+
+                                }
+
+
+                            </div>
+
+
+                        </div>
+
+                        <div class="col-md-4 pr-1">
+
+                            <div class="form-group">
+                                <label>Fecha Creación</label>
+                                <input type="date" class="form-control form-control-lg" id="desc" asp-for="BTS.Fecha" readonly>
+
+
+                            </div>
+
+
+                        </div>
+
+                        <div class="col-md-4 pr-1">
+
+                            <div class="form-group">
+                                <label>Tipo Movimiento</label>
+                                <select id="idTraslado" class="form-control" asp-for="BTS.TipoMovimiento" disabled="disabled">
+                                    <option value="0">Seleccione</option>
+
+
+                                    <option value="1">1- Solicitud </option>
+                                    <option value="2">2- Devolución </option>
+
+
+                                </select>
+
+                            </div>
+
+
+                        </div>
+                        <div class="col-md-4 pr-1">
+
+                            <div class="form-group">
+                                <label>Técnico</label>
+                                <input type="text" class="form-control form-control-lg" id="desc" asp-for="Tecnico" readonly>
+
+                            </div>
+
+
+                        </div>
+                        <div class="col-md-4 pr-1">
+
+                            <div class="form-group">
+                                <label>Llamada</label>
+                                <input type="text" class="form-control form-control-lg" id="idLlamada" asp-for="Encabezado.idLlamada" readonly>
+
+                            </div>
+
+
+                        </div>
+
+                        <div class="col-md-4 pr-1">
+
+                            <div class="form-group">
+                                <label>Bodega Inicial</label>
+                                <input type="text" class="form-control form-control-lg" id="bodI" asp-for="BTS.BodegaInicial" readonly>
+
+                            </div>
+
+
+                        </div>
+                        <div class="col-md-4 pr-1">
+
+                            <div class="form-group">
+                                <label>Bodega Destino</label>
+                                <input type="text" class="form-control form-control-lg" id="bodF" asp-for="BTS.BodegaFinal" readonly>
+
+                            </div>
+
+
+                        </div>
+                    </div>
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+            <div class="card">
+                <div class="card-header">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <h5>Materiales</h5>
+                        </div>
+                        <div class="col-md-4">
+
+
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped table-bordered first">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Producto</th>
+                                    <th>Cantidad</th>
+
+
+
+
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model.BTS.Detalle)
+                                {
+                                    <tr>
+                                        <td>@item.id</td>
+                                        <td>@(item.ItemCode)</td>
+
+
+                                        <td>@item.Cantidad</td>
+
+
+                                    </tr>
+                                }
+
+
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Producto</th>
+                                    <th>Cantidad</th>
+
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <button type="submit" onclick="javascript: Generar();" class="btn btn-rounded btn-outline-success">Guardar Cambios</button>
+</form>

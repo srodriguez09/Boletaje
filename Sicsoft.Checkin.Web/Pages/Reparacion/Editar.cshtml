@@ -1,0 +1,777 @@
+﻿@page "{id}"
+@model Boletaje.Pages.Reparacion.EditarModel
+@{
+    ViewData["Title"] = "Editar Repuestos";
+}
+@section breadcrumb{
+
+    <li class="breadcrumb-item">
+        <a asp-page="./Index">Repuestos</a>
+    </li>
+    <li class="breadcrumb-item active">
+        <a>Listado de Repuestos</a>
+    </li>
+
+}
+@section styles{
+
+    <style>
+        h4 {
+            font-size: 22px !important;
+        }
+    </style>
+
+}
+
+@section scripts{
+    @*@{await Html.RenderPartialAsync("_ValidationScriptsPartial");}*@
+    
+<script>
+        $(document).ready(function () {
+
+            jQuery(document).ready(function ($) {
+                $(document).ready(function () {
+                });
+            });
+
+            Recuperar();
+        });
+
+
+        var ProdCadena = [];
+    var ProdCadenaM = [];
+    var ErroresP = [];
+    var Errores = [];
+    function Recuperar() {
+        //   $("#comentarios").val("@Model.Encabezado.Comentarios");
+        //var tipo = parseInt( $("#idTraslado").val());
+
+        //if (tipo > 0) {
+        //    $('#idTraslado').attr('readonly', true);
+        //    $("#idTraslado").prop("disabled", true);
+        //}
+            var disponibles = JSON.parse($("#HijosDisponibles").val());
+            var seleccionados = JSON.parse($("#HijosSeleccionados").val());
+        Errores = JSON.parse($("#Errores").val());
+        var idError = '@Model.Encabezado.idDiagnostico';
+
+        console.log(Errores);
+
+            for (var i = 0; i < disponibles.length; i++) {
+                var detalle = {
+                    id: 0,
+                    idEncabezado: "",
+                    idProducto: disponibles[i].id,
+                    ItemCode: disponibles[i].codSAP + " | " + disponibles[i].Nombre,
+                    Cantidad: disponibles[i].Cantidad,
+                    idError: disponibles[i].idError
+
+                };
+                ProdCadena.push(detalle);
+
+            }
+            for (var i = 0; i < seleccionados.length; i++) {
+                var detalle = {
+                    id: 0,
+                    idEncabezado: "",
+                    idProducto: seleccionados[i].idProducto,
+                    ItemCode: seleccionados[i].ItemCode,
+                    Cantidad: seleccionados[i].Cantidad,
+                    idError: seleccionados[i].idError
+
+
+                };
+                ProdCadenaM.push(detalle);
+
+        }
+
+        if (parseInt(idError) > 0) {
+            var ErroresTemp = Errores.filter(a => a.idDiagnostico == parseInt(idError));
+            for (var i = 0; i < ErroresTemp.length; i++) {
+                var detalle = {
+                    id: ErroresTemp[i].id,
+                    idDiagnostico: ErroresTemp[i].idDiagnostico,
+                    Descripcion: ErroresTemp[i].Descripcion,
+                    Diagnostico: ErroresTemp[i].Diagnostico
+
+
+                };
+                ErroresP.push(detalle);
+
+            }
+
+        }
+
+            RellenaTablaG();
+            RellenaTablaM();
+    }
+
+    function onChangeDiagnostico() {
+        var idError = $("#idDiag").val();
+        ErroresP = [];
+        if (parseInt(idError) > 0) {
+           var ErroresTemp = Errores.filter(a => a.idDiagnostico == parseInt(idError));
+            for (var i = 0; i < ErroresTemp.length; i++) {
+                var detalle = {
+                    id: ErroresTemp[i].id,
+                    idDiagnostico: ErroresTemp[i].idDiagnostico,
+                    Descripcion: ErroresTemp[i].Descripcion,
+                    Diagnostico: ErroresTemp[i].Diagnostico
+
+
+                };
+                ErroresP.push(detalle);
+
+            }
+
+        }
+
+        RellenaTablaG();
+        RellenaTablaM();
+
+    }
+
+        function InsertarProductoTablaMia(i) {
+            var detalle =
+            {
+                id: 0,
+                idEncabezado: "",
+                idProducto: ProdCadena[i].idProducto,
+                ItemCode: ProdCadena[i].ItemCode  ,
+                Cantidad: ProdCadena[i].Cantidad
+
+
+            }
+            ProdCadenaM.push(detalle);
+
+            ProdCadena.splice(i, 1);
+            RellenaTablaM();
+            RellenaTablaG();
+
+        }
+
+        function InsertarProductoTablaG(i) {
+            var detalle =
+            {
+                id: 0,
+                idEncabezado: "",
+                idProducto: ProdCadenaM[i].idProducto,
+                ItemCode: ProdCadenaM[i].ItemCode,
+                Cantidad: ProdCadenaM[i].Cantidad
+
+
+            }
+            ProdCadena.push(detalle);
+
+            ProdCadenaM.splice(i, 1);
+            RellenaTablaM();
+            RellenaTablaG();
+
+        }
+
+        function PasarTodasDerecha() {
+
+
+            var tam = ProdCadenaM.length;
+            var tam2 = ProdCadena.length;
+
+
+            for (var i = 0; i < ProdCadena.length; i++) {
+
+                var detalle =
+                {
+                    id: 0,
+                    idEncabezado: "",
+                    idProducto: ProdCadena[i].idProducto,
+                    ItemCode: ProdCadena[i].ItemCode,
+                    Cantidad: ProdCadena[i].Cantidad
+
+                }
+                ProdCadenaM.push(detalle);
+            }
+
+            ProdCadena = [];
+
+
+            RellenaTablaM();
+            RellenaTablaG();
+        }
+
+        function PasarTodasIzquierda() {
+            var tam = ProdCadena.length;
+            var tam2 = ProdCadenaM.length;
+
+            console.log(tam2);
+            for (var i = 0; i < tam2; i++) {
+
+                var detalle =
+                {
+                    id: 0,
+                    idEncabezado: "",
+                    idProducto: ProdCadenaM[i].idProducto,
+                    ItemCode: ProdCadenaM[i].ItemCode,
+                    Cantidad: ProdCadenaM[i].Cantidad
+                }
+                ProdCadena.push(detalle);
+            }
+
+
+            ProdCadenaM = [];
+
+
+            RellenaTablaM();
+            RellenaTablaG();
+        }
+
+        function RellenaTablaG() {
+            var sOptions = '';
+
+            $("#tbody1").html('');
+
+            for (var i = 0; i < ProdCadena.length; i++) {
+                sOptions += '<tr>'
+                sOptions += '<td align="center" style="padding-top:15px;">  <p style="font-size:15px;">' + ProdCadena[i].ItemCode + '</p></td>';
+                sOptions += '<td align="center" style="padding-top:15px;">  <p style="font-size:15px;">' + ProdCadena[i].Cantidad + '</p></td>';
+
+                sOptions += '<td align="center" style="padding-top:15px;"><a  onclick="javascript: InsertarProductoTablaMia(' + i + ')" style="cursor: pointer; font-size: 25px; line-height: 0px;"  title="Pasar Modulo" > > </a> ';
+
+
+
+                sOptions += '</tr>'
+            }
+            $("#tbody1").html(sOptions);
+        }
+        function RellenaTablaM() {
+            var sOptions = '';
+
+            $("#tbody2").html('');
+
+            for (var i = 0; i < ProdCadenaM.length; i++) {
+                sOptions += '<tr>'
+                sOptions += '<td align="center" style="padding-top:15px;">  <p style="font-size:15px;">' + ProdCadenaM[i].ItemCode + '</p></td>'; 
+                sOptions += '<td align="left" style="padding-top:15px;">  <input id="cantidad-' + i + '" value="' + ProdCadenaM[i].Cantidad + '"  type="number" /> </td>';
+                sOptions += '<td align="left" style="padding-top:15px;">  <select id="error-' + i + '" class="form-control" >  <option value="0">Sin Diagnostico</option> ';
+                for (var a = 0; a < ErroresP.length; a++) {
+                    if (ProdCadenaM[i].idError == ErroresP[a].id) {
+                        sOptions += '<option value="' + ErroresP[a].id + '" selected>' + ErroresP[a].Descripcion + '</option>';
+
+                    } else
+                    {
+                        sOptions += '<option value="' + ErroresP[a].id + '">' + ErroresP[a].Descripcion + '</option>';
+
+                    }
+
+                }
+
+                sOptions += '</select> </td>';
+
+                sOptions += '<td align="center" style="padding-top:15px;"><a  onclick="javascript: InsertarProductoTablaG(' + i + ')" style="cursor: pointer; font-size: 25px; line-height: 0px;" title="Pasar Modulo" > < </a> ';
+
+
+
+                sOptions += '</tr>'
+            }
+            $("#tbody2").html(sOptions);
+        }
+
+
+        function Generar() {
+            var idGeneral = $("#idGeneral").val();
+            var tipo = $("#idTraslado").val();
+            var status = $("#status").val();
+            var comentarios = $("#comentarios").val();
+            var BodegaOrigen = $("#bodegaOrigen").val();
+            var BodegaFinal = $("#bodegaFinal").val();
+            var idDiag = $("#idDiag").val();
+
+            var Cadena = [];
+
+
+            for (var i = 0; i < ProdCadenaM.length; i++) {
+                var det = {
+                    id: 0,
+                    idEncabezado: 0,
+                    idProducto: ProdCadenaM[i].idProducto,
+                    ItemCode: ProdCadenaM[i].ItemCode,
+                    Cantidad: $("#cantidad-" + i).val(),
+                    idError: $("#error-" + i).val()
+
+                };
+                Cadena.push(det);
+            }
+
+            var recibido =
+            {
+                id: idGeneral,
+                Tipo: tipo,
+                Status: status,
+                comentarios: comentarios,
+                BodegaInicial: BodegaOrigen,
+                BodegaFinal: BodegaFinal,
+                idDiagnostico: idDiag,
+                DetReparacion: Cadena
+            }
+
+            console.log(JSON.stringify(recibido));
+
+            Swal.fire({
+                    title: '¿Desea guardar los cambios?',
+                    showDenyButton: true,
+                    showCancelButton: false,
+                    confirmButtonText: `Aceptar`,
+                    denyButtonText: `Cancelar`,
+                    customClass: {
+                        confirmButton: 'swalBtnColor',
+                        denyButton: 'swalDeny'
+                    },
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        var recibidos = JSON.stringify(recibido);
+
+                        $.ajax({
+                            type: 'POST',
+
+                            url: '@Url.Page("Editar", "Generar")',
+                            dataType: 'json',
+                            data: { recibidos: recibidos.toString() },
+                            headers: {
+                                RequestVerificationToken: $('input:hidden[name="__RequestVerificationToken"]').val()
+                            },
+                            success: function (json) {
+
+                                $("#divProcesando").hide();
+
+                                if ($('.modal-backdrop').is(':visible')) {
+
+                                    $('body').removeClass('modal-open');
+                                    $('.modal-backdrop').hide();
+                                }
+                                console.log("resultado " + json.mensaje);
+                                if (json.success == true) {
+                                    Swal.fire({
+                                        title: "Ha sido generado con éxito",
+
+                                        icon: 'success',
+                                        showCancelButton: false,
+
+                                        confirmButtonText: 'OK',
+                                        customClass: {
+                                            confirmButton: 'swalBtnColor',
+
+                                        },
+                                    }).then((result) => {
+                                        if (result.isConfirmed) {
+                                            location.reload();
+                                        }
+                                    })
+
+                                } else {
+                                    Swal.fire({
+                                        icon: 'error',
+                                        title: 'Oops...',
+                                        text: 'Ha ocurrido un error al intentar guardar '
+
+                                    })
+                                }
+                            },
+
+                            beforeSend: function (xhr) {
+
+                                $("#divProcesando").modal("show");
+                            },
+                            complete: function () {
+
+                            },
+                            error: function (error) {
+
+                            }
+                        });
+                    }
+                }
+               )
+
+
+
+        }
+
+</script>
+
+}
+@using Newtonsoft.Json;
+
+<form method="post" id="formTipos" role="form" novalidate class="needs-validation " enctype="multipart/form-data">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <h5 class="title">Editar Repuestos</h5>
+
+                        </div>
+
+                        <div class="col-sm-6" style="text-align: right">
+
+                            <a asp-page="./Index" class="nav-link text-dark" style="text-decoration: underline;"><i class="fas fa-reply "></i>  Regresar</a>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <input hidden id="HijosDisponibles" value="@JsonConvert.SerializeObject(Model.InputHijos)" />
+                    <input hidden id="HijosSeleccionados" value="@JsonConvert.SerializeObject(Model.Input)" />
+                    <input hidden id="Errores" value="@JsonConvert.SerializeObject(Model.Errores)" />
+
+
+                    <div class="row">
+                        <div class="col-md-4 pr-1">
+
+                            <div class="form-group">
+                                <label>Producto</label>
+                                <input type="text" class="form-control form-control-lg" id="desc" asp-for="Producto" readonly>
+                                <input id="idGeneral" asp-for="Encabezado.id" hidden />
+                            </div>
+
+
+                        </div>
+
+
+
+
+                        <div class="col-md-4 pr-1">
+
+                            <div class="form-group">
+                                <label>Status</label>
+                                <select id="status" class="form-control" asp-for="Encabezado.Status">
+                                    <option value="0" selected>Abierto</option>
+
+
+                                    <option value="1">Cerrado </option>
+
+
+
+                                </select>
+
+                            </div>
+
+
+                        </div>
+
+                        <div class="col-md-4 pl-1">
+
+                            <div class="form-group">
+                                <label>Llamada</label>
+                                <input type="text" class="form-control form-control-lg" id="idLlamada" asp-for="Encabezado.idLlamada" readonly>
+
+                            </div>
+
+
+                        </div>
+                        <div class="col-md-4 pr-1">
+
+                            <div class="form-group">
+                                <label>Diagnóstico</label>
+                                <select id="idDiag" class="form-control" asp-for="Encabezado.idDiagnostico" onchange="javascript: onChangeDiagnostico();">
+                                    <option value="0" selected>Seleccione</option>
+
+                                    @foreach (var item in Model.Diagnosticos)
+                                    {
+
+                                        <option value="@item.id"> @item.id - @item.Descripcion </option>
+                                    }
+
+
+
+
+
+                                </select>
+
+                            </div>
+
+
+                        </div>
+                    </div>
+
+
+                 
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <h5 class="title">Generar Movimiento</h5>
+
+                        </div>
+
+                        <div class="col-sm-6" style="text-align: right">
+ 
+
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                  
+                    <div class="row">
+                    
+
+
+                        <div class="col-md-4 pr-1">
+
+                            <div class="form-group">
+                                <label>Tipo de Reparación</label>
+                                <select id="idTraslado" class="form-control" asp-for="Encabezado.TipoReparacion">
+                                    <option value="0">Seleccione</option>
+
+
+                                    <option value="1">1- Solicitud </option>
+                                    <option value="2">2- Devolución </option>
+
+
+                                </select>
+
+                            </div>
+
+
+                        </div>
+
+                      
+                      
+                        <div class="col-md-4 pr-1" hidden>
+
+                            <div class="form-group">
+                                <label>Bodega Origen</label>
+                                <select id="bodegaOrigen" class="form-control" asp-for="Encabezado.BodegaOrigen">
+                                    <option value="0" selected>Seleccione</option>
+
+                                    @foreach(var item in Model.Bodegas)
+            {
+
+                                    <option value="@item.codSAP"> @item.codSAP - @item.Nombre </option>
+            }
+
+
+
+
+                                </select>
+
+                            </div>
+
+
+                        </div> 
+                        <div class="col-md-4 pr-1" hidden>
+
+                            <div class="form-group">
+                                <label>Bodega Destino</label>
+                                <select id="bodegaFinal" class="form-control" asp-for="Encabezado.BodegaFinal">
+                                    <option value="0" selected>Seleccione</option>
+
+
+                                    @foreach (var item in Model.Bodegas)
+                                    {
+
+                                    <option value="@item.codSAP"> @item.codSAP - @item.Nombre </option>
+                                    }
+
+
+
+                                </select>
+
+                            </div>
+
+
+                        </div>
+
+                    </div>
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <div class="row">
+                        <div class="col-sm-8">
+
+                            <h5 class="title"> Repuestos Utilizables</h5>
+                        </div>
+
+                        <div class="col-sm-3">
+                            <a onclick="javascript: PasarTodasDerecha()" style="cursor: pointer; font-size: 25px; line-height: 0px;" title="Pasar Todos los Modulos"> >> </a>
+                        </div>
+
+
+                    </div>
+                </div>
+                <div class="card-body">
+
+                    <div class="table-responsive tableFixHead" style="padding:inherit; overflow:scroll;    z-index: 5; height: 290px;">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+
+                                    <th align="center" style=" text-align: center;">Item</th>
+                                    <th align="center" style=" text-align: center;">Cantidad </th>
+
+
+
+
+                                    <th align="center" style=" text-align: center;">Acción</th>
+                                </tr>
+
+                            </thead>
+                            <tbody id="tbody1">
+                            </tbody>
+                        </table>
+
+                    </div>
+
+
+                </div>
+            </div>
+        </div>
+
+
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <div class="row">
+                        <div class="col-sm-8">
+
+                            <h5 class="title"> Repuestos utilizados</h5>
+                        </div>
+
+                        <div class="col-sm-4" style="text-align: right;">
+                            <a onclick="javascript: PasarTodasIzquierda()" style="cursor: pointer; font-size: 25px; line-height: 0px;" title="Pasar Todos los Modulos"><<</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive tableFixHead" style="padding:inherit; overflow:scroll;    z-index: 5; height: 290px;">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+
+                                    <th align="center" style=" text-align: center;">Item</th>
+                                    <th align="center" style=" text-align: center;">Cantidad </th>
+                                    <th align="center" style=" text-align: center;">Diagnostico </th>
+
+
+
+
+
+                                    <th align="center" style=" text-align: center;">Acción</th>
+                                </tr>
+
+                            </thead>
+                            <tbody id="tbody2">
+                            </tbody>
+                        </table>
+
+                    </div>
+
+
+
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-6">
+            <div class="form-group">
+                <label>Comentarios</label>
+
+                <textarea id="comentarios" maxlength="500" class="form-control" asp-for="Encabezado.Comentarios"></textarea>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+            <div class="card">
+                <div class="card-header">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <h5>Movimientos</h5>
+                        </div>
+                        <div class="col-md-4">
+
+
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped table-bordered first">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>DocEntry</th>
+
+                                    <th>Tipo Movimiento</th>
+                                    <th>Fecha</th>
+                                    <th>Bodega Inicial</th>
+                                    <th>Bodega Final</th>
+                                    <th>Status</th>
+
+
+
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model.BTS)
+                            {
+                                <tr>
+                                    <td>@item.id</td>
+                                    <td>@item.DocEntry</td>
+
+                                    <td>@(item.TipoMovimiento == 1 ? "Solicitud" : "Devolución")</td>
+                                    <td>@item.Fecha</td>
+                                    <td>@item.BodegaInicial</td>
+                                    <td>@item.BodegaFinal</td>
+                                    <td>@((item.Status == "0" ? "En espera" : item.Status == "1" ? "Aceptado" : "Rechazado"))</td>
+
+                                </tr>
+                            }
+
+
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>DocEntry</th>
+
+                                    <th>Tipo Movimiento</th>
+                                    <th>Fecha</th>
+                                    <th>Bodega Inicial</th>
+                                    <th>Bodega Final</th>
+                                    <th>Status</th>
+
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <button type="button" onclick="javascript: Generar();" class="btn btn-rounded btn-outline-success">Guardar Cambios</button>
+</form>
