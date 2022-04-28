@@ -16,17 +16,157 @@
 @section styles{
 
     <style>
+
+        #menu {
+            float: left;
+            width: 100%;
+            background-color: #fff;
+        }
+
+            #menu img {
+                width: 12%;
+                margin: 2%;
+                cursor: pointer;
+            }
+
+        #principal {
+            float: left;
+            width: 75%;
+        }
+
+        #visor {
+            width: 60%;
+            margin: 10%
+        }
+
+            #visor img {
+                width: 100%
+            }
+
+
+
         h4 {
             font-size: 22px !important;
         }
+
+        body {
+            margin: 0;
+        }
+
+        img {
+            border: none;
+        }
+
+        button, h1 {
+            margin: 0;
+            padding: 0;
+        }
+
+        #wrapper {
+            width: 100%;
+        }
+
+        h1 {
+            padding: 50px 0;
+            text-align: center;
+        }
+
+
+
+        .preload {
+            padding-top: 20px;
+            text-align: center;
+            display: none;
+        }
+
+        .activate-preload {
+            display: block;
+        }
+
+        #container-input {
+            width: 640px;
+            margin: 0 auto;
+            border: solid 1px #CCC;
+            position: relative;
+            overflow: hidden;
+        }
+
+            #container-input .wrap-file .content-icon-camera {
+                width: 55px;
+                overflow: hidden;
+            }
+
+                #container-input .wrap-file .content-icon-camera:hover {
+                    background-color: #e6e6e6;
+                }
+
+                #container-input .wrap-file .content-icon-camera .icon-camera {
+                    width: 36px;
+                    height: 36px;
+                    background: url('../../camera.png') no-repeat;
+                    cursor: pointer;
+                    position: absolute;
+                    top: 8px;
+                    left: 8px;
+                }
+
+                #container-input .wrap-file .content-icon-camera #file {
+                    padding: 15px;
+                    opacity: 0;
+                    position: relative;
+                    cursor: pointer;
+                    left: -120px;
+                    z-index: 1;
+                }
+
+            #container-input .wrap-file #preview-images .thumbnail {
+                width: 120px;
+                height: 120px;
+                display: inline-block;
+                vertical-align: middle;
+                border: solid 2px #CCC;
+                background-size: cover;
+                position: relative;
+            }
+
+                #container-input .wrap-file #preview-images .thumbnail:not(:last-child) {
+                    margin-right: 5px;
+                }
+
+                #container-input .wrap-file #preview-images .thumbnail .close-button {
+                    width: 20px;
+                    height: 20px;
+                    background-color: black;
+                    color: white;
+                    text-align: center;
+                    position: absolute;
+                    top: 5px;
+                    right: 5px;
+                    border-radius: 100px;
+                    cursor: pointer;
+                }
+
+            #container-input #publish {
+                padding: 15px 35px;
+                font-size: 1.1em;
+                float: right;
+                border: none;
+                cursor: pointer;
+                background-color: #8ECA67;
+                color: #FFF;
+            }
+
+                #container-input #publish:hover {
+                    background-color: #6EAD45;
+                }
     </style>
 
 }
 
 @section scripts{
     @*@{await Html.RenderPartialAsync("_ValidationScriptsPartial");}*@
-    
-<script>
+
+    <script>
         $(document).ready(function () {
 
             jQuery(document).ready(function ($) {
@@ -248,7 +388,7 @@
 
             for (var i = 0; i < ProdCadenaM.length; i++) {
                 sOptions += '<tr>'
-                sOptions += '<td align="center" style="padding-top:15px;">  <p style="font-size:15px;">' + ProdCadenaM[i].ItemCode + '</p></td>'; 
+                sOptions += '<td align="center" style="padding-top:15px;">  <p style="font-size:15px;">' + ProdCadenaM[i].ItemCode + '</p></td>';
                 sOptions += '<td align="left" style="padding-top:15px;">  <input id="cantidad-' + i + '" value="' + ProdCadenaM[i].Cantidad + '"  type="number" /> </td>';
                 sOptions += '<td align="left" style="padding-top:15px;">  <select id="error-' + i + '" class="form-control" >  <option value="0">Sin Diagnostico</option> ';
                 for (var a = 0; a < ErroresP.length; a++) {
@@ -300,6 +440,19 @@
                 Cadena.push(det);
             }
 
+            var bases64 = [];
+
+            for (var i = 0; i < documentosbase64.length; i++) {
+                var det = {
+                    id: 0,
+                    idEncabezado: 0,
+                    base64: documentosbase64[i].base64
+
+                };
+                bases64.push(det);
+            }
+
+
             var recibido =
             {
                 id: idGeneral,
@@ -309,7 +462,8 @@
                 BodegaInicial: BodegaOrigen,
                 BodegaFinal: BodegaFinal,
                 idDiagnostico: idDiag,
-                DetReparacion: Cadena
+                DetReparacion: Cadena,
+                Adjuntos: bases64
             }
 
             console.log(JSON.stringify(recibido));
@@ -394,7 +548,128 @@
 
         }
 
-</script>
+    </script>
+    <script type="text/javascript">
+        var file = document.getElementById('file');
+        var preload = document.querySelector('.preload');
+
+        var formData = new FormData();
+        var documentosbase64 = [];
+
+        function getBase64(file, id) {
+            var reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = function () {
+                console.log(reader.result);
+                var detalle = {
+                    id: id,
+                    idEncabezado: 0,
+                    base64: reader.result
+                }
+                documentosbase64.push(detalle);
+            };
+            reader.onerror = function (error) {
+                console.log('Error: ', error);
+            };
+        }
+
+        function getBase642(event, id) {
+            var input = event.target;
+
+            var reader = new FileReader();
+            reader.onload = function () {
+                var dataURL = reader.result;
+                console.log(dataURL);
+                var detalle = {
+                    id: id,
+                    base64: dataURL
+                }
+                documentosbase64.push(detalle);
+            };
+            reader.readAsDataURL(input.files[0]);
+        }
+
+        function eliminar(id) {
+            documentosbase64.splice(documentosbase64.indexOf(documentosbase64.find(a => a.id == id)), 1)
+        }
+
+        file.addEventListener('change', function (e) {
+
+            for (var i = 0; i < file.files.length; i++) {
+                var thumbnail_id = Math.floor(Math.random() * 30000) + '_' + Date.now();
+                createThumbnail(file, i, thumbnail_id);
+                formData.append(thumbnail_id, file.files[i]);
+            }
+            getBase642(e, thumbnail_id);
+            e.target.value = '';
+
+        });
+
+
+
+        var createThumbnail = function (file, iterator, thumbnail_id) {
+            var thumbnail = document.createElement('div');
+            thumbnail.classList.add('thumbnail', thumbnail_id);
+            thumbnail.dataset.id = thumbnail_id;
+
+            thumbnail.setAttribute('style', `background-image: url(${URL.createObjectURL(file.files[iterator])})`);
+            document.getElementById('preview-images').appendChild(thumbnail);
+            createCloseButton(thumbnail_id);
+        }
+
+        var createCloseButton = function (thumbnail_id) {
+            var closeButton = document.createElement('div');
+            closeButton.classList.add('close-button');
+            closeButton.innerText = 'x';
+            document.getElementsByClassName(thumbnail_id)[0].appendChild(closeButton);
+        }
+
+        var clearFormDataAndThumbnails = function () {
+            for (var key of formData.keys()) {
+                formData.delete(key);
+            }
+
+            document.querySelectorAll('.thumbnail').forEach(function (thumbnail) {
+                thumbnail.remove();
+            });
+        }
+
+
+        document.body.addEventListener('click', function (e) {
+            if (e.target.classList.contains('close-button')) {
+                e.target.parentNode.remove();
+                formData.delete(e.target.parentNode.dataset.id);
+                eliminar(e.target.parentNode.dataset.id);
+
+            }
+        });
+
+
+    </script>
+    <script>
+        // Get the modal
+        var modal = document.getElementById('myModal');
+
+
+        // Get the image and insert it inside the modal - use its "alt" text as a caption
+        //   var img = document.getElementById('myImg');
+        var modalImg = document.getElementById("img01");
+        //var captionText = document.getElementById("caption");
+        function onclickImage(id) {
+            modal.style.display = "block";
+            modalImg.src = $("#" + id).attr('src');
+
+        }
+
+        // Get the <span> element that closes the modal
+        var span = document.getElementsByClassName("close")[0];
+
+        // When the user clicks on <span> (x), close the modal
+        span.onclick = function () {
+            modal.style.display = "none";
+        }
+    </script>
+
 
 }
 @using Newtonsoft.Json;
@@ -479,7 +754,7 @@
                                     @foreach (var item in Model.Diagnosticos)
                                     {
 
-                                        <option value="@item.id"> @item.id - @item.Descripcion </option>
+                                    <option value="@item.id"> @item.id - @item.Descripcion </option>
                                     }
 
 
@@ -495,7 +770,7 @@
                     </div>
 
 
-                 
+
 
 
                 </div>
@@ -515,15 +790,15 @@
                         </div>
 
                         <div class="col-sm-6" style="text-align: right">
- 
+
 
                         </div>
                     </div>
                 </div>
                 <div class="card-body">
-                  
+
                     <div class="row">
-                    
+
 
 
                         <div class="col-md-4 pr-1">
@@ -545,8 +820,8 @@
 
                         </div>
 
-                      
-                      
+
+
                         <div class="col-md-4 pr-1" hidden>
 
                             <div class="form-group">
@@ -554,11 +829,11 @@
                                 <select id="bodegaOrigen" class="form-control" asp-for="Encabezado.BodegaOrigen">
                                     <option value="0" selected>Seleccione</option>
 
-                                    @foreach(var item in Model.Bodegas)
-            {
+                                    @foreach (var item in Model.Bodegas)
+                                    {
 
                                     <option value="@item.codSAP"> @item.codSAP - @item.Nombre </option>
-            }
+                                    }
 
 
 
@@ -568,7 +843,7 @@
                             </div>
 
 
-                        </div> 
+                        </div>
                         <div class="col-md-4 pr-1" hidden>
 
                             <div class="form-group">
@@ -736,7 +1011,7 @@
                             </thead>
                             <tbody>
                                 @foreach (var item in Model.BTS)
-                            {
+                                {
                                 <tr>
                                     <td>@item.id</td>
                                     <td>@item.DocEntry</td>
@@ -748,7 +1023,7 @@
                                     <td>@((item.Status == "0" ? "En espera" : item.Status == "1" ? "Aceptado" : "Rechazado"))</td>
 
                                 </tr>
-                            }
+                                }
 
 
                             </tbody>
@@ -773,5 +1048,81 @@
 
     </div>
 
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-header">
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <h5 class="title">Subir Imágenes</h5>
+
+                        </div>
+
+                        <div class="col-sm-6" style="text-align: right">
+
+
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+
+                    <div id="wrapper">
+
+                        <div id="container-input">
+                            <div class="wrap-file">
+                                <div class="content-icon-camera">
+                                    <input type="file" id="file" name="file[]" accept="image/*" multiple />
+                                    <div class="icon-camera"></div>
+                                </div>
+                                <div id="preview-images">
+
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="preload">
+                            <img src="assets/images/preload.gif" alt="preload" />
+                        </div>
+                        <h2 id="success"></h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card">
+
+                <div class="card-body">
+
+                    <div id="menu">
+                        @foreach (var item in Model.Encabezado.Adjuntos)
+                        {
+                              <img src='data:image/png;base64,@item.base64' id="@item.id" name='fotos1' onclick="javascript: onclickImage(@item.id)" />
+
+                        }
+
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
     <button type="button" onclick="javascript: Generar();" class="btn btn-rounded btn-outline-success">Guardar Cambios</button>
 </form>
+
+
+
+<!-- The Modal -->
+<div id="myModal" class="modal">
+    <span class="close">×</span>
+    <img class="modal-content" id="img01">
+    
+</div>

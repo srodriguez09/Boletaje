@@ -26,6 +26,32 @@
 @section styles{
 
     <style>
+        #menu {
+            float: left;
+            width: 100%;
+            background-color: #fff;
+        }
+
+            #menu img {
+                width: 12%;
+                margin: 2%;
+                cursor: pointer;
+            }
+
+        #principal {
+            float: left;
+            width: 75%;
+        }
+
+        #visor {
+            width: 60%;
+            margin: 10%
+        }
+
+            #visor img {
+                width: 100%
+            }
+
         .tableFixHead th {
             position: sticky;
             top: 0;
@@ -57,7 +83,29 @@
 
 
     </script>
+    <script>
+        // Get the modal
+        var modal = document.getElementById('myModal');
 
+
+        // Get the image and insert it inside the modal - use its "alt" text as a caption
+        //   var img = document.getElementById('myImg');
+        var modalImg = document.getElementById("img01");
+        //var captionText = document.getElementById("caption");
+        function onclickImage(id) {
+            modal.style.display = "block";
+            modalImg.src = $("#" + id).attr('src');
+
+        }
+
+        // Get the <span> element that closes the modal
+        var span = document.getElementsByClassName("close")[0];
+
+        // When the user clicks on <span> (x), close the modal
+        span.onclick = function () {
+            modal.style.display = "none";
+        }
+    </script>
 }
 @using Microsoft.AspNetCore.Http
 @using System;
@@ -172,7 +220,7 @@
 
                         <div class="form-group">
                             <label>Diagnóstico</label>
-                            <select id="idDiag" class="form-control" asp-for="Encabezado.idDiagnostico"  disabled="disabled" readonly>
+                            <select id="idDiag" class="form-control" asp-for="Encabezado.idDiagnostico" disabled="disabled" readonly>
                                 <option value="0" selected>Seleccione</option>
 
                                 @foreach (var item in Model.Diagnosticos)
@@ -295,16 +343,16 @@
                         <tbody>
                             @foreach (var item in Model.BTS)
                             {
-                            <tr>
-                                <td>@item.id</td>
-                                <td>@(item.TipoMovimiento == 1 ? "Solicitud" : "Devolución")</td>
+                                <tr>
+                                    <td>@item.id</td>
+                                    <td>@(item.TipoMovimiento == 1 ? "Solicitud" : "Devolución")</td>
 
 
-                                <td>@item.Fecha</td>
-                                <td>@item.BodegaInicial</td>
-                                <td>@item.BodegaFinal</td>
+                                    <td>@item.Fecha</td>
+                                    <td>@item.BodegaInicial</td>
+                                    <td>@item.BodegaFinal</td>
 
-                            </tr>
+                                </tr>
                             }
 
 
@@ -324,5 +372,33 @@
             </div>
         </div>
     </div>
+
+</div>
+<div class="row">
+    <div class="col-sm-12">
+        <div class="card">
+
+            <div class="card-body">
+
+                <div id="menu">
+                    @foreach (var item in Model.Encabezado.Adjuntos)
+                    {
+                        <img src='data:image/png;base64,@item.base64' id="@item.id" name='fotos1' onclick="javascript: onclickImage(@item.id)" />
+
+                    }
+
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- The Modal -->
+<div id="myModal" class="modal">
+    <span class="close">×</span>
+    <img class="modal-content" id="img01">
 
 </div>

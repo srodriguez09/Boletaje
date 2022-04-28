@@ -128,6 +128,8 @@ namespace Boletaje.Pages.Reparacion
                 ColeccionRepuestosViewModel coleccion = new ColeccionRepuestosViewModel();
                 coleccion.EncReparacion = new EncReparacionViewModel();
                 coleccion.DetReparacion = new DetReparacionViewModel[recibido.DetReparacion.Length];
+                coleccion.Adjuntos = new AdjuntosViewModel[recibido.Adjuntos.Length];
+
 
                 coleccion.EncReparacion.id = recibido.id;
                 coleccion.EncReparacion.TipoReparacion = recibido.Tipo;
@@ -149,6 +151,15 @@ namespace Boletaje.Pages.Reparacion
 
                     cantidad++;
                 }
+
+                cantidad = 1;
+                foreach(var item in recibido.Adjuntos)
+                {
+                    coleccion.Adjuntos[cantidad - 1] = new AdjuntosViewModel();
+                    coleccion.Adjuntos[cantidad - 1].base64 = item.base64;
+                    cantidad++;
+                }
+
 
                 await serviceColeccion.Agregar(coleccion);
 
