@@ -20,8 +20,24 @@
 
 @section scripts{
 
-  
 
+
+}
+@using Microsoft.AspNetCore.Http
+@using System;
+@using System.Collections.Generic;
+@using System.IO;
+@using System.Linq;
+@using System.Security.Claims;
+@using System.Threading.Tasks;
+@using Microsoft.AspNetCore.Mvc;
+@using Microsoft.AspNetCore.Mvc.RazorPages;
+@using Microsoft.Extensions.Configuration;
+@using Refit;
+@using Sicsoft.Checkin.Web.Models;
+@inject IHttpContextAccessor httpContextAccessor
+@{
+    var Roles = ((ClaimsIdentity)User.Identity).Claims.Where(d => d.Type == "Roles").Select(s1 => s1.Value).FirstOrDefault().Split("|");
 }
 
 <form method="post" id="formTipos" role="form" novalidate class="needs-validation " enctype="multipart/form-data">
@@ -68,7 +84,18 @@
                         <div class="col-md-4">
                             <div class="form-group">
                                 <label>Fecha SISO:</label>
-                                <input type="date" class="form-control form-control-lg" id="fecsiso" placeholder="" asp-for="Input.FechaSISO">
+                                @{if (!string.IsNullOrEmpty(Roles.Where(a => a == "33").FirstOrDefault()))
+                                    {
+
+                                        <input type="date" class="form-control form-control-lg" id="fecsiso" placeholder="" asp-for="Input.FechaSISO">
+                                    }
+                                    else
+                                    {
+                                        <input type="date" class="form-control form-control-lg" id="fecsiso" placeholder="" asp-for="Input.FechaSISO" readonly>
+                                    }
+
+                                }
+
 
 
 
@@ -161,16 +188,10 @@
 
                         </div>
                         <div class="col-sm-6">
-                            @*<div class="form-group">
-                                    <label>Técnico:</label>
-                                    <select id="srt" class="form-control" asp-for="Input.Tecnico" required>
-                                        <option value="0">Seleccione</option>
-                                        @foreach (var item in Model.Tecnicos)
-                                        {
-                                            <option value="@item.idSAP">@item.Nombre</option>
-                                        }
-                                    </select>
-                                </div>*@
+                            <div class="form-group">
+                                <label>Horas:</label>
+                                <input type="number" min="0" step="1" class="form-control" asp-for="Input.Horas" id="horas" required />
+                            </div>
                         </div>
 
                     </div>
@@ -215,10 +236,10 @@
             <div class="card">
 
                 <div class="card-body">
-                   <center>
+                    <center>
                         <img src="@Model.Input.Firma" width="300" height="300" />
 
-                   </center>
+                    </center>
                 </div>
             </div>
 

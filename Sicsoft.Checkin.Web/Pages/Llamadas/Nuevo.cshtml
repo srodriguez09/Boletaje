@@ -454,10 +454,10 @@
                                 <datalist id="cardcodes">
                                     @foreach (var item in Model.Clientes.Clientes)
                                     {
-                                        <option value="@item.CardCode / @item.CardName"> </option>
+                                    <option value="@item.CardCode / @item.CardName"> </option>
                                     }
                                 </datalist>
-
+                                <a asp-page="/Client/Nuevo" style="text-decoration: underline;" class="nav-link" target="_blank">Crear Cliente</a>
 
 
                             </div>
@@ -469,6 +469,7 @@
                                     <option value="0">Seleccione</option>
 
                                 </select>
+                                <a asp-page="/Boletas/Nuevo" style="text-decoration: underline;" class="nav-link" target="_blank">Crear Boleta</a>
                             </div>
                         </div>
 
@@ -536,16 +537,7 @@
                         </div>
 
                         <div class="col-sm-6">
-                            @*<div class="form-group">
-                                    <label>Garantía:</label>
-                                    <select id="garantia" class="form-control" asp-for="Input.Garantia" required>
-                                        <option value="0">Seleccione</option>
-                                        @foreach (var item in Model.Garantias)
-                                        {
-                                            <option value="@item.idSAP">@item.Nombre</option>
-                                        }
-                                    </select>
-                                </div>*@
+                         
                             <div class="form-group">
                                 <label>Técnico:</label>
                                 <select id="srt" class="form-control" asp-for="Input.Tecnico" required>
@@ -558,16 +550,10 @@
                             </div>
                         </div>
                         <div class="col-sm-6">
-                            @*<div class="form-group">
-                                    <label>Técnico:</label>
-                                    <select id="srt" class="form-control" asp-for="Input.Tecnico" required>
-                                        <option value="0">Seleccione</option>
-                                        @foreach (var item in Model.Tecnicos)
-                                        {
-                                            <option value="@item.idSAP">@item.Nombre</option>
-                                        }
-                                    </select>
-                                </div>*@
+                            <div class="form-group">
+                                    <label>Horas:</label>
+                                   <input type="number"  min="0" step="1" class="form-control" asp-for="Input.Horas" id="horas" required />
+                                </div>
                         </div>
 
                     </div>

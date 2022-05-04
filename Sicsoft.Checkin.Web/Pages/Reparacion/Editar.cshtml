@@ -458,6 +458,8 @@
                 id: idGeneral,
                 Tipo: tipo,
                 Status: status,
+                StatusLlamada: $("#statusLlamada").val(),
+                idLlamada: $("#idLlamada").val(),
                 comentarios: comentarios,
                 BodegaInicial: BodegaOrigen,
                 BodegaFinal: BodegaFinal,
@@ -718,7 +720,7 @@
                         <div class="col-md-4 pr-1">
 
                             <div class="form-group">
-                                <label>Status</label>
+                                <label>Estado de la Reparación</label>
                                 <select id="status" class="form-control" asp-for="Encabezado.Status">
                                     <option value="0" selected>Abierto</option>
 
@@ -733,8 +735,20 @@
 
 
                         </div>
-
                         <div class="col-md-4 pl-1">
+                            <div class="form-group">
+                                <label>Estado de la Llamada:</label>
+                                <input asp-for="InputLlamada.id" id="idLlamada"hidden />
+                                <select id="statusLlamada" class="form-control" asp-for="InputLlamada.Status" required>
+                                    <option value="0">Seleccione</option>
+                                    @foreach (var item in Model.Status)
+                                    {
+                                        <option value="@item.idSAP">@item.Nombre</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-4 pr-1">
 
                             <div class="form-group">
                                 <label>Llamada</label>
@@ -754,7 +768,7 @@
                                     @foreach (var item in Model.Diagnosticos)
                                     {
 
-                                    <option value="@item.id"> @item.id - @item.Descripcion </option>
+                                        <option value="@item.id"> @item.id - @item.Descripcion </option>
                                     }
 
 

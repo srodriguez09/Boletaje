@@ -75,7 +75,7 @@ namespace Boletaje.Pages.Reparacion
 
                     filtro.FechaFinal = ultimoDia;
 
-
+                    filtro.Codigo2 = 0;
 
                 }
 

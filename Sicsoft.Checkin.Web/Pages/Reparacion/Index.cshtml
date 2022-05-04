@@ -107,7 +107,7 @@
                             {
                                 <div class="form-group">
                                     <label>Técnico</label>
-                                    <select id="heard" class="form-control" asp-for="filtro.Codigo1" >
+                                    <select id="heard" class="form-control" asp-for="filtro.Codigo1">
                                         <option value="0">Seleccione</option>
                                         @foreach (var item in Model.Tecnicos)
                                         {
@@ -118,7 +118,16 @@
                                 </div>
                             }
                         </div>
+                        <div class="col-sm-4 pr-1">
+                            <div class="form-group">
+                                <label>Status</label>
+                                <select id="heard" class="form-control" asp-for="filtro.Codigo2">
+                                    <option value="1" >Activos</option>
+                                    <option value="2">Cerrados</option>
 
+                                </select>
+                            </div>
+                        </div>
                         <div class="col-sm-12">
                             <br />
                         </div>

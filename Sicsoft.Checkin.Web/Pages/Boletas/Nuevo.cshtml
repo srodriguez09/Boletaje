@@ -1,0 +1,117 @@
+﻿@page
+@model Boletaje.Pages.Boletas.NuevoModel
+@{
+    ViewData["Title"] = "Tarjeta de Equipo";
+}
+@section breadcrumb{
+
+    <li class="breadcrumb-item">
+        <a >Tarjeta de Equipo</a>
+    </li>
+    <li class="breadcrumb-item active">
+        <a>Nuevo</a>
+    </li>
+
+}
+@section styles{
+
+
+}
+
+@section scripts{
+
+
+
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-sm-6">
+                        <h5 class="title">Crear Tarjeta de Equipo</h5>
+                    </div>
+
+                    <div class="col-sm-6" style="text-align: right">
+
+                       
+
+                    </div>
+                </div>
+
+            </div>
+            <div class="card-body">
+                <form method="post" id="formTipos" role="form" novalidate class="needs-validation " enctype="multipart/form-data">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>No Serie:</label>
+
+                                <input type="text" class="form-control form-control-lg" id="serie" placeholder="Numero de serie" asp-for="Input.NoSerie">
+
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>No Serie Fabricante:</label>
+
+                                <input type="text" class="form-control form-control-lg" id="serieFabricante" placeholder="Numero de serie fabricante" asp-for="Input.NoSerieFabricante">
+
+                            </div>
+                        </div>
+
+                    </div>
+
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Cliente:</label>
+
+                                <input type="text" list="cardcodes" class="form-control form-control-lg" id="cardcode" placeholder="Nombre Cliente" asp-for="Input.CardCode" >
+
+                                <datalist id="cardcodes">
+                                    @foreach (var item in Model.Clientes.Clientes)
+                                    {
+                                        <option value="@item.CardCode / @item.CardName"> </option>
+                                    }
+                                </datalist>
+
+
+
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Producto:</label>
+
+                                <input type="text" list="products" class="form-control form-control-lg" id="itemcode" placeholder="Producto" asp-for="Input.ItemCode">
+
+                                <datalist id="products">
+                                    @foreach (var item in Model.Productos)
+                                    {
+                                        <option value="@item.ItemCode / @item.ItemName"> </option>
+                                    }
+                                </datalist>
+                            </div>
+                        </div>
+
+                    </div>
+
+
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <button type="submit" id="Guardar" class="btn btn-rounded btn-outline-success">Guardar Cambios</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

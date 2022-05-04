@@ -29,8 +29,14 @@ namespace Boletaje.Pages.Reparacion
         private readonly ICrudApi<BitacoraMovimientosViewModel, int> bt;
         private readonly ICrudApi<DiagnosticosViewModel, int> serviceD;
         private readonly ICrudApi<ErroresViewModel, int> serviceError;
+        private readonly ICrudApi<StatusViewModel, int> status;
 
 
+        [BindProperty]
+
+        public StatusViewModel[] Status { get; set; }
+        [BindProperty]
+        public LlamadasViewModel InputLlamada { get; set; }
 
         [BindProperty]
         public ErroresViewModel[] Errores { get; set; }
@@ -63,7 +69,7 @@ namespace Boletaje.Pages.Reparacion
 
         public EditarModel(ICrudApi<DetReparacionViewModel, int> service, ICrudApi<LlamadasViewModel, int> serviceL, ICrudApi<ClientesViewModel, int> clientes, ICrudApi<ProductosViewModel, int> prods,
            ICrudApi<ProductosHijosViewModel, int> service2, ICrudApi<EncReparacionViewModel, int> serviceE, ICrudApi<ColeccionRepuestosViewModel, int> serviceColeccion, ICrudApi<BodegasViewModel, int> serviceBodegas, ICrudApi<BitacoraMovimientosViewModel, int> bt, ICrudApi<DiagnosticosViewModel, int> serviceD
-            ,ICrudApi<ErroresViewModel, int> serviceError)
+            ,ICrudApi<ErroresViewModel, int> serviceError, ICrudApi<StatusViewModel, int> status)
         {
             this.service = service;
             this.serviceL = serviceL;
@@ -76,6 +82,7 @@ namespace Boletaje.Pages.Reparacion
             this.bt = bt;
             this.serviceD = serviceD;
             this.serviceError = serviceError;
+            this.status = status;
         }
 
         public async Task<IActionResult> OnGetAsync(int id)
@@ -109,6 +116,8 @@ namespace Boletaje.Pages.Reparacion
                 Diagnosticos = await serviceD.ObtenerLista("");
                 Errores = await serviceError.ObtenerLista("");
 
+                InputLlamada = await serviceL.ObtenerPorDocEntry(Encabezado.idLlamada);
+                Status = await status.ObtenerLista("");
 
                 return Page();
             }
@@ -162,6 +171,13 @@ namespace Boletaje.Pages.Reparacion
 
 
                 await serviceColeccion.Agregar(coleccion);
+
+                var Status = recibido.StatusLlamada;
+                InputLlamada = await serviceL.ObtenerPorId(recibido.idLlamada);
+                InputLlamada.Status = Status;
+
+                await serviceL.Editar(InputLlamada);
+
 
                 var obj = new
                 {

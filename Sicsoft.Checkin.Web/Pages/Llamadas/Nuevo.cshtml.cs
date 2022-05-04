@@ -84,6 +84,8 @@ namespace Boletaje.Pages.Llamadas
                 Sucursales = await sucursales.ObtenerLista("");
                 Tecnicos = await tecnicos.ObtenerLista("");
                 Status = await status.ObtenerLista("");
+                Input = new LlamadasViewModel();
+                Input.Horas = 0;
                 return Page();
             }
             catch (Exception ex)

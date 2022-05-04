@@ -10,6 +10,8 @@ namespace Boletaje.Models
         public int id { get; set; }
         public int Tipo { get; set; }
         public int Status { get; set; }
+        public int StatusLlamada { get; set; }
+        public int idLlamada { get; set; }
         public string comentarios { get; set; }
         public string BodegaInicial { get; set; }
         public string BodegaFinal { get; set; }
