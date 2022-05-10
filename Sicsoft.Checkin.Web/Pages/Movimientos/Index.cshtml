@@ -1,13 +1,13 @@
 ﻿@page
-@model Boletaje.Pages.Reparacion.IndexModel
+@model Boletaje.Pages.Movimientos.IndexModel
 @{
-    ViewData["Title"] = "Reparaciones";
+    ViewData["Title"] = "Movimientos";
 }
 
 @section breadcrumb{
 
     <li class="breadcrumb-item">
-        <a asp-page="./Index">Reparaciones</a>
+        <a asp-page="./Index">BackOffice</a>
     </li>
 
 
@@ -48,7 +48,7 @@
 
 
             $(document).ready(function () {
-               // $('#tablita').DataTable();
+                $('#tablita').DataTable();
             });
 
 
@@ -61,6 +61,7 @@
     </script>
 
 }
+
 @using Microsoft.AspNetCore.Http
 @using System;
 @using System.Collections.Generic;
@@ -74,7 +75,6 @@
 @using Refit;
 @using Sicsoft.Checkin.Web.Models;
 @inject IHttpContextAccessor httpContextAccessor
-
 
 <div class="row">
     <div class="col-md-12   ">
@@ -103,31 +103,12 @@
                         </div>
 
                         <div class="col-md-4 pl-1">
-                            @if (Model.bandera)
-                            {
-                                <div class="form-group">
-                                    <label>Técnico</label>
-                                    <select id="heard" class="form-control" asp-for="filtro.Codigo1">
-                                        <option value="0">Seleccione</option>
-                                        @foreach (var item in Model.Tecnicos)
-                                        {
-                                            <option value="@item.idSAP">@item.idSAP - @item.Nombre </option>
-                                        }
-                                    </select>
 
-                                </div>
-                            }
-                        </div>
-                        <div class="col-sm-4 pr-1">
-                            <div class="form-group">
-                                <label>Status</label>
-                                <select id="heard" class="form-control" asp-for="filtro.Codigo2">
-                                    <option value="1" >Activos</option>
-                                    <option value="2">Cerrados</option>
 
-                                </select>
-                            </div>
+
+                         
                         </div>
+
                         <div class="col-sm-12">
                             <br />
                         </div>
@@ -156,10 +137,10 @@
             <div class="card-header">
                 <div class="row">
                     <div class="col-md-8">
-                        <h5>Reparaciones</h5>
+                        <h5>BackOffice</h5>
                     </div>
                     <div class="col-md-4">
-                         
+
 
                     </div>
                 </div>
@@ -171,12 +152,17 @@
                         <thead>
                             <tr>
                                 <th>ID</th>
-                                <th>ID Llamada</th>
-                                <th>Tecnico</th>
-                                <th>Fecha Creación</th>
-                                <th>Actualización Ult.</th>
-                                <th>Producto</th>
-                                <th>Status</th>
+                                <th>Llamada</th>
+                                <th>DocEntry</th>}
+                                <th>Cliente</th>
+                                <th>Fecha</th>
+                                <th>Tipo Movimiento</th>
+                                <th>Subtotal</th>
+                                <th>Impuestos</th>
+
+                                <th>Descuento</th>
+                                <th>Total</th>
+
 
                                 <th>Acción</th>
 
@@ -187,43 +173,38 @@
                             {
                             <tr>
                                 <td>@item.id</td>
-                                <td>@item.idLlamada</td>
-                                @{var id = item.idTecnico.ToString();} 
-                                <td>@Model.Tecnicos.Where(a => a.idSAP == id).FirstOrDefault().Nombre</td>
-                      
-                                <td>@item.FechaCreacion.ToString("dd/MM/yyyy")</td>
-                                <td>@item.FechaModificacion.ToString("dd/MM/yyyy HH:mm:ss")</td>
-                                <td>@item.idProductoArreglar</td> 
-                                <td>
-                                    @switch (item.Status)
-                                    {
-                                        case 0:
-                                            {
-                                                <span class="mr-2"><span class="badge-dot badge-success"></span>Activo</span>
-                                                break;
-                                            }
-                                        case 1:
-                                            {
-                                                <span class="mr-2"><span class="badge-dot badge-danger"></span>Cerrado</span>
-                                                break;
-                                            }
-                                        case 2:
-                                            {
-                                                <span class="mr-2"><span class="badge-dot badge-danger"></span>Cerrado y Reparado</span>
+                                <td>@item.NumLlamada</td>
+                                <td>@item.DocEntry</td>
 
-                                                break;
-                                            }
+                                <td>@item.CardCode - @item.CardName</td>
+                                <td>@item.Fecha.ToString("dd/MM/yyyy")</td>
+                                @{switch (item.TipoMovimiento)
+                                {
+                                    case 1:
+                                        {
+                                    <td>Oferta de Venta</td>
+                                            break;
+                                        }
+                                    case 2:
+                                        {
+                                    <td>Entrega</td>
+                                            break;
+                                        }
+                                }
+                                }
+                                <td align="right">@decimal.Round(item.Subtotal, 2).ToString("N", formato)</td>
+                                <td align="right">@decimal.Round(item.Impuestos, 2).ToString("N", formato)</td>
+
+                                <td align="right">@decimal.Round(item.Descuento, 2).ToString("N", formato)</td>
+                                <td align="right">@decimal.Round(item.TotalComprobante, 2).ToString("N", formato)</td>
+
+                                <td>
+                                    @if (item.DocEntry == 0)
+                                    {
+
+                                    <a asp-page="./Editar" asp-route-id="@item.id" title="Editar" class="btn btn-rounded btn-outline-warning"> Generar</a>
                                     }
-                                </td>
-
-                                <td>
-                                    @if (item.Status == 0 )
-                                    {
-
-                                        <a asp-page="./Editar" asp-route-id="@item.id" title="Editar" class="btn btn-rounded btn-outline-warning"> Editar</a>
-                                     }
                                     &nbsp;
-                                    <a asp-page="./Observar" asp-route-id="@item.id" title="Editar" class="btn btn-rounded btn-outline-primary"> Observar</a>
                                 </td>
                             </tr>
                             }
@@ -233,13 +214,17 @@
                         <tfoot>
                             <tr>
                                 <th>ID</th>
-                                <th>ID Llamada</th>
-                                <th>Tecnico</th>
-                                <th>Fecha Creación</th>
-                                <th>Actualización Ult.</th>
-                                <th>Producto</th>
-                                <th>Status</th>
+                                <th>Llamada</th>
+                                <th>DocEntry</th>
 
+                                <th>Cliente</th>
+                                <th>Fecha</th>
+                                <th>Tipo Movimiento</th>
+                                <th>Subtotal</th>
+                                <th>Impuestos</th>
+
+                                <th>Descuento</th>
+                                <th>Total</th>
                                 <th>Acción</th>
 
                             </tr>
@@ -250,5 +235,4 @@
         </div>
     </div>
 </div>
-
 

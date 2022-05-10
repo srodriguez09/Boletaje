@@ -1,0 +1,393 @@
+﻿@page "{id}"
+@model Boletaje.Pages.Movimientos.EditarModel
+@{
+    ViewData["Title"] = "Generar Movimiento";
+}
+
+@section breadcrumb{
+
+    <li class="breadcrumb-item">
+        <a asp-page="./Index">BackOffice</a>
+    </li>
+    <li class="breadcrumb-item active">
+        <a>Generar Movimiento</a>
+    </li>
+
+}
+@using Newtonsoft.Json;
+@section styles{
+    <style>
+        .input{
+            width: 40%;
+        }
+
+        .input2 {
+            width: 70%;
+        }
+    </style>
+
+}
+@section scripts{
+
+    <script>
+        $(document).ready(function () {
+
+            jQuery(document).ready(function ($) {
+                $(document).ready(function () {
+                });
+            });
+
+            Recuperar();
+        });
+
+        var Detalles = [];
+
+        function Recuperar() {
+            var detalles = JSON.parse($("#Detalle").val());
+            console.log(detalles);
+            for (var i = 0; i < detalles.length; i++) {
+                var detalle = {
+                    id: detalles[i].id,
+                    NumLinea: i + 1,
+                    idEncabezado: 0,
+                    ItemCode: detalles[i].ItemCode,
+                    ItemName: detalles[i].ItemName,
+                    PrecioUnitario: detalles[i].PrecioUnitario,
+                    Cantidad: detalles[i].Cantidad,
+                    PorDescuento: detalles[i].PorDescuento,
+                    Descuento: detalles[i].Descuento,
+                    Impuestos: detalles[i].Impuestos,
+                    TotalLinea: detalles[i].TotalLinea
+                };
+                Detalles.push(detalle);
+
+            }
+
+            RellenaTabla();
+        }
+        function RellenaTabla() {
+            var sOptions = '';
+
+            $("#tbody").html('');
+
+            for (var i = 0; i < Detalles.length; i++) {
+                sOptions += '<tr>'
+                sOptions += '<td align="center">'+ (i+1) +'</td>';
+                sOptions += '<td align="left strong">' + Detalles[i].ItemCode + '</td>';
+                sOptions += '<td align="left ">' + Detalles[i].ItemName + '</td>';
+
+                sOptions += '<td align="right"> <input class="form-control input2" value="' + Detalles[i].PrecioUnitario + '" type="number" step="1" id="' + i +'PrecioU" onchange="javascript: ModificaLinea('+i+')"/> </td>';
+                sOptions += '<td align="center"> <p id="'+i+'Cantidad">' + Detalles[i].Cantidad + '</p></td>';
+                sOptions += '<td align="right"> <p id="' + i + 'Imp">' + Detalles[i].Impuestos + '</p></td>';
+                sOptions += '<td align="right"> <input class="form-control input2" value="' + Detalles[i].PorDescuento + '" type="number" step="1" id="' + i + 'PorDesc" onchange="javascript: ModificaLinea(' + i +')"/> </td>';
+
+                sOptions += '<td align="right"> <p id="'+i+'Desc">' + Detalles[i].Descuento + '</p></td>';
+                sOptions += '<td align="right"><p id="' + i +'TLinea">' + Detalles[i].TotalLinea + '</p></td>';
+
+
+                sOptions += '</tr>'
+            }
+            $("#tbody").html(sOptions);
+
+            ModificaTodo();
+
+        }
+
+        function ModificaLinea(i) {
+
+            var Impuestos = 0;
+            var Descuentos = 0;
+            var TotalLinea = 0;
+            var Subtotal = 0;
+
+            Subtotal = $("#" + i + "PrecioU").val() * $("#" + i + "Cantidad").text();
+
+            Descuentos = ($("#" + i + "PorDesc").val() / 100) * Subtotal ;
+            Impuestos = (Subtotal - Descuentos) * 0.13;
+            TotalLinea = (Subtotal - Descuentos) + Impuestos;
+
+            Detalles[i].PrecioUnitario = $("#" + i + "PrecioU").val();
+            Detalles[i].Cantidad = $("#" + i + "Cantidad").text();
+            Detalles[i].PorDescuento = $("#" + i + "PorDesc").val();
+            Detalles[i].Descuento = Descuentos;
+            Detalles[i].Impuestos = Impuestos;
+            Detalles[i].TotalLinea = TotalLinea;
+
+            $("#" + i + "TLinea").text(TotalLinea.toFixed(2));
+            $("#" + i + "Desc").text(Descuentos.toFixed(2));
+            $("#" + i + "Imp").text(Impuestos.toFixed(2));
+
+            ModificaTodo();
+        }
+
+        function ModificaTodo() {
+            var SubTotal = 0;
+            var Descuentos = 0;
+            var Impuestos = 0;
+            var Total = 0;
+            var PorDescuento = 0;
+
+            PorDescuento = $("#descGeneral").val();
+            for (var i = 0; i < Detalles.length; i++) {
+                var ImpLocal = parseFloat($("#" + i + "Imp").text());
+                var DescuentoLocal = parseFloat($("#" + i + "Desc").text());
+                var TotalLocal = parseFloat($("#" + i + "TLinea").text());
+                var subtotalLocal = (TotalLocal - ImpLocal) ;
+                SubTotal += subtotalLocal;
+                Impuestos += ImpLocal;
+                Total += subtotalLocal + ImpLocal;
+
+            }
+
+            if (PorDescuento > 0) {
+                Descuentos = SubTotal * (PorDescuento / 100);
+                Impuestos = (SubTotal - Descuentos) * 0.13;
+                Total = (SubTotal - Descuentos) + Impuestos;
+            }
+
+            $("#SubtotalGeneral").text(SubTotal.toFixed(2));
+            $("#DescGeneral").text(Descuentos.toFixed(2));
+            $("#ImpGeneral").text(Impuestos.toFixed(2));
+            $("#TotalGeneral").text(Total.toFixed(2));
+
+        }
+
+        function Generar(generar) {
+
+
+
+            var recibido =
+            {
+                id: $("#idGeneral").val(),
+                CardCode: "",
+                CardName: "",
+                NumLlamada: "",
+                Fecha: new Date(),
+                TipoMovimiento: 0,
+                Comentarios: $("#comentarios").val(),
+                CreadoPor: "0",
+                Subtotal: $("#SubtotalGeneral").text(),
+                PorDescuento: $("#descGeneral").val(),
+                Descuento: $("#DescGeneral").text(),
+                Impuestos: $("#ImpGeneral").text(),
+                TotalComprobante: $("#TotalGeneral").text(),
+                Generar: generar,
+                Detalle: Detalles
+
+            }
+
+                Swal.fire({
+                    title: '¿Desea guardar los cambios?',
+                    showDenyButton: true,
+                    showCancelButton: false,
+                    confirmButtonText: `Aceptar`,
+                    denyButtonText: `Cancelar`,
+                    customClass: {
+                        confirmButton: 'swalBtnColor',
+                        denyButton: 'swalDeny'
+                    },
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        var recibidos = JSON.stringify(recibido);
+
+                        $.ajax({
+                            type: 'POST',
+
+                            url: '@Url.Page("Editar", "Generar")',
+                            dataType: 'json',
+                            data: { recibidos: recibidos.toString() },
+                            headers: {
+                                RequestVerificationToken: $('input:hidden[name="__RequestVerificationToken"]').val()
+                            },
+                            success: function (json) {
+
+                                $("#divProcesando").hide();
+
+                                if ($('.modal-backdrop').is(':visible')) {
+
+                                    $('body').removeClass('modal-open');
+                                    $('.modal-backdrop').hide();
+                                }
+                                console.log("resultado " + json.mensaje);
+                                if (json.success == true) {
+                                    Swal.fire({
+                                        title: "Ha sido generado con éxito",
+
+                                        icon: 'success',
+                                        showCancelButton: false,
+
+                                        confirmButtonText: 'OK',
+                                        customClass: {
+                                            confirmButton: 'swalBtnColor',
+
+                                        },
+                                    }).then((result) => {
+                                        if (result.isConfirmed) {
+                                            //location.reload();
+                                            window.location.href = window.location.href.split("/Editar")[0];
+                                        }
+                                    })
+
+                                } else {
+                                    Swal.fire({
+                                        icon: 'error',
+                                        title: 'Oops...',
+                                        text: 'Ha ocurrido un error al intentar guardar ' + json.mensaje
+
+                                    })
+                                }
+                            },
+
+                            beforeSend: function (xhr) {
+
+                                $("#divProcesando").modal("show");
+                            },
+                            complete: function () {
+
+                            },
+                            error: function (error) {
+
+                            }
+                        });
+                    }
+                }
+               )
+
+        }
+
+
+    </script>
+}
+
+
+
+
+
+<div class="row">
+    <div class=" col-md-12 col-sm-12 col-12">
+        <div class="card">
+            <div class="card-header p-4">
+                <a asp-page="/Movimientos/Index" class="nav-link text-dark" style="text-decoration: underline;"><i class="fas fa-reply "></i>  Regresar</a>
+                <input hidden id="Detalle" value="@JsonConvert.SerializeObject(Model.Input.Detalle)" />
+                <input hidden id="idGeneral" value="@Model.Input.id" />
+               
+
+
+                <div class="float-right">
+                    <h3 class="mb-0">Llamada #@Model.Input.NumLlamada</h3>
+                    Fecha: @Model.Input.Fecha.ToString("dd/MMMM/yyyy")
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="row mb-4">
+                    <div class="col-sm-6">
+
+                        @{switch(Model.Input.TipoMovimiento)
+                            {
+                                case 1:
+                                {
+                            <h3 class="text-dark mb-1">Oferta de Venta</h3>
+                                    break;
+                                }
+                                case 2:
+                                {
+                            <h3 class="text-dark mb-1">Entrega</h3>
+                                            break;
+                                }
+                             }
+                        }
+
+                        <div>CardCode: @Model.Input.CardCode</div>
+                        <div>Cliente: @Model.Input.CardName</div>
+                        <div>Telefono: @Model.Cliente.Phone1</div>
+
+                    </div>
+                    <div class="col-sm-6">
+
+
+                    </div>
+                </div>
+                <div class="table-responsive-sm">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th class="center">#</th>
+                                <th>Código SAP</th>
+                                <th>Nombre</th>
+                                <th class="center">Precio Unitario</th>
+                                <th class="center">Cantidad</th>
+                                <th class="center">Impuestos</th>
+                                <th class="center">% Descuento</th>
+
+                                <th class="center">Descuentos</th>
+                                <th class="center">Total</th>
+
+                            </tr>
+                        </thead>
+                        <tbody id="tbody">
+                           
+
+                        </tbody>
+                    </table>
+                </div>
+                <div class="row">
+                    <div class="col-lg-4 col-sm-5">
+                    </div>
+                    <div class="col-lg-4 col-sm-5 ml-auto">
+                        <table class="table table-clear">
+                            <tbody>
+                                <tr>
+                                    <td align="left">
+                                        <strong class="text-dark">Subtotal</strong>
+                                    </td>
+                                    <td align="right"><p id="SubtotalGeneral"></p></td>
+                                </tr>
+                                <tr>
+                                    <td align="left">
+                                        <strong class="text-dark">% Descuento</strong>
+                                    </td>
+                                    <td align="right"><input class="form-control input" value="@(Convert.ToInt32(Model.Input.PorDescuento))" type="number" step="1" id="descGeneral" onchange="javascript: ModificaTodo()"></td>
+                                </tr>
+                                <tr>
+                                    <td align="left">
+                                        <strong class="text-dark">Descuento</strong>
+                                    </td>
+                                    <td align="right"><p id="DescGeneral"></p></td>
+                                </tr>
+                                <tr>
+                                    <td align="left">
+                                        <strong class="text-dark">Impuestos</strong>
+                                    </td>
+                                    <td align="right"><p id="ImpGeneral"></p></td>
+                                </tr>
+                                <tr>
+                                    <td align="left">
+                                        <strong class="text-dark">Total</strong>
+                                    </td>
+                                    <td align="right">
+                                        <strong class="text-dark" id="TotalGeneral"></strong>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label>Comentarios</label>
+
+                        <textarea id="comentarios" maxlength="500" class="form-control" asp-for="Input.Comentarios"></textarea>
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<button type="button" onclick="javascript: Generar(false);" class="btn btn-rounded btn-outline-success">Guardar Cambios</button>
+&nbsp;
+<button type="button" onclick="javascript: Generar(true);" class="btn btn-rounded btn-outline-secondary">Guardar y Generar</button>

@@ -218,6 +218,27 @@
                         </div>
                     </li>
 
+                    <li class="nav-item ">
+                        <a class="nav-link active" href="#" data-toggle="collapse" aria-expanded="false" data-target="#submenu-5" aria-controls="submenu-5"><i class="fas fa-clipboard-list"></i>BackOffice <span class="badge badge-success">6</span></a>
+                        <div id="submenu-5" class="collapse submenu" style="">
+                            <ul class="nav flex-column">
+
+
+                                <li class="nav-item">
+                                    @{if (!string.IsNullOrEmpty(Roles.Where(a => a == "34").FirstOrDefault()))
+                                        {
+
+                                            <a class="nav-link" asp-page="/Movimientos/Index">Movimientos</a>
+                                        }
+
+                                    }
+
+                                </li>
+
+                            </ul>
+                        </div>
+                    </li>
+
                 </ul>
             </div>
         </nav>

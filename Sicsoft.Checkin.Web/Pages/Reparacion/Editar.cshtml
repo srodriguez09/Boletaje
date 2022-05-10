@@ -183,13 +183,7 @@
     var ErroresP = [];
     var Errores = [];
     function Recuperar() {
-        //   $("#comentarios").val("@Model.Encabezado.Comentarios");
-        //var tipo = parseInt( $("#idTraslado").val());
-
-        //if (tipo > 0) {
-        //    $('#idTraslado').attr('readonly', true);
-        //    $("#idTraslado").prop("disabled", true);
-        //}
+         
             var disponibles = JSON.parse($("#HijosDisponibles").val());
             var seleccionados = JSON.parse($("#HijosSeleccionados").val());
         Errores = JSON.parse($("#Errores").val());
@@ -517,7 +511,8 @@
                                         },
                                     }).then((result) => {
                                         if (result.isConfirmed) {
-                                            location.reload();
+                                            //location.reload();
+                                            window.location.href = window.location.href.split("/Editar")[0];
                                         }
                                     })
 
@@ -525,7 +520,7 @@
                                     Swal.fire({
                                         icon: 'error',
                                         title: 'Oops...',
-                                        text: 'Ha ocurrido un error al intentar guardar '
+                                        text: 'Ha ocurrido un error al intentar guardar ' + json.mensaje
 
                                     })
                                 }
@@ -726,6 +721,7 @@
 
 
                                     <option value="1">Cerrado </option>
+                                    <option value="2">Cerrado y Reparado </option>
 
 
 
@@ -825,6 +821,8 @@
 
                                     <option value="1">1- Solicitud </option>
                                     <option value="2">2- Devolución </option>
+                                    <option value="3">3- Cotizar </option>
+
 
 
                                 </select>

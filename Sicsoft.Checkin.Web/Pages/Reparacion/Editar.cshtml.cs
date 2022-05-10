@@ -172,11 +172,19 @@ namespace Boletaje.Pages.Reparacion
 
                 await serviceColeccion.Agregar(coleccion);
 
-                var Status = recibido.StatusLlamada;
-                InputLlamada = await serviceL.ObtenerPorId(recibido.idLlamada);
-                InputLlamada.Status = Status;
+                try
+                {
+                    var Status = recibido.StatusLlamada;
+                    InputLlamada = await serviceL.ObtenerPorId(recibido.idLlamada);
+                    InputLlamada.Status = Status;
 
-                await serviceL.Editar(InputLlamada);
+                    await serviceL.Editar(InputLlamada);
+                }
+                catch (Exception ex)
+                {
+ 
+                }
+             
 
 
                 var obj = new
@@ -196,7 +204,7 @@ namespace Boletaje.Pages.Reparacion
                 var obj = new
                 {
                     success = false,
-                    mensaje = "Error en el exception: -> " + ex.Message + " -> " + ex.StackTrace
+                    mensaje = "Error en el exception: -> " + ex.Message  
                 };
                 return new JsonResult(obj);
             }
