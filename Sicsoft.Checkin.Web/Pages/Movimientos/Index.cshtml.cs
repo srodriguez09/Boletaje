@@ -74,5 +74,23 @@ namespace Boletaje.Pages.Movimientos
                 return Page();
             }
         }
+
+        public async Task<IActionResult> OnGetReenviar(int id, string correos)
+        {
+            try
+            {
+
+                await service.ReenvioFacturas(id, correos);
+                return new JsonResult(true);
+            }
+            catch (Exception ex)
+            {
+                return new JsonResult(false);
+            }
+        }
+
+
     }
+
+
 }

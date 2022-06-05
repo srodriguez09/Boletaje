@@ -17,7 +17,7 @@
 @using Newtonsoft.Json;
 @section styles{
     <style>
-        .input{
+        .input {
             width: 40%;
         }
 
@@ -28,7 +28,7 @@
 
 }
 @section scripts{
-
+   
     <script>
         $(document).ready(function () {
 
@@ -73,13 +73,13 @@
             for (var i = 0; i < Detalles.length; i++) {
                 sOptions += '<tr>'
                 sOptions += '<td align="center">'+ (i+1) +'</td>';
-                sOptions += '<td align="left strong">' + Detalles[i].ItemCode + '</td>';
+                sOptions += '<td align="left " class="strong">' + Detalles[i].ItemCode + '</td>';
                 sOptions += '<td align="left ">' + Detalles[i].ItemName + '</td>';
 
                 sOptions += '<td align="right"> <input class="form-control input2" value="' + Detalles[i].PrecioUnitario + '" type="number" step="1" id="' + i +'PrecioU" onchange="javascript: ModificaLinea('+i+')"/> </td>';
                 sOptions += '<td align="center"> <p id="'+i+'Cantidad">' + Detalles[i].Cantidad + '</p></td>';
                 sOptions += '<td align="right"> <p id="' + i + 'Imp">' + Detalles[i].Impuestos + '</p></td>';
-                sOptions += '<td align="right"> <input class="form-control input2" value="' + Detalles[i].PorDescuento + '" type="number" step="1" id="' + i + 'PorDesc" onchange="javascript: ModificaLinea(' + i +')"/> </td>';
+                sOptions += '<td align="right"> <input class="form-control input2" readonnly value="' + Detalles[i].PorDescuento + '" type="number" step="1" id="' + i + 'PorDesc" onchange="javascript: ModificaLinea(' + i +')"/> </td>';
 
                 sOptions += '<td align="right"> <p id="'+i+'Desc">' + Detalles[i].Descuento + '</p></td>';
                 sOptions += '<td align="right"><p id="' + i +'TLinea">' + Detalles[i].TotalLinea + '</p></td>';
@@ -154,8 +154,11 @@
 
         function Generar(generar) {
 
+            var btn = document.getElementById('Guardar1');
+            var btn2 = document.getElementById('Guardar2');
 
-
+            btn.disabled = true;
+            btn2.disabled = true;
             var recibido =
             {
                 id: $("#idGeneral").val(),
@@ -270,7 +273,7 @@
                 <a asp-page="/Movimientos/Index" class="nav-link text-dark" style="text-decoration: underline;"><i class="fas fa-reply "></i>  Regresar</a>
                 <input hidden id="Detalle" value="@JsonConvert.SerializeObject(Model.Input.Detalle)" />
                 <input hidden id="idGeneral" value="@Model.Input.id" />
-               
+
 
 
                 <div class="float-right">
@@ -282,19 +285,19 @@
                 <div class="row mb-4">
                     <div class="col-sm-6">
 
-                        @{switch(Model.Input.TipoMovimiento)
+                        @{switch (Model.Input.TipoMovimiento)
                             {
                                 case 1:
-                                {
-                            <h3 class="text-dark mb-1">Oferta de Venta</h3>
-                                    break;
-                                }
+                                    {
+                                        <h3 class="text-dark mb-1">Oferta de Venta</h3>
+                                        break;
+                                    }
                                 case 2:
-                                {
-                            <h3 class="text-dark mb-1">Entrega</h3>
-                                            break;
-                                }
-                             }
+                                    {
+                                        <h3 class="text-dark mb-1">Entrega</h3>
+                                        break;
+                                    }
+                            }
                         }
 
                         <div>CardCode: @Model.Input.CardCode</div>
@@ -325,8 +328,6 @@
                             </tr>
                         </thead>
                         <tbody id="tbody">
-                           
-
                         </tbody>
                     </table>
                 </div>
@@ -388,6 +389,6 @@
     </div>
 </div>
 
-<button type="button" onclick="javascript: Generar(false);" class="btn btn-rounded btn-outline-success">Guardar Cambios</button>
+<button type="button" onclick="javascript: Generar(false);" class="btn btn-rounded btn-outline-success" id="Guardar1">Guardar Cambios</button>
 &nbsp;
-<button type="button" onclick="javascript: Generar(true);" class="btn btn-rounded btn-outline-secondary">Guardar y Generar</button>
+<button type="button" onclick="javascript: Generar(true);" class="btn btn-rounded btn-outline-secondary" id="Guardar2">Guardar y Generar</button>

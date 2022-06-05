@@ -19,6 +19,9 @@ namespace Boletaje.Pages.Reparacion
         private readonly IConfiguration configuration;
         private readonly ICrudApi<EncReparacionViewModel, int> service;
         private readonly ICrudApi<TecnicosViewModel, int> serviceT;
+        private readonly ICrudApi<ColeccionRepuestosViewModel, int> serviceColeccion;
+
+
 
         [BindProperty]
         public EncReparacionViewModel[] Objeto { get; set; }
@@ -32,10 +35,11 @@ namespace Boletaje.Pages.Reparacion
         [BindProperty(SupportsGet = true)]
         public ParametrosFiltros filtro { get; set; }
 
-        public IndexModel(ICrudApi<EncReparacionViewModel, int> service, ICrudApi<TecnicosViewModel, int> serviceT)
+        public IndexModel(ICrudApi<EncReparacionViewModel, int> service, ICrudApi<TecnicosViewModel, int> serviceT, ICrudApi<ColeccionRepuestosViewModel, int> serviceColeccion)
         {
             this.service = service;
             this.serviceT = serviceT;
+            this.serviceColeccion = serviceColeccion;
         }
 
         public async Task<IActionResult> OnGetAsync()
@@ -75,7 +79,7 @@ namespace Boletaje.Pages.Reparacion
 
                     filtro.FechaFinal = ultimoDia;
 
-                    filtro.Codigo2 = 0;
+                    filtro.Codigo2 = 1;
 
                 }
 
@@ -92,5 +96,24 @@ namespace Boletaje.Pages.Reparacion
                 return Page();
             }
         }
+
+        public async Task<IActionResult> OnGetEstado(int id)
+        {
+            try
+            {
+                var EncReparacion = new ColeccionRepuestosViewModel();
+                EncReparacion.EncReparacion = new EncReparacionViewModel();
+                EncReparacion.EncReparacion.id = id;
+                EncReparacion.EncReparacion.Status = 0;
+
+                await serviceColeccion.Editar(EncReparacion);
+                return new JsonResult(true);
+            }
+            catch (Exception ex)
+            {
+                return new JsonResult(false);
+            }
+        }
+
     }
 }

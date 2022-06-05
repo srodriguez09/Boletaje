@@ -105,10 +105,12 @@ namespace Boletaje.Pages.Reparacion
                 filt.Codigo1 = 0;
                 filt.Texto = Encabezado.idProductoArreglar;
                 InputHijos = await service2.ObtenerLista(filt); // Se trae todos los productos hijos dispobibles
-               
+                var i = 0;
                 foreach(var item in Input)
                 {
+                    Input[i].Stock = InputHijos.Where(a => a.id == item.idProducto).FirstOrDefault().Stock;
                     InputHijos = InputHijos.Where(a => a.id != item.idProducto).ToArray();
+                    i++;
                 }
                 
                 Productos = await prods.ObtenerListaEspecial("");
@@ -118,6 +120,9 @@ namespace Boletaje.Pages.Reparacion
 
                 InputLlamada = await serviceL.ObtenerPorDocEntry(Encabezado.idLlamada);
                 Status = await status.ObtenerLista("");
+
+                Clientes = await clientes.ObtenerListaEspecial("");
+                Cliente = Clientes.Clientes.Where(a => a.CardCode == InputLlamada.CardCode).FirstOrDefault() == null ? "" : Clientes.Clientes.Where(a => a.CardCode == InputLlamada.CardCode).FirstOrDefault().CardCode + " - " + Clientes.Clientes.Where(a => a.CardCode == InputLlamada.CardCode).FirstOrDefault().CardName;
 
                 return Page();
             }

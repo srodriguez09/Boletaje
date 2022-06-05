@@ -17,3 +17,4 @@ const formatter = new Intl.NumberFormat('es-CR', {
     currency: 'CRC',
     minimumFractionDigits: 0
 })
+

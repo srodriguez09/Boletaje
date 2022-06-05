@@ -185,11 +185,11 @@
     function Recuperar() {
          
             var disponibles = JSON.parse($("#HijosDisponibles").val());
-            var seleccionados = JSON.parse($("#HijosSeleccionados").val());
+            var seleccionados = JSON.parse($("#HijosSeleccionados").val());  //Viene de input
         Errores = JSON.parse($("#Errores").val());
         var idError = '@Model.Encabezado.idDiagnostico';
 
-        console.log(Errores);
+        console.log(disponibles);
 
             for (var i = 0; i < disponibles.length; i++) {
                 var detalle = {
@@ -198,7 +198,8 @@
                     idProducto: disponibles[i].id,
                     ItemCode: disponibles[i].codSAP + " | " + disponibles[i].Nombre,
                     Cantidad: disponibles[i].Cantidad,
-                    idError: disponibles[i].idError
+                    idError: disponibles[i].idError,
+                    Stock: disponibles[i].Stock
 
                 };
                 ProdCadena.push(detalle);
@@ -211,7 +212,9 @@
                     idProducto: seleccionados[i].idProducto,
                     ItemCode: seleccionados[i].ItemCode,
                     Cantidad: seleccionados[i].Cantidad,
-                    idError: seleccionados[i].idError
+                    idError: seleccionados[i].idError,
+                    Stock: seleccionados[i].Stock
+
 
 
                 };
@@ -272,7 +275,9 @@
                 idEncabezado: "",
                 idProducto: ProdCadena[i].idProducto,
                 ItemCode: ProdCadena[i].ItemCode  ,
-                Cantidad: ProdCadena[i].Cantidad
+                Cantidad: ProdCadena[i].Cantidad,
+                Stock: ProdCadena[i].Stock
+
 
 
             }
@@ -291,7 +296,8 @@
                 idEncabezado: "",
                 idProducto: ProdCadenaM[i].idProducto,
                 ItemCode: ProdCadenaM[i].ItemCode,
-                Cantidad: ProdCadenaM[i].Cantidad
+                Cantidad: ProdCadenaM[i].Cantidad,
+                    Stock: ProdCadenaM[i].Stock
 
 
             }
@@ -318,7 +324,8 @@
                     idEncabezado: "",
                     idProducto: ProdCadena[i].idProducto,
                     ItemCode: ProdCadena[i].ItemCode,
-                    Cantidad: ProdCadena[i].Cantidad
+                    Cantidad: ProdCadena[i].Cantidad,
+                    Stock: ProdCadena[i].Stock
 
                 }
                 ProdCadenaM.push(detalle);
@@ -344,7 +351,9 @@
                     idEncabezado: "",
                     idProducto: ProdCadenaM[i].idProducto,
                     ItemCode: ProdCadenaM[i].ItemCode,
-                    Cantidad: ProdCadenaM[i].Cantidad
+                    Cantidad: ProdCadenaM[i].Cantidad,
+                    Stock: ProdCadenaM[i].Stock
+
                 }
                 ProdCadena.push(detalle);
             }
@@ -366,6 +375,8 @@
                 sOptions += '<tr>'
                 sOptions += '<td align="center" style="padding-top:15px;">  <p style="font-size:15px;">' + ProdCadena[i].ItemCode + '</p></td>';
                 sOptions += '<td align="center" style="padding-top:15px;">  <p style="font-size:15px;">' + ProdCadena[i].Cantidad + '</p></td>';
+                sOptions += '<td align="center" style="padding-top:15px;">  <p style="font-size:15px;">' + ProdCadena[i].Stock + '</p></td>';
+
 
                 sOptions += '<td align="center" style="padding-top:15px;"><a  onclick="javascript: InsertarProductoTablaMia(' + i + ')" style="cursor: pointer; font-size: 25px; line-height: 0px;"  title="Pasar Modulo" > > </a> ';
 
@@ -384,6 +395,9 @@
                 sOptions += '<tr>'
                 sOptions += '<td align="center" style="padding-top:15px;">  <p style="font-size:15px;">' + ProdCadenaM[i].ItemCode + '</p></td>';
                 sOptions += '<td align="left" style="padding-top:15px;">  <input id="cantidad-' + i + '" value="' + ProdCadenaM[i].Cantidad + '"  type="number" /> </td>';
+                sOptions += '<td align="center" style="padding-top:15px;">  <p style="font-size:15px;">' + ProdCadenaM[i].Stock + '</p></td>';
+
+
                 sOptions += '<td align="left" style="padding-top:15px;">  <select id="error-' + i + '" class="form-control" >  <option value="0">Sin Diagnostico</option> ';
                 for (var a = 0; a < ErroresP.length; a++) {
                     if (ProdCadenaM[i].idError == ErroresP[a].id) {
@@ -545,6 +559,17 @@
 
         }
 
+
+        function onChangeTipoMovimiento() {
+            if (parseInt($("#idTraslado").val()) == 2) {
+                $("#rowRepUti").hide();
+                $("#titleRepUti").text("Repuestos a devolver");
+            } else {
+                $("#rowRepUti").show();
+                $("#titleRepUti").text("Repuestos Utilizados");
+
+            }
+        }
     </script>
     <script type="text/javascript">
         var file = document.getElementById('file');
@@ -734,10 +759,10 @@
                         <div class="col-md-4 pl-1">
                             <div class="form-group">
                                 <label>Estado de la Llamada:</label>
-                                <input asp-for="InputLlamada.id" id="idLlamada"hidden />
+                                <input asp-for="InputLlamada.id" id="idLlamada" hidden />
                                 <select id="statusLlamada" class="form-control" asp-for="InputLlamada.Status" required>
                                     <option value="0">Seleccione</option>
-                                    @foreach (var item in Model.Status)
+                                    @foreach (var item in Model.Status.Where(a => a.idSAP == "-3" || a.idSAP == "47" || a.idSAP == "46" || a.idSAP == "48"))
                                     {
                                         <option value="@item.idSAP">@item.Nombre</option>
                                     }
@@ -749,6 +774,16 @@
                             <div class="form-group">
                                 <label>Llamada</label>
                                 <input type="text" class="form-control form-control-lg" id="idLlamada" asp-for="Encabezado.idLlamada" readonly>
+
+                            </div>
+
+
+                        </div>
+                        <div class="col-md-4 pr-1">
+
+                            <div class="form-group">
+                                <label>Cliente</label>
+                                <input type="text" class="form-control form-control-lg" id="desc" asp-for="Cliente" readonly>
 
                             </div>
 
@@ -815,7 +850,7 @@
 
                             <div class="form-group">
                                 <label>Tipo de Reparación</label>
-                                <select id="idTraslado" class="form-control" asp-for="Encabezado.TipoReparacion">
+                                <select id="idTraslado" class="form-control" asp-for="Encabezado.TipoReparacion" onchange="javascript: onChangeTipoMovimiento();">
                                     <option value="0">Seleccione</option>
 
 
@@ -888,8 +923,8 @@
     </div>
 
 
-    <div class="row">
-        <div class="col-md-12">
+    <div class="row" >
+        <div class="col-md-12" id="rowRepUti">
             <div class="card">
                 <div class="card-header">
                     <div class="row">
@@ -914,6 +949,8 @@
 
                                     <th align="center" style=" text-align: center;">Item</th>
                                     <th align="center" style=" text-align: center;">Cantidad </th>
+                                    <th align="center" style=" text-align: center;">Stock </th>
+
 
 
 
@@ -940,7 +977,7 @@
                     <div class="row">
                         <div class="col-sm-8">
 
-                            <h5 class="title"> Repuestos utilizados</h5>
+                            <h5 class="title" id="titleRepUti"> Repuestos utilizados</h5>
                         </div>
 
                         <div class="col-sm-4" style="text-align: right;">
@@ -956,6 +993,7 @@
 
                                     <th align="center" style=" text-align: center;">Item</th>
                                     <th align="center" style=" text-align: center;">Cantidad </th>
+                                    <th align="center" style=" text-align: center;">Stock </th>
                                     <th align="center" style=" text-align: center;">Diagnostico </th>
 
 

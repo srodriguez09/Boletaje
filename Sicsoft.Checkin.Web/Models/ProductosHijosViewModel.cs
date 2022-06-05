@@ -13,5 +13,6 @@ namespace Boletaje.Models
         public string Nombre { get; set; }
         public decimal Stock { get; set; }
         public int Cantidad { get; set; }
+        public string Localizacion { get; set; }
     }
 }

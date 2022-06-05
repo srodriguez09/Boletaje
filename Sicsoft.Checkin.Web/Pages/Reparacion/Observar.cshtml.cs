@@ -21,6 +21,9 @@ namespace Boletaje.Pages.Reparacion
         private readonly IConfiguration configuration;
         private readonly ICrudApi<EncReparacionViewModel, int> service;
         private readonly ICrudApi<ProductosViewModel, int> prods;
+        private readonly ICrudApi<ClientesViewModel, int> clientes;
+        private readonly ICrudApi<LlamadasViewModel, int> llamada;
+
         private readonly ICrudApi<TecnicosViewModel, int> serviceT;
         private readonly ICrudApi<BitacoraMovimientosViewModel, int> bt;
         private readonly ICrudApi<DiagnosticosViewModel, int> serviceD;
@@ -41,10 +44,17 @@ namespace Boletaje.Pages.Reparacion
         public EncReparacionViewModel Encabezado { get; set; }
         [BindProperty]
         public string Producto { get; set; }
+
+        [BindProperty]
+        public string Cliente { get; set; }
+
         [BindProperty]
         public ProductosViewModel Productos { get; set; }
+
+        [BindProperty]
+        public ClientesViewModel Clientes { get; set; }
         public ObservarModel(ICrudApi<EncReparacionViewModel, int> service, ICrudApi<ProductosViewModel, int> prods, ICrudApi<TecnicosViewModel, int> serviceT, ICrudApi<BitacoraMovimientosViewModel, int> bt, ICrudApi<DiagnosticosViewModel, int> serviceD,
-            ICrudApi<ErroresViewModel, int> serviceError
+            ICrudApi<ErroresViewModel, int> serviceError, ICrudApi<ClientesViewModel, int> clientes, ICrudApi<LlamadasViewModel, int> llamada
             )
         {
             this.service = service;
@@ -53,7 +63,8 @@ namespace Boletaje.Pages.Reparacion
             this.bt = bt;
             this.serviceD = serviceD;
             this.serviceError = serviceError;
-
+            this.clientes = clientes;
+            this.llamada = llamada;
         }
         public async Task<IActionResult> OnGetAsync(int id)
         {
@@ -71,6 +82,11 @@ namespace Boletaje.Pages.Reparacion
                 Encabezado = await service.ObtenerPorId(id);
                 Productos = await prods.ObtenerListaEspecial("");
                 Producto = Productos.Productos.Where(a => a.itemCode == Encabezado.idProductoArreglar).FirstOrDefault().itemCode + " - " + Productos.Productos.Where(a => a.itemCode == Encabezado.idProductoArreglar).FirstOrDefault().itemName;
+
+                Clientes = await clientes.ObtenerListaEspecial("");
+                var Llamada = await llamada.ObtenerPorDocEntry(Encabezado.idLlamada);
+                Cliente = Clientes.Clientes.Where(a => a.CardCode == Llamada.CardCode).FirstOrDefault() == null ? "" : Clientes.Clientes.Where(a => a.CardCode == Llamada.CardCode).FirstOrDefault().CardCode +  " - " + Clientes.Clientes.Where(a => a.CardCode == Llamada.CardCode).FirstOrDefault().CardName;
+
 
                 Tecnicos = await serviceT.ObtenerLista("");
                 var ids = Encabezado.idTecnico.ToString();

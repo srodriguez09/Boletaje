@@ -54,7 +54,76 @@
 
         });
 
+         var ids = 0;
+       
+        function onClickModal(id) {
 
+            ids = id;
+
+
+            Swal.fire({
+                title: '¿Desea cambiarle el estado de la reparación?',
+                showDenyButton: true,
+                showCancelButton: false,
+                confirmButtonText: `Aceptar`,
+                denyButtonText: `Cancelar`,
+                customClass: {
+                    confirmButton: 'swalBtnColor',
+                    denyButton: 'swalDeny'
+                },
+            }).then((result) => {
+                /* Read more about isConfirmed, isDenied below */
+                if (result.isConfirmed) {
+
+                    Estado();
+
+                }
+            })
+
+
+        }
+
+        function  Estado() {
+
+         $.ajax({
+                        type: 'GET',
+                        dataType: 'json',
+             url: '@Url.Page("Index", "Estado")',
+             data: { id: ids },
+             success: function (result) {
+                 console.log(result);
+                             if (result == false) {
+                                 ids = 0;
+                                 Swal.fire({
+                                     icon: 'error',
+                                     title: 'Oops...',
+                                     text: 'Ha ocurrido un error al intentar hacerlo'
+
+                                 })
+
+                             } else {
+                                 Swal.fire({
+                                     title: "Ha sido cambiado con éxito",
+
+                                     icon: 'success',
+                                     showCancelButton: false,
+                                     customClass: {
+                                         confirmButton: 'swalBtnColor',
+
+                                     },
+                                     confirmButtonText: 'OK'
+                                 }).then((result) => {
+                                     if (result.isConfirmed) {
+                                         location.reload();
+                                     }
+                                 })
+                             }
+             },
+             beforeSend: function () {
+
+             }
+                     })
+        }
 
 
 
@@ -122,8 +191,10 @@
                             <div class="form-group">
                                 <label>Status</label>
                                 <select id="heard" class="form-control" asp-for="filtro.Codigo2">
-                                    <option value="1" >Activos</option>
+                                    <option value="1">Activos</option>
                                     <option value="2">Cerrados</option>
+                                    <option value="3">Cerrados y Reparados</option>
+
 
                                 </select>
                             </div>
@@ -217,11 +288,16 @@
                                 </td>
 
                                 <td>
-                                    @if (item.Status == 0 )
+                                    @if (item.Status == 0)
                                     {
 
                                         <a asp-page="./Editar" asp-route-id="@item.id" title="Editar" class="btn btn-rounded btn-outline-warning"> Editar</a>
-                                     }
+                                    }
+                                    else
+                                    {
+                                        <a onclick="javascript: onClickModal('@item.id')" title="Cambiar Estado" class="btn btn-rounded btn-outline-warning">Activar</a>
+
+                                    }
                                     &nbsp;
                                     <a asp-page="./Observar" asp-route-id="@item.id" title="Editar" class="btn btn-rounded btn-outline-primary"> Observar</a>
                                 </td>

@@ -65,7 +65,7 @@ namespace Boletaje.Pages.Bodega
 
                     filtro.FechaFinal = ultimoDia;
 
-
+                    filtro.Codigo3 = 0;
 
                 }
              

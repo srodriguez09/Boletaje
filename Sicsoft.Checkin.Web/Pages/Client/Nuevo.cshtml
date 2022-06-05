@@ -20,7 +20,12 @@
 
 @section scripts{
 
-
+    <script>
+        var btn = document.getElementById('Guardar');
+        function onGuardar() {
+            btn.disabled = true;
+        }
+    </script>
 
 }
 
@@ -48,7 +53,7 @@
                     <div class="row">
                         <div class="col-md-4">
                             <div class="form-group">
-                                <label>Cédula:</label>
+                                <label>Cédula (Factura Electrónica):</label>
 
                                 <input type="text" class="form-control form-control-lg" id="cedula" placeholder="Cedula" asp-for="Input.Cedula" maxlength="12">
 
@@ -92,7 +97,7 @@
                             <div class="form-group">
 
                                 <label>Teléfono de Contacto:</label>
-                                <input type="tel" class="form-control form-control-lg" id="telcontacto" placeholder="Email" asp-for="Input.NumeroContacto" maxlength="10">
+                                <input type="tel" class="form-control form-control-lg" id="telcontacto" placeholder="Numero de Telefono del contacto" asp-for="Input.NumeroContacto" maxlength="10">
                             </div>
                         </div>
 
@@ -113,7 +118,7 @@
                     <div class="row">
                         <div class="col-md-12">
                             <div class="form-group">
-                                <button type="submit" id="Guardar" class="btn btn-rounded btn-outline-success">Guardar Cambios</button>
+                                <button type="submit" id="Guardar" class="btn btn-rounded btn-outline-success" onclick="javascript: onGuardar();">Guardar Cambios</button>
                             </div>
                         </div>
                     </div>

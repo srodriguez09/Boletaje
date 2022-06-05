@@ -103,6 +103,7 @@ namespace Sicsoft.Checkin.Web.Servicios
         [Post("/Eliminar")]
         Task EliminarEjecutivo (int idEjecutivo);
 
- 
+        [Get("/Reenvio")]
+        Task<TEntity> ReenvioFacturas(int id, string correo);
     }
 }

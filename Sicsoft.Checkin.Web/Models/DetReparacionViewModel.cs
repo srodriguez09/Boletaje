@@ -13,5 +13,6 @@ namespace Boletaje.Models
         public string ItemCode { get; set; }
         public int Cantidad { get; set; }
         public int idError { get; set; }
+        public decimal Stock { get; set; }
     }
 }

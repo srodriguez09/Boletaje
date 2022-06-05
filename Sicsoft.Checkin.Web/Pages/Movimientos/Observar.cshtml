@@ -1,0 +1,185 @@
+﻿@page "{id}"
+@model Boletaje.Pages.Movimientos.ObservarModel
+@{
+    ViewData["Title"] = "Observar Movimiento";
+}
+@section breadcrumb{
+
+    <li class="breadcrumb-item">
+        <a asp-page="./Index">BackOffice</a>
+    </li>
+    <li class="breadcrumb-item active">
+        <a>Generar Movimiento</a>
+    </li>
+
+}
+@using Newtonsoft.Json;
+@section styles{
+    <style>
+        .input {
+            width: 40%;
+        }
+
+        .input2 {
+            width: 70%;
+        }
+    </style>
+
+}
+@section scripts{
+
+
+
+}
+@using System.Globalization;
+@{
+    NumberFormatInfo formato = new CultureInfo("en-US").NumberFormat;
+    formato.CurrencyGroupSeparator = ",";
+    formato.NumberDecimalSeparator = ".";
+
+
+}
+<div class="row">
+    <div class=" col-md-12 col-sm-12 col-12">
+        <div class="card">
+            <div class="card-header p-4">
+                <a asp-page="/Movimientos/Index" class="nav-link text-dark" style="text-decoration: underline;"><i class="fas fa-reply "></i>  Regresar</a>
+                <input hidden id="Detalle" value="@JsonConvert.SerializeObject(Model.Input.Detalle)" />
+                <input hidden id="idGeneral" value="@Model.Input.id" />
+
+
+
+                <div class="float-right">
+                    <h3 class="mb-0">Llamada #@Model.Input.NumLlamada</h3>
+                    Fecha: @Model.Input.Fecha.ToString("dd/MMMM/yyyy")
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="row mb-4">
+                    <div class="col-sm-6">
+
+                        @{switch (Model.Input.TipoMovimiento)
+                            {
+                                case 1:
+                                    {
+                                        <h3 class="text-dark mb-1">Oferta de Venta</h3>
+                                        break;
+                                    }
+                                case 2:
+                                    {
+                                        <h3 class="text-dark mb-1">Entrega</h3>
+                                        break;
+                                    }
+                            }
+                        }
+
+                        <div>CardCode: @Model.Input.CardCode</div>
+                        <div>Cliente: @Model.Input.CardName</div>
+                        <div>Telefono: @Model.Cliente.Phone1</div>
+
+                    </div>
+                    <div class="col-sm-6">
+
+
+                    </div>
+                </div>
+                <div class="table-responsive-sm">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th class="center">#</th>
+                                <th>Código SAP</th>
+                                <th>Nombre</th>
+                                <th class="center">Precio Unitario</th>
+                                <th class="center">Cantidad</th>
+                                <th class="center">Impuestos</th>
+                                <th class="center">% Descuento</th>
+
+                                <th class="center">Descuentos</th>
+                                <th class="center">Total</th>
+
+                            </tr>
+                        </thead>
+                        <tbody id="tbody">
+                            @{int i = 1; }
+                            @{ foreach (var item in Model.Input.Detalle)
+                                {
+                                                        <tr>
+
+                                                            <td align="center">@i</td>
+                                                            <td align="left" class="strong">@item.ItemCode </td>
+                                                            <td align="left"> @item.ItemName</td>
+                                                            <td align="right"> @decimal.Round(item.PrecioUnitario, 2).ToString("N", formato)</td>
+                                                            <td align="center"> @decimal.Round(item.Cantidad, 2).ToString("N", formato)</td>
+                                                            <td align="right"> @decimal.Round(item.Impuestos, 2).ToString("N", formato)</td>
+                                                            <td align="center"> @decimal.Round(item.PorDescuento, 2).ToString("N", formato) %</td>
+                                                            <td align="right"> @decimal.Round(item.Descuento, 2).ToString("N", formato)</td>
+                                                            <td align="right"> @decimal.Round(item.TotalLinea, 2).ToString("N", formato)</td>
+
+
+                                                        </tr>
+                                    i++;
+                                }
+
+
+                            }
+                        </tbody>
+                    </table>
+                </div>
+                <div class="row">
+                    <div class="col-lg-4 col-sm-5">
+                    </div>
+                    <div class="col-lg-4 col-sm-5 ml-auto">
+                        <table class="table table-clear">
+                            <tbody>
+                                <tr>
+                                    <td align="left">
+                                        <strong class="text-dark">Subtotal</strong>
+                                    </td>
+                                    <td align="right"><p id="SubtotalGeneral">@decimal.Round(Model.Input.Subtotal, 2).ToString("N", formato)</p></td>
+                                </tr>
+                                <tr>
+                                    <td align="left">
+                                        <strong class="text-dark">% Descuento</strong>
+                                    </td>
+                                    <td align="right"><p id="DescuentoPorcentar">@decimal.Round(Model.Input.PorDescuento, 2).ToString("N", formato)</p></td>
+                                </tr>
+                                <tr>
+                                    <td align="left">
+                                        <strong class="text-dark">Descuento</strong>
+                                    </td>
+                                    <td align="right"><p id="DescGeneral">@decimal.Round(Model.Input.Descuento, 2).ToString("N", formato)</p></td>
+                                </tr>
+                                <tr>
+                                    <td align="left">
+                                        <strong class="text-dark">Impuestos</strong>
+                                    </td>
+                                    <td align="right"><p id="ImpGeneral">@decimal.Round(Model.Input.Impuestos, 2).ToString("N", formato)</p></td>
+                                </tr>
+                                <tr>
+                                    <td align="left">
+                                        <strong class="text-dark">Total</strong>
+                                    </td>
+                                    <td align="right">
+                                        <strong class="text-dark" id="TotalGeneral">@decimal.Round(Model.Input.TotalComprobante, 2).ToString("N", formato)</strong>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label>Comentarios</label>
+
+                        <textarea id="comentarios" maxlength="500" class="form-control" asp-for="Input.Comentarios" readonly></textarea>
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>

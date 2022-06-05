@@ -53,8 +53,85 @@
 
 
         });
+        var ids = 0;
+        var correo = '';
+        function onClickModal(id, correos) {
+            ids = id;
+            correo = correos;
 
 
+            Swal.fire({
+                title: "¿Desea reenviar este correo?",
+                input: "text",
+                inputValue: correo,
+                showCancelButton: true,
+                confirmButtonText: "Guardar",
+                cancelButtonText: "Cancelar",
+                inputValidator: nombre => {
+                    // Si el valor es válido, debes regresar undefined. Si no, una cadena
+                    if (!nombre) {
+                        return "Por favor escribe el correo";
+                    } else {
+                        return undefined;
+                    }
+                }
+            })
+                .then(resultado => {
+                    if (resultado.value) {
+                        let nombre = resultado.value;
+                        correo = nombre;
+                        Reenviar();
+                    }
+                });
+
+
+
+          
+       
+
+        }
+
+        function  Reenviar() {
+
+         $.ajax({
+                        type: 'GET',
+                        dataType: 'json',
+             url: '@Url.Page("Index", "Reenviar")',
+             data: { id: ids, correos: correo },
+             success: function (result) {
+                 console.log(result);
+                             if (result == false) {
+                                 ids = 0;
+                                 Swal.fire({
+                                     icon: 'error',
+                                     title: 'Oops...',
+                                     text: 'Ha ocurrido un error al intentar reenviar'
+
+                                 })
+
+                             } else {
+                                 Swal.fire({
+                                     title: "Ha sido reenviado con éxito",
+
+                                     icon: 'success',
+                                     showCancelButton: false,
+                                     customClass: {
+                                         confirmButton: 'swalBtnColor',
+
+                                     },
+                                     confirmButtonText: 'OK'
+                                 }).then((result) => {
+                                     if (result.isConfirmed) {
+
+                                     }
+                                 })
+                             }
+             },
+             beforeSend: function () {
+
+             }
+                     })
+        }
 
 
 
@@ -153,7 +230,6 @@
                             <tr>
                                 <th>ID</th>
                                 <th>Llamada</th>
-                                <th>DocEntry</th>}
                                 <th>Cliente</th>
                                 <th>Fecha</th>
                                 <th>Tipo Movimiento</th>
@@ -174,7 +250,6 @@
                             <tr>
                                 <td>@item.id</td>
                                 <td>@item.NumLlamada</td>
-                                <td>@item.DocEntry</td>
 
                                 <td>@item.CardCode - @item.CardName</td>
                                 <td>@item.Fecha.ToString("dd/MM/yyyy")</td>
@@ -202,9 +277,16 @@
                                     @if (item.DocEntry == 0)
                                     {
 
-                                    <a asp-page="./Editar" asp-route-id="@item.id" title="Editar" class="btn btn-rounded btn-outline-warning"> Generar</a>
+                                        <a asp-page="./Editar" asp-route-id="@item.id" title="Generar" class="btn btn-rounded btn-outline-warning"> Generar</a>
+                                    }
+                                    else
+                                    {
+                                        
+                                        <a onclick="javascript: onClickModal('@item.id', '')" title="Reenviar" class="btn btn-rounded btn-outline-warning">Reenviar Correo</a>
                                     }
                                     &nbsp;
+                                    <a asp-page="./Observar" asp-route-id="@item.id" title="Observar" class="btn btn-rounded btn-outline-primary"> Observar</a>
+
                                 </td>
                             </tr>
                             }
@@ -215,7 +297,6 @@
                             <tr>
                                 <th>ID</th>
                                 <th>Llamada</th>
-                                <th>DocEntry</th>
 
                                 <th>Cliente</th>
                                 <th>Fecha</th>
