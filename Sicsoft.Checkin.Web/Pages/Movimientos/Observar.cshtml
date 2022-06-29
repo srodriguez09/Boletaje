@@ -97,6 +97,7 @@
 
                                 <th class="center">Descuentos</th>
                                 <th class="center">Total</th>
+                                <th class="center">Garantia</th>
 
                             </tr>
                         </thead>
@@ -115,7 +116,19 @@
                                                             <td align="center"> @decimal.Round(item.PorDescuento, 2).ToString("N", formato) %</td>
                                                             <td align="right"> @decimal.Round(item.Descuento, 2).ToString("N", formato)</td>
                                                             <td align="right"> @decimal.Round(item.TotalLinea, 2).ToString("N", formato)</td>
+                                                            <td align="center">
+                                                                @if (item.Garantia)
+                                                                {
 
+
+                                                                    <input class="form-check-input" disabled checked type="checkbox" style="position: unset;" /><span class="form-check-sign"></span>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <input class="form-check-input" disabled type="checkbox" style="position: unset;" /><span class="form-check-sign"></span>
+                                                                }
+
+                                                            </td>
 
                                                         </tr>
                                     i++;

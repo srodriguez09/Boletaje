@@ -57,7 +57,8 @@
                     PorDescuento: detalles[i].PorDescuento,
                     Descuento: detalles[i].Descuento,
                     Impuestos: detalles[i].Impuestos,
-                    TotalLinea: detalles[i].TotalLinea
+                    TotalLinea: detalles[i].TotalLinea,
+                    Garantia: detalles[i].Garantia
                 };
                 Detalles.push(detalle);
 
@@ -83,6 +84,7 @@
 
                 sOptions += '<td align="right"> <p id="'+i+'Desc">' + Detalles[i].Descuento + '</p></td>';
                 sOptions += '<td align="right"><p id="' + i +'TLinea">' + Detalles[i].TotalLinea + '</p></td>';
+                sOptions += '<td align="center">  <input class="form-check-input" type="checkbox" onclick="javascript: ModificaLinea(' + i + ')" style="position: unset;" id="' + i + 'check"><span class="form-check-sign"></span> </td>';
 
 
                 sOptions += '</tr>'
@@ -99,7 +101,8 @@
             var Descuentos = 0;
             var TotalLinea = 0;
             var Subtotal = 0;
-
+            var checkbox1 = document.getElementById(i+"check");
+            Detalles[i].Garantia = checkbox1.checked;
             Subtotal = $("#" + i + "PrecioU").val() * $("#" + i + "Cantidad").text();
 
             Descuentos = ($("#" + i + "PorDesc").val() / 100) * Subtotal ;
@@ -136,7 +139,10 @@
                 SubTotal += subtotalLocal;
                 Impuestos += ImpLocal;
                 Total += subtotalLocal + ImpLocal;
-
+                var checkbox1 = document.getElementById(i + "check");
+                if (Detalles[i].Garantia) {
+                    checkbox1.checked = true;
+                }
             }
 
             if (PorDescuento > 0) {
@@ -324,6 +330,8 @@
 
                                 <th class="center">Descuentos</th>
                                 <th class="center">Total</th>
+                                <th class="center">Garantia</th>
+
 
                             </tr>
                         </thead>

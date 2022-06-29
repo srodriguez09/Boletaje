@@ -89,6 +89,7 @@ namespace Boletaje.Pages.Movimientos
                     coleccion.Detalle[cantidad - 1].Descuento = item.Descuento;
                     coleccion.Detalle[cantidad - 1].Impuestos = item.Impuestos;
                     coleccion.Detalle[cantidad - 1].TotalLinea = item.TotalLinea;
+                    coleccion.Detalle[cantidad - 1].Garantia = item.Garantia;
 
 
                     cantidad++;
