@@ -38,6 +38,7 @@
             });
 
             Recuperar();
+            ModificaMoneda();
         });
 
         var Detalles = [];
@@ -136,12 +137,14 @@
                 var DescuentoLocal = parseFloat($("#" + i + "Desc").text());
                 var TotalLocal = parseFloat($("#" + i + "TLinea").text());
                 var subtotalLocal = (TotalLocal - ImpLocal) ;
-                SubTotal += subtotalLocal;
-                Impuestos += ImpLocal;
-                Total += subtotalLocal + ImpLocal;
+               
                 var checkbox1 = document.getElementById(i + "check");
                 if (Detalles[i].Garantia) {
                     checkbox1.checked = true;
+                } else {
+                    SubTotal += subtotalLocal;
+                    Impuestos += ImpLocal;
+                    Total += subtotalLocal + ImpLocal;
                 }
             }
 
@@ -180,6 +183,7 @@
                 Descuento: $("#DescGeneral").text(),
                 Impuestos: $("#ImpGeneral").text(),
                 TotalComprobante: $("#TotalGeneral").text(),
+                Moneda: $("#Moneda").val(),
                 Generar: generar,
                 Detalle: Detalles
 
@@ -259,12 +263,26 @@
                             }
                         });
                     }
+                    else {
+                        btn.disabled = false;
+                        btn2.disabled = false;
+
+                    }
+
                 }
                )
+            btn.disabled = false;
+            btn2.disabled = false;
 
         }
 
-
+        function ModificaMoneda() {
+            if ($("#Moneda").val() == "COL") {
+                $(".moneda").text("₡");
+            } else {
+                $(".moneda").text("$")
+            }
+        }
     </script>
 }
 
@@ -309,6 +327,18 @@
                         <div>CardCode: @Model.Input.CardCode</div>
                         <div>Cliente: @Model.Input.CardName</div>
                         <div>Telefono: @Model.Cliente.Phone1</div>
+                        <div class="row col-sm-4">
+
+                            <div class="form-group">
+                                <label>Moneda</label>
+                                <select id="Moneda" class="form-control" asp-for="Input.Moneda" required onchange="javascript: ModificaMoneda()">
+                                    <option value="COL" selected>Colones</option>
+                                    <option value="USD">Dólares</option>
+
+                                </select>
+
+                            </div>
+                        </div>
 
                     </div>
                     <div class="col-sm-6">
@@ -349,7 +379,11 @@
                                     <td align="left">
                                         <strong class="text-dark">Subtotal</strong>
                                     </td>
-                                    <td align="right"><p id="SubtotalGeneral"></p></td>
+                                    <td align="right">
+                                        <span class="moneda"></span>
+
+                                        <strong style="font-weight: inherit;" id="SubtotalGeneral"></strong>
+                                    </td>
                                 </tr>
                                 <tr>
                                     <td align="left">
@@ -361,19 +395,29 @@
                                     <td align="left">
                                         <strong class="text-dark">Descuento</strong>
                                     </td>
-                                    <td align="right"><p id="DescGeneral"></p></td>
+                                    <td align="right">
+                                        <span class="moneda"></span>
+
+                                        <strong style="font-weight: inherit;" id="DescGeneral"></strong>
+                                    </td>
                                 </tr>
                                 <tr>
                                     <td align="left">
                                         <strong class="text-dark">Impuestos</strong>
                                     </td>
-                                    <td align="right"><p id="ImpGeneral"></p></td>
+
+                                    <td align="right">
+                                        <span class="moneda"></span>
+
+                                        <strong style="font-weight: inherit;" id="ImpGeneral"></strong>
+                                    </td>
                                 </tr>
                                 <tr>
                                     <td align="left">
                                         <strong class="text-dark">Total</strong>
                                     </td>
                                     <td align="right">
+                                       <span class="moneda"></span> 
                                         <strong class="text-dark" id="TotalGeneral"></strong>
                                     </td>
                                 </tr>

@@ -30,6 +30,8 @@ namespace Boletaje.Pages.Reparacion
         private readonly ICrudApi<DiagnosticosViewModel, int> serviceD;
         private readonly ICrudApi<ErroresViewModel, int> serviceError;
         private readonly ICrudApi<StatusViewModel, int> status;
+        private readonly ICrudApi<ControlProductosViewModel, int> control;
+
 
 
         [BindProperty]
@@ -67,9 +69,12 @@ namespace Boletaje.Pages.Reparacion
         [BindProperty]
         public EncReparacionViewModel Encabezado { get; set; }
 
+        [BindProperty]
+        public ControlProductosViewModel[] Control { get; set; }
+
         public EditarModel(ICrudApi<DetReparacionViewModel, int> service, ICrudApi<LlamadasViewModel, int> serviceL, ICrudApi<ClientesViewModel, int> clientes, ICrudApi<ProductosViewModel, int> prods,
            ICrudApi<ProductosHijosViewModel, int> service2, ICrudApi<EncReparacionViewModel, int> serviceE, ICrudApi<ColeccionRepuestosViewModel, int> serviceColeccion, ICrudApi<BodegasViewModel, int> serviceBodegas, ICrudApi<BitacoraMovimientosViewModel, int> bt, ICrudApi<DiagnosticosViewModel, int> serviceD
-            ,ICrudApi<ErroresViewModel, int> serviceError, ICrudApi<StatusViewModel, int> status)
+            ,ICrudApi<ErroresViewModel, int> serviceError, ICrudApi<StatusViewModel, int> status, ICrudApi<ControlProductosViewModel, int> control)
         {
             this.service = service;
             this.serviceL = serviceL;
@@ -83,6 +88,7 @@ namespace Boletaje.Pages.Reparacion
             this.serviceD = serviceD;
             this.serviceError = serviceError;
             this.status = status;
+            this.control = control;
         }
 
         public async Task<IActionResult> OnGetAsync(int id)
@@ -97,6 +103,7 @@ namespace Boletaje.Pages.Reparacion
                 ParametrosFiltros filt = new ParametrosFiltros();
                 filt.Codigo1 = id;
 
+                Control = await control.ObtenerLista(filt);
                 BTS = await bt.ObtenerLista(filt);
                 Bodegas = await serviceBodegas.ObtenerLista("");
                 Input = await service.ObtenerLista(filt); //Se trae todos los hijos seleccionados

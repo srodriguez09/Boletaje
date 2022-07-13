@@ -56,6 +56,10 @@ namespace Boletaje.Pages.Llamadas
 
         public StatusViewModel[] Status { get; set; }
 
+
+        [BindProperty]
+        public AdjuntosViewModel[] Adjuntos { get; set; }
+
         public NuevoModel(ICrudApi<LlamadasViewModel, int> service, ICrudApi<ClientesViewModel, int> clientes, ICrudApi<ProductosViewModel, int> prods, ICrudApi<GarantiasViewModel, int> garantias,
             ICrudApi<SucursalesViewModel, int> sucursales, ICrudApi<TecnicosViewModel, int> tecnicos, ICrudApi<StatusViewModel, int> status, ICrudApi<TiposCasosViewModel, int> tp)
         {
@@ -127,6 +131,9 @@ namespace Boletaje.Pages.Llamadas
             }
         }
 
+
+
+
         public async Task<IActionResult> OnPostAsync()
         {
             try
@@ -137,6 +144,8 @@ namespace Boletaje.Pages.Llamadas
                 Input.ItemCode = item.Split("/")[0].Replace(" ", "");
                 Input.SerieFabricante = item.Split("/")[1].Replace(" ", "");
                 await service.Agregar(Input);
+
+
                 return RedirectToPage("./Index");
             }
             catch (ApiException ex)
@@ -147,5 +156,77 @@ namespace Boletaje.Pages.Llamadas
                 return Page();
             }
         }
+
+        //Experimento de mandar los adjuntos por la llamada
+
+        public async Task<IActionResult> OnPostGenerar(LlamadasViewModel recibido)
+        {
+            try
+            {
+                
+
+                LlamadasViewModel coleccion = new LlamadasViewModel();
+                coleccion.TipoLlamada = recibido.TipoLlamada;
+                coleccion.Status = recibido.Status;
+                coleccion.Asunto = recibido.Asunto;
+                coleccion.TipoCaso = recibido.TipoCaso;
+                coleccion.FechaSISO = null;
+                coleccion.LugarReparacion = recibido.LugarReparacion;
+                coleccion.SucRecibo = recibido.SucRecibo;
+                coleccion.SucRetiro = recibido.SucRetiro;
+                coleccion.Comentarios = recibido.Comentarios;
+                coleccion.Tecnico = recibido.Tecnico;
+                coleccion.Firma = recibido.Firma;
+                coleccion.Horas = recibido.Horas;
+
+                coleccion.TratadoPor = Convert.ToInt32(((ClaimsIdentity)User.Identity).Claims.Where(d => d.Type == "CodVendedor").Select(s1 => s1.Value).FirstOrDefault());
+                coleccion.CardCode = recibido.CardCode.Split("/")[0].Replace(" ", "");
+                var item = recibido.ItemCode;
+                coleccion.ItemCode = item.Split("/")[0].Replace(" ", "");
+                coleccion.SerieFabricante = item.Split("/")[1].Replace(" ", "");
+
+                coleccion.Adjuntos = new List<AdjuntosViewModel>();
+
+                if(recibido.Adjuntos != null)
+                {
+                    var cantidad = 1;
+                    foreach (var item1 in recibido.Adjuntos)
+                    {
+                        var adjunto = new AdjuntosViewModel();
+                        adjunto.base64 = item1.base64;
+                        coleccion.Adjuntos.Add(adjunto);
+                        cantidad++;
+                    }
+                }
+               
+
+
+
+                await service.Agregar(coleccion);
+
+                var obj = new
+                {
+                    success = true,
+                    mensaje = ""
+                };
+
+                return new JsonResult(obj);
+
+            }
+            catch (Exception ex)
+            {
+
+                ModelState.AddModelError(string.Empty, ex.Message);
+
+                var obj = new
+                {
+                    success = false,
+                    mensaje = "Error en el exception: -> " + ex.Message
+                };
+                return new JsonResult(obj);
+            }
+        }
+
+
     }
 }

@@ -194,7 +194,151 @@
                 background: #367ebd;
             }
     </style>
+    <style>
 
+        #menu {
+            float: left;
+            width: 100%;
+            background-color: #fff;
+        }
+
+            #menu img {
+                width: 12%;
+                margin: 2%;
+                cursor: pointer;
+            }
+
+        #principal {
+            float: left;
+            width: 75%;
+        }
+
+        #visor {
+            width: 60%;
+            margin: 10%
+        }
+
+            #visor img {
+                width: 100%
+            }
+
+
+
+        h4 {
+            font-size: 22px !important;
+        }
+
+        body {
+            margin: 0;
+        }
+
+        img {
+            border: none;
+        }
+
+        button, h1 {
+            margin: 0;
+            padding: 0;
+        }
+
+        #wrapper {
+            width: 100%;
+        }
+
+        h1 {
+            padding: 50px 0;
+            text-align: center;
+        }
+
+
+
+        .preload {
+            padding-top: 20px;
+            text-align: center;
+            display: none;
+        }
+
+        .activate-preload {
+            display: block;
+        }
+
+        #container-input {
+            width: 640px;
+            margin: 0 auto;
+            border: solid 1px #CCC;
+            position: relative;
+            overflow: hidden;
+        }
+
+            #container-input .wrap-file .content-icon-camera {
+                width: 55px;
+                overflow: hidden;
+            }
+
+                #container-input .wrap-file .content-icon-camera:hover {
+                    background-color: #e6e6e6;
+                }
+
+                #container-input .wrap-file .content-icon-camera .icon-camera {
+                    width: 36px;
+                    height: 36px;
+                    background: url('../../camera.png') no-repeat;
+                    cursor: pointer;
+                    position: absolute;
+                    top: 8px;
+                    left: 8px;
+                }
+
+                #container-input .wrap-file .content-icon-camera #file {
+                    padding: 15px;
+                    opacity: 0;
+                    position: relative;
+                    cursor: pointer;
+                    left: -120px;
+                    z-index: 1;
+                }
+
+            #container-input .wrap-file #preview-images .thumbnail {
+                width: 120px;
+                height: 120px;
+                display: inline-block;
+                vertical-align: middle;
+                border: solid 2px #CCC;
+                background-size: cover;
+                position: relative;
+            }
+
+                #container-input .wrap-file #preview-images .thumbnail:not(:last-child) {
+                    margin-right: 5px;
+                }
+
+                #container-input .wrap-file #preview-images .thumbnail .close-button {
+                    width: 20px;
+                    height: 20px;
+                    background-color: black;
+                    color: white;
+                    text-align: center;
+                    position: absolute;
+                    top: 5px;
+                    right: 5px;
+                    border-radius: 100px;
+                    cursor: pointer;
+                }
+
+            #container-input #publish {
+                padding: 15px 35px;
+                font-size: 1.1em;
+                float: right;
+                border: none;
+                cursor: pointer;
+                background-color: #8ECA67;
+                color: #FFF;
+            }
+
+                #container-input #publish:hover {
+                    background-color: #6EAD45;
+                }
+    </style>
 }
 
 @section scripts{
@@ -371,7 +515,126 @@
         var btn = document.getElementById('Guardar');
         function onGuardar() {
             btn.disabled = true;
-            $("#formTipos").submit();
+
+            var bases64 = [];
+
+            for (var i = 0; i < documentosbase64.length; i++) {
+                var det = {
+                    id: 0,
+                    idEncabezado: 0,
+                    base64: documentosbase64[i].base64
+
+                };
+                bases64.push(det);
+            }
+            var recibido =
+            {
+                id: 0,
+                TipoLlamada: null,
+                Series: 0,
+                Status: $("#status").val(),
+                CardCode: $("#cardcode").val(),
+                DocEntry: 0,
+                DocNum: 0,
+                SerieFabricante: "",
+                ItemCode: $("#productos").val(),
+                Asunto: $("#asunto").val(),
+                TipoCaso: $("#tp").val(),
+                FechaSISO: null,
+                LugarReparacion: $("#lReparacion").val(),
+                SucRecibo: $("#sr").val() ,
+                SucRetiro: $("#srt").val(),
+                Comentarios: $("#comentarios").val() ,
+                TratadoPor: 0,
+                Garantia: 0,
+                Tecnico: $("#tecnico").val(),
+                ProcesadaSAP: false,
+                Firma: $("#Firma").val(),
+                Horas: $("#horas").val(),
+                Adjuntos: bases64
+            }
+
+
+             Swal.fire({
+                    title: '¿Desea guardar los cambios?',
+                    showDenyButton: true,
+                    showCancelButton: false,
+                    confirmButtonText: `Aceptar`,
+                    denyButtonText: `Cancelar`,
+                    customClass: {
+                        confirmButton: 'swalBtnColor',
+                        denyButton: 'swalDeny'
+                    },
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        var recibidos = recibido;
+
+                        $.ajax({
+                            type: 'POST',
+
+                            url: '@Url.Page("Nuevo", "Generar")',
+                            dataType: 'json',
+                            data: { recibido: recibidos },
+                            headers: {
+                                RequestVerificationToken: $('input:hidden[name="__RequestVerificationToken"]').val()
+                            },
+                            success: function (json) {
+
+                                $("#divProcesando").hide();
+
+                                if ($('.modal-backdrop').is(':visible')) {
+
+                                    $('body').removeClass('modal-open');
+                                    $('.modal-backdrop').hide();
+                                }
+                                console.log("resultado " + json.mensaje);
+                                if (json.success == true) {
+                                    Swal.fire({
+                                        title: "Ha sido generado con éxito",
+
+                                        icon: 'success',
+                                        showCancelButton: false,
+
+                                        confirmButtonText: 'OK',
+                                        customClass: {
+                                            confirmButton: 'swalBtnColor',
+
+                                        },
+                                    }).then((result) => {
+                                        if (result.isConfirmed) {
+
+                                            window.location.href = window.location.href.split("/Nuevo")[0];
+                                        }
+                                    })
+
+                                } else {
+                                    Swal.fire({
+                                        icon: 'error',
+                                        title: 'Oops...',
+                                        text: 'Ha ocurrido un error al intentar guardar ' + json.mensaje
+
+                                    })
+                                }
+                            },
+
+                            beforeSend: function (xhr) {
+
+                                $("#divProcesando").modal("show");
+                            },
+                            complete: function () {
+
+                            },
+                            error: function (error) {
+
+                            }
+                        });
+                    } else {
+                        btn.disabled = false;
+                    }
+                }
+               )
+            btn.disabled = false;
+            //$("#formTipos").submit();
         }
     </script>
     <script>
@@ -426,9 +689,106 @@
 
     </script>
 
+    <script type="text/javascript">
+        var file = document.getElementById('file');
+        var preload = document.querySelector('.preload');
+
+        var formData = new FormData();
+        var documentosbase64 = [];
+
+        function getBase64(file, id) {
+            var reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = function () {
+                console.log(reader.result);
+                var detalle = {
+                    id: id,
+                    idEncabezado: 0,
+                    base64: reader.result
+                }
+                documentosbase64.push(detalle);
+            };
+            reader.onerror = function (error) {
+                console.log('Error: ', error);
+            };
+        }
+
+        function getBase642(event, id) {
+            var input = event.target;
+
+            var reader = new FileReader();
+            reader.onload = function () {
+                var dataURL = reader.result;
+                console.log(dataURL);
+                var detalle = {
+                    id: id,
+                    base64: dataURL
+                }
+                documentosbase64.push(detalle);
+            };
+            reader.readAsDataURL(input.files[0]);
+        }
+
+        function eliminar(id) {
+            documentosbase64.splice(documentosbase64.indexOf(documentosbase64.find(a => a.id == id)), 1)
+        }
+
+        file.addEventListener('change', function (e) {
+
+            for (var i = 0; i < file.files.length; i++) {
+                var thumbnail_id = Math.floor(Math.random() * 30000) + '_' + Date.now();
+                createThumbnail(file, i, thumbnail_id);
+                formData.append(thumbnail_id, file.files[i]);
+            }
+            getBase642(e, thumbnail_id);
+            e.target.value = '';
+
+        });
+
+
+
+        var createThumbnail = function (file, iterator, thumbnail_id) {
+            var thumbnail = document.createElement('div');
+            thumbnail.classList.add('thumbnail', thumbnail_id);
+            thumbnail.dataset.id = thumbnail_id;
+
+            thumbnail.setAttribute('style', `background-image: url(${URL.createObjectURL(file.files[iterator])})`);
+            document.getElementById('preview-images').appendChild(thumbnail);
+            createCloseButton(thumbnail_id);
+        }
+
+        var createCloseButton = function (thumbnail_id) {
+            var closeButton = document.createElement('div');
+            closeButton.classList.add('close-button');
+            closeButton.innerText = 'x';
+            document.getElementsByClassName(thumbnail_id)[0].appendChild(closeButton);
+        }
+
+        var clearFormDataAndThumbnails = function () {
+            for (var key of formData.keys()) {
+                formData.delete(key);
+            }
+
+            document.querySelectorAll('.thumbnail').forEach(function (thumbnail) {
+                thumbnail.remove();
+            });
+        }
+
+
+        document.body.addEventListener('click', function (e) {
+            if (e.target.classList.contains('close-button')) {
+                e.target.parentNode.remove();
+                formData.delete(e.target.parentNode.dataset.id);
+                eliminar(e.target.parentNode.dataset.id);
+
+            }
+        });
+
+
+    </script>
 }
 
-<form method="post" id="formTipos" role="form" novalidate class="needs-validation " enctype="multipart/form-data">
+@*<form method="post" id="formTipos" role="form" novalidate class="needs-validation " enctype="multipart/form-data">*@
     <div class="row">
         <div class="col-md-12">
             <div class="card">
@@ -531,9 +891,17 @@
                                 <label>Sucursal de Recibo:</label>
                                 <select id="sr" class="form-control" asp-for="Input.SucRecibo" required>
                                     <option value="0">Seleccione</option>
+                                    @{var i = 0;}
                                     @foreach (var item in Model.Sucursales)
                                     {
-                                        <option value="@item.idSAP">@item.Nombre</option>
+                                    @if(i == 0)
+                                    {
+                                    <option value="@item.idSAP" selected>@item.Nombre</option>
+                                    }else
+                                    {
+                                    <option value="@item.idSAP">@item.Nombre</option>
+                                    }
+                                    i++;
                                     }
                                 </select>
                             </div>
@@ -542,10 +910,21 @@
                             <div class="form-group">
                                 <label>Sucursal de Retiro:</label>
                                 <select id="srt" class="form-control" asp-for="Input.SucRetiro" required>
+                                    @{var i = 0;}
                                     <option value="0">Seleccione</option>
                                     @foreach (var item in Model.Sucursales)
                                     {
-                                        <option value="@item.idSAP">@item.Nombre</option>
+                                    @if(i == 0)
+                                    {
+                                    <option value="@item.idSAP" selected>@item.Nombre</option>
+                                    }else
+                                    {
+                                    <option value="@item.idSAP">@item.Nombre</option>
+                                    }
+
+
+
+                                        i++;
                                     }
                                 </select>
                             </div>
@@ -555,7 +934,7 @@
 
                             <div class="form-group">
                                 <label>Técnico:</label>
-                                <select id="srt" class="form-control" asp-for="Input.Tecnico" required>
+                                <select id="tecnico" class="form-control" asp-for="Input.Tecnico" required>
                                     <option value="0">Seleccione</option>
                                     @foreach (var item in Model.Tecnicos)
                                     {
@@ -658,7 +1037,48 @@
         </div>
 
     </div>
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-header">
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <h5 class="title">Subir Imágenes</h5>
 
+                        </div>
+
+                        <div class="col-sm-6" style="text-align: right">
+
+
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+
+                    <div id="wrapper">
+
+                        <div id="container-input">
+                            <div class="wrap-file">
+                                <div class="content-icon-camera">
+                                    <input type="file" id="file" name="file[]" accept="image/*" multiple asp-for="Adjuntos" />
+                                    <div class="icon-camera"></div>
+                                </div>
+                                <div id="preview-images">
+
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="preload">
+                            <img src="assets/images/preload.gif" alt="preload" />
+                        </div>
+                        <h2 id="success"></h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
 
     <div class="row">
         <div class="col-md-12">
@@ -667,4 +1087,4 @@
             </div>
         </div>
     </div>
-</form>
+@*</form>*@

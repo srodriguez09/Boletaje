@@ -173,7 +173,7 @@
                 $(document).ready(function () {
                 });
             });
-
+            onChangeTipoMovimiento();
             Recuperar();
         });
 
@@ -181,12 +181,19 @@
         var ProdCadena = [];
     var ProdCadenaM = [];
     var ErroresP = [];
-    var Errores = [];
-    function Recuperar() {
-         
+        var Errores = [];
+        var Control = [];
+        function Recuperar() {
+           
+            ProdCadena = [];
+            ProdCadenaM = [];
+            ErroresP = [];
+            Errores = [];
+
             var disponibles = JSON.parse($("#HijosDisponibles").val());
             var seleccionados = JSON.parse($("#HijosSeleccionados").val());  //Viene de input
         Errores = JSON.parse($("#Errores").val());
+        Control = JSON.parse($("#Control").val());
         var idError = '@Model.Encabezado.idDiagnostico';
 
         console.log(disponibles);
@@ -238,7 +245,7 @@
             }
 
         }
-
+        $("#rowRepDevolver").hide();
             RellenaTablaG();
             RellenaTablaM();
     }
@@ -307,6 +314,12 @@
             RellenaTablaM();
             RellenaTablaG();
 
+        }
+
+
+        function EliminarProductoDevolver(i) {
+            ProdCadenaM.splice(i, 1);
+            RellenaTablaRD(false);
         }
 
         function PasarTodasDerecha() {
@@ -378,7 +391,7 @@
                 sOptions += '<td align="center" style="padding-top:15px;">  <p style="font-size:15px;">' + ProdCadena[i].Stock + '</p></td>';
 
 
-                sOptions += '<td align="center" style="padding-top:15px;"><a  onclick="javascript: InsertarProductoTablaMia(' + i + ')" style="cursor: pointer; font-size: 25px; line-height: 0px;"  title="Pasar Modulo" > > </a> ';
+                sOptions += '<td align="center" style="padding-top:15px;"><a  onclick="javascript: InsertarProductoTablaMia(' + i + ')" style="cursor: pointer; font-size: 25px; line-height: 0px;"  title="Pasar Modulo" > > </a></td> ';
 
 
 
@@ -413,7 +426,7 @@
 
                 sOptions += '</select> </td>';
 
-                sOptions += '<td align="center" style="padding-top:15px;"><a  onclick="javascript: InsertarProductoTablaG(' + i + ')" style="cursor: pointer; font-size: 25px; line-height: 0px;" title="Pasar Modulo" > < </a> ';
+                sOptions += '<td align="center" style="padding-top:15px;"><a  onclick="javascript: InsertarProductoTablaG(' + i + ')" style="cursor: pointer; font-size: 25px; line-height: 0px;" title="Pasar Modulo" > < </a> </td>';
 
 
 
@@ -422,6 +435,61 @@
             $("#tbody2").html(sOptions);
         }
 
+        function RellenaTablaRD(bit) {
+            if (bit) {
+                ProdCadenaM = [];
+                for (var i = 0; i < Control.length; i++) {
+
+                    var detalle =
+                    {
+                        id: 0,
+                        idEncabezado: "",
+                        idProducto: Control[i].idProducto,
+                        ItemCode: Control[i].Item + " | " + Control[i].ItemName,
+                        Cantidad: 1,
+                        Stock: Control[i].CantidadUsado
+
+                    }
+                    ProdCadenaM.push(detalle);
+                }
+            }
+           
+
+
+            var sOptions = '';
+
+            $("#tbody3").html('');
+
+            for (var i = 0; i < ProdCadenaM.length; i++) {
+                sOptions += '<tr>'
+                sOptions += '<td align="center" style="padding-top:15px;">  <p style="font-size:15px;">' + ProdCadenaM[i].ItemCode + '</p></td>';
+                if (parseInt($("#idTraslado").val()) == 3) {
+
+                    sOptions += '<td align="center" style="padding-top:15px;">  <p style="font-size:15px;">N/A</p></td>';
+
+                } else {
+                    sOptions += '<td align="center" style="padding-top:15px;">  <input id="cantidad-' + i + '" value="' + ProdCadenaM[i].Cantidad + '"  type="number" /> </td>';
+
+                }
+
+                    sOptions += '<td align="center" style="padding-top:15px;">  <p style="font-size:15px;">' + ProdCadenaM[i].Stock + '</p></td>';
+
+
+                 
+                if (parseInt($("#idTraslado").val()) == 3) {
+                    sOptions += '<td align="center" style="padding-top:15px;"> </td> ';
+
+                } else {
+                    sOptions += '<td align="center" style="padding-top:15px;"><a  onclick="javascript: EliminarProductoDevolver(' + i + ')" style="cursor: pointer; font-size: 25px; line-height: 0px;" title="Eliminar Producto" > X </a> </td>';
+
+                }
+
+
+
+                sOptions += '</tr>'
+            }
+            $("#tbody3").html(sOptions);
+        }
 
         function Generar() {
             var idGeneral = $("#idGeneral").val();
@@ -525,8 +593,13 @@
                                         },
                                     }).then((result) => {
                                         if (result.isConfirmed) {
-                                            //location.reload();
-                                            window.location.href = window.location.href.split("/Editar")[0];
+                                            if ($("#status").val() == "0") {
+                                                location.reload();
+                                            } else {
+                                                 window.location.href = window.location.href.split("/Editar")[0];
+                                            }
+                                            
+                                           
                                         }
                                     })
 
@@ -561,15 +634,34 @@
 
 
         function onChangeTipoMovimiento() {
-            if (parseInt($("#idTraslado").val()) == 2) {
+            if (parseInt($("#idTraslado").val()) == 0) {
                 $("#rowRepUti").hide();
-                $("#titleRepUti").text("Repuestos a devolver");
+                $("#rowRepUtilizados").hide();
+                $("#rowRepDevolver").hide();
+            } else if (parseInt($("#idTraslado").val()) == 2 || parseInt($("#idTraslado").val()) == 3) {
+                $("#rowRepUti").hide(); 
+                $("#rowRepUtilizados").hide();
+                $("#rowRepDevolver").show();
+                RellenaTablaRD(true);
+                $("#titleRepDevolver").text("Repuestos a devolver");
+                if (parseInt($("#idTraslado").val()) == 3) {
+                    $("#titleRepDevolver").text("Repuestos a cotizar");
+                }
+                
+
             } else {
+                Recuperar();
                 $("#rowRepUti").show();
+                $("#rowRepUtilizados").show();
+                $("#rowRepDevolver").hide();
+
                 $("#titleRepUti").text("Repuestos Utilizados");
 
             }
         }
+
+
+
     </script>
     <script type="text/javascript">
         var file = document.getElementById('file');
@@ -720,6 +812,7 @@
                     <input hidden id="HijosDisponibles" value="@JsonConvert.SerializeObject(Model.InputHijos)" />
                     <input hidden id="HijosSeleccionados" value="@JsonConvert.SerializeObject(Model.Input)" />
                     <input hidden id="Errores" value="@JsonConvert.SerializeObject(Model.Errores)" />
+                    <input hidden id="Control" value="@JsonConvert.SerializeObject(Model.Control)" />
 
 
                     <div class="row">
@@ -923,7 +1016,7 @@
     </div>
 
 
-    <div class="row" >
+    <div class="row">
         <div class="col-md-12" id="rowRepUti">
             <div class="card">
                 <div class="card-header">
@@ -971,7 +1064,7 @@
         </div>
 
 
-        <div class="col-md-12">
+        <div id="rowRepUtilizados" class="col-md-12">
             <div class="card">
                 <div class="card-header">
                     <div class="row">
@@ -1015,6 +1108,52 @@
                 </div>
             </div>
         </div>
+
+        <div id="rowRepDevolver" class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <div class="row">
+                        <div class="col-sm-8">
+
+                            <h5 class="title" id="titleRepDevolver"> Repuestos a Devolver</h5>
+                        </div>
+
+                        <div class="col-sm-4" style="text-align: right;">
+                             
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive tableFixHead" style="padding:inherit; overflow:scroll;    z-index: 5; height: 290px;">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+
+                                    <th align="center" style=" text-align: center;">Item</th>
+                                    <th align="center" style=" text-align: center;">Cantidad Devuelta</th>
+                                    <th align="center" style=" text-align: center;">Cantidad Pedida </th>
+                               
+
+
+
+
+
+                                    <th align="center" style=" text-align: center;">Acción</th>
+                                </tr>
+
+                            </thead>
+                            <tbody id="tbody3">
+                            </tbody>
+                        </table>
+
+                    </div>
+
+
+
+                </div>
+            </div>
+        </div>
+
 
         <div class="col-sm-6">
             <div class="form-group">

@@ -85,6 +85,22 @@ namespace Boletaje.Pages.Llamadas
             }
         }
 
+        ///Reenviar el correo
+        ///
+        public async Task<IActionResult> OnGetReenviar(int id, string correos)
+        {
+            try
+            {
+
+                await service.ReenvioFacturas(id, correos);
+                return new JsonResult(true);
+            }
+            catch (Exception ex)
+            {
+                return new JsonResult(false);
+            }
+        }
+
 
         //Enviar a SAP
 

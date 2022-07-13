@@ -76,6 +76,7 @@ namespace Boletaje.Pages.Movimientos
                 coleccion.PorDescuento = recibido.PorDescuento;
                 coleccion.Generar = recibido.Generar;
                 coleccion.TotalComprobante = recibido.TotalComprobante;
+                coleccion.Moneda = recibido.Moneda;
 
                 short cantidad = 1;
                 foreach (var item in recibido.Detalle)

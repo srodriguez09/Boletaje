@@ -16,6 +16,8 @@ namespace Sicsoft.Checkin.Web.Servicios
         [Get("")]
         Task EnviarCorreo([Body] TEntity payload);
 
+        [Post("")]
+        Task<TEntity[]> AgregarLlamada([Body] TEntity llamada, TEntity[] adj);
 
         [Post("")]
         Task<TEntity[]> AgregarBulk([Body] TEntity[] payload);

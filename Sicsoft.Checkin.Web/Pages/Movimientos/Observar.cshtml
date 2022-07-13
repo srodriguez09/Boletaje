@@ -29,7 +29,25 @@
 @section scripts{
 
 
+    <script>
+        $(document).ready(function () {
 
+            jQuery(document).ready(function ($) {
+                $(document).ready(function () {
+                });
+            });
+
+           
+            ModificaMoneda();
+        });
+        function ModificaMoneda() {
+            if ($("#Moneda").val() == "COL") {
+                $(".moneda").text("₡");
+            } else {
+                $(".moneda").text("$")
+            }
+        }
+    </script>
 }
 @using System.Globalization;
 @{
@@ -76,7 +94,18 @@
                         <div>CardCode: @Model.Input.CardCode</div>
                         <div>Cliente: @Model.Input.CardName</div>
                         <div>Telefono: @Model.Cliente.Phone1</div>
+                        <div class="row col-sm-4">
 
+                            <div class="form-group">
+                                <label>Moneda</label>
+                                <select disabled="disabled" id="Moneda" class="form-control" asp-for="Input.Moneda" required onchange="javascript: ModificaMoneda()">
+                                    <option value="COL" selected>Colones</option>
+                                    <option value="USD">Dólares</option>
+
+                                </select>
+
+                            </div>
+                        </div>
                     </div>
                     <div class="col-sm-6">
 
@@ -149,31 +178,49 @@
                                     <td align="left">
                                         <strong class="text-dark">Subtotal</strong>
                                     </td>
-                                    <td align="right"><p id="SubtotalGeneral">@decimal.Round(Model.Input.Subtotal, 2).ToString("N", formato)</p></td>
+                                    <td align="right">
+                                        <span class="moneda"></span>
+
+                                        <strong style="font-weight: inherit;" id="SubtotalGeneral">@decimal.Round(Model.Input.Subtotal, 2).ToString("N", formato)</strong>
+
+                                    </td>
                                 </tr>
                                 <tr>
                                     <td align="left">
                                         <strong class="text-dark">% Descuento</strong>
                                     </td>
-                                    <td align="right"><p id="DescuentoPorcentar">@decimal.Round(Model.Input.PorDescuento, 2).ToString("N", formato)</p></td>
+                                    <td align="right">
+                                        <strong style="font-weight: inherit;" id="DescuentoPorcentar">@decimal.Round(Model.Input.PorDescuento, 2).ToString("N", formato)</strong>
+                                    </td>
                                 </tr>
                                 <tr>
                                     <td align="left">
                                         <strong class="text-dark">Descuento</strong>
                                     </td>
-                                    <td align="right"><p id="DescGeneral">@decimal.Round(Model.Input.Descuento, 2).ToString("N", formato)</p></td>
+                                    <td align="right">
+
+                                        <span class="moneda"></span>
+
+                                        <strong style="font-weight: inherit;" id="DescGeneral">@decimal.Round(Model.Input.Descuento, 2).ToString("N", formato)</strong>
+                                    </td>
                                 </tr>
                                 <tr>
                                     <td align="left">
                                         <strong class="text-dark">Impuestos</strong>
                                     </td>
-                                    <td align="right"><p id="ImpGeneral">@decimal.Round(Model.Input.Impuestos, 2).ToString("N", formato)</p></td>
+                                    <td align="right">
+                                        <span class="moneda"></span>
+
+                                        <strong style="font-weight: inherit;" id="ImpGeneral">@decimal.Round(Model.Input.Impuestos, 2).ToString("N", formato)</strong>
+                                    </td>
                                 </tr>
                                 <tr>
                                     <td align="left">
                                         <strong class="text-dark">Total</strong>
                                     </td>
                                     <td align="right">
+                                        <span class="moneda"></span>
+
                                         <strong class="text-dark" id="TotalGeneral">@decimal.Round(Model.Input.TotalComprobante, 2).ToString("N", formato)</strong>
                                     </td>
                                 </tr>

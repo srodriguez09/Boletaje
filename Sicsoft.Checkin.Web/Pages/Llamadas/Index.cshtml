@@ -48,13 +48,6 @@
             });
 
 
-         
-            //$(document).ready(function () {
-            //    $('#tablita').DataTable({
-            //        "order": [[0, "desc"]]
-            //    });
-            //});
-
 
         });
 
@@ -156,6 +149,86 @@
 
         }
 
+
+           var ids = 0;
+        var correo = '';
+        function onClickModal(id, correos) {
+            ids = id;
+            correo = correos;
+
+
+            Swal.fire({
+                title: "¿Desea reenviar este correo?",
+                input: "text",
+                inputValue: correo,
+                showCancelButton: true,
+                confirmButtonText: "Guardar",
+                cancelButtonText: "Cancelar",
+                inputValidator: nombre => {
+                    // Si el valor es válido, debes regresar undefined. Si no, una cadena
+                    if (!nombre) {
+                        return "Por favor escribe el correo";
+                    } else {
+                        return undefined;
+                    }
+                }
+            })
+                .then(resultado => {
+                    if (resultado.value) {
+                        let nombre = resultado.value;
+                        correo = nombre;
+                        Reenviar();
+                    }
+                });
+
+
+
+
+
+
+        }
+
+        function  Reenviar() {
+
+         $.ajax({
+                        type: 'GET',
+                        dataType: 'json',
+             url: '@Url.Page("Index", "Reenviar")',
+             data: { id: ids, correos: correo },
+             success: function (result) {
+                 console.log(result);
+                             if (result == false) {
+                                 ids = 0;
+                                 Swal.fire({
+                                     icon: 'error',
+                                     title: 'Oops...',
+                                     text: 'Ha ocurrido un error al intentar reenviar'
+
+                                 })
+
+                             } else {
+                                 Swal.fire({
+                                     title: "Ha sido reenviado con éxito",
+
+                                     icon: 'success',
+                                     showCancelButton: false,
+                                     customClass: {
+                                         confirmButton: 'swalBtnColor',
+
+                                     },
+                                     confirmButtonText: 'OK'
+                                 }).then((result) => {
+                                     if (result.isConfirmed) {
+
+                                     }
+                                 })
+                             }
+             },
+             beforeSend: function () {
+
+             }
+                     })
+        }
     </script>
 
 }
@@ -294,7 +367,8 @@
                                             <a onclick="javascript: enviarSAP('@item.id')" title="Enviar a SAP"> <img src="~/sap.png" style="width: 40%;height: 50%;border-radius: 30%; cursor: pointer;" /></a>
                                         }&nbsp;
                                         <button title="PDF" type="button" class="btn btn-rounded btn-outline-danger" onclick="javascript: ImprimeEtiqueta('@item.DocEntry', '@item.CardCode - @Model.Clientes.Clientes.Where(a => a.CardCode == item.CardCode).FirstOrDefault().CardName')">PDF</button>
-
+                                        &nbsp;
+                                        <a onclick="javascript: onClickModal('@item.id', '@( Model.Clientes.Clientes.Where(a => a.CardCode == item.CardCode).FirstOrDefault() == null ? "" :  Model.Clientes.Clientes.Where(a => a.CardCode == item.CardCode).FirstOrDefault().E_Mail )')" title="Reenviar" class="btn btn-rounded btn-outline-warning">Reenviar Correo</a>
 
                                     </td>
                                 </tr>

@@ -18,17 +18,20 @@ namespace Boletaje.Pages.Movimientos
     public class IndexModel : PageModel
     {
         private readonly ICrudApi<EncMovimientoViewModel, int> service;
+        private readonly ICrudApi<ClientesViewModel, int> clientes;
+
         [BindProperty]
         public EncMovimientoViewModel[] Objeto { get; set; }
-
+        [BindProperty]
+        public ClientesViewModel Clientes { get; set; }
 
         [BindProperty(SupportsGet = true)]
         public ParametrosFiltros filtro { get; set; }
 
-        public IndexModel(ICrudApi<EncMovimientoViewModel, int> service)
+        public IndexModel(ICrudApi<EncMovimientoViewModel, int> service, ICrudApi<ClientesViewModel, int> clientes)
         {
             this.service = service;
-
+            this.clientes = clientes;
         }
         public async Task<IActionResult> OnGetAsync()
         {
@@ -63,6 +66,8 @@ namespace Boletaje.Pages.Movimientos
                 }
 
                 Objeto = await service.ObtenerLista(filtro);
+                
+                Clientes = await clientes.ObtenerListaEspecial("");
 
                 return Page();
             }
@@ -89,6 +94,21 @@ namespace Boletaje.Pages.Movimientos
             }
         }
 
+        public async Task<IActionResult> OnGetEliminar(int id)
+        {
+            try
+            {
+
+
+                await service.Eliminar(id);
+
+                return new JsonResult(true);
+            }
+            catch (ApiException ex)
+            {
+                return new JsonResult(false);
+            }
+        }
 
     }
 

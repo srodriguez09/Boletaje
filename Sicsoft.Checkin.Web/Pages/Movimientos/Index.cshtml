@@ -86,8 +86,8 @@
 
 
 
-          
-       
+
+
 
         }
 
@@ -134,6 +134,79 @@
         }
 
 
+
+        
+        function onClickModalEliminar(id) {
+
+        ids = id;
+
+
+            Swal.fire({
+                title: '¿Desea eliminar ese usuario?',
+                showDenyButton: true,
+                showCancelButton: false,
+                confirmButtonText: `Aceptar`,
+                denyButtonText: `Cancelar`,
+                customClass: {
+                    confirmButton: 'swalBtnColor',
+                    denyButton: 'swalDeny'
+                },
+            }).then((result) => {
+                /* Read more about isConfirmed, isDenied below */
+                if (result.isConfirmed) {
+
+                    Eliminar();
+
+                }
+            })
+
+
+    }
+        function  Eliminar() {
+
+
+         $.ajax({
+                        type: 'GET',
+                        dataType: 'json',
+                        url: '@Url.Page("Index", "Eliminar")',
+                        data: { id: ids },
+             success: function (result) {
+
+                             if (result == false) {
+                                 ids = 0;
+                              
+                                 Swal.fire({
+                                     icon: 'error',
+                                     title: 'Oops...',
+                                     text: 'Ha ocurrido un error al intentar eliminar'
+
+                                 })
+                             } else {
+                                 Swal.fire({
+                                     title: "Ha sido eliminado con éxito",
+
+                                     icon: 'success',
+                                     showCancelButton: false,
+                                     customClass: {
+                                         confirmButton: 'swalBtnColor',
+
+                                     },
+                                     confirmButtonText: 'OK'
+                                 }).then((result) => {
+                                     if (result.isConfirmed) {
+                                         location.reload();
+                                     }
+                                 })
+                             }
+             },
+             beforeSend: function () {
+
+             },
+             complete: function () {
+
+             }
+                     })
+        }
 
     </script>
 
@@ -282,11 +355,16 @@
                                     else
                                     {
                                         
-                                        <a onclick="javascript: onClickModal('@item.id', '')" title="Reenviar" class="btn btn-rounded btn-outline-warning">Reenviar Correo</a>
+                                        <a onclick="javascript: onClickModal('@item.id', '@( Model.Clientes.Clientes.Where(a => a.CardCode == item.CardCode).FirstOrDefault() == null ? "" :  Model.Clientes.Clientes.Where(a => a.CardCode == item.CardCode).FirstOrDefault().E_Mail )')" title="Reenviar" class="btn btn-rounded btn-outline-warning">Reenviar Correo</a>
                                     }
                                     &nbsp;
                                     <a asp-page="./Observar" asp-route-id="@item.id" title="Observar" class="btn btn-rounded btn-outline-primary"> Observar</a>
+                                    &nbsp;
+                                    @if (item.TipoMovimiento == 1)
+                                    {
+                                        <a onclick="javascript: onClickModalEliminar('@item.id')" title="Activar/Desactivar" class="btn btn-rounded btn-outline-danger">Eliminar</a>
 
+                                    }
                                 </td>
                             </tr>
                             }
