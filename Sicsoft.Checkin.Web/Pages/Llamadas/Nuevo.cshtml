@@ -527,7 +527,7 @@
                 };
                 bases64.push(det);
             }
-            var recibido =
+            var recibido1 =
             {
                 id: 0,
                 TipoLlamada: null,
@@ -567,7 +567,7 @@
                     },
                 }).then((result) => {
                     if (result.isConfirmed) {
-                        var recibidos = recibido;
+                        var recibidos = recibido1;
 
                         $.ajax({
                             type: 'POST',
@@ -846,7 +846,7 @@
                                     <!-- <option value="0">Seleccione</option>-->
                                     @foreach (var item in Model.Status)
                                     {
-                                        if (item.Nombre.ToLower().Contains("ABRIR"))
+                                        if (item.Nombre.ToLower().Contains("ABRIR".ToLower()))
                                         {
                                             <option value="@item.idSAP" selected>@item.Nombre</option>
 

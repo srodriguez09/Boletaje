@@ -249,6 +249,7 @@
                                 <th>Producto</th>
                                 <th>Status</th>
 
+                                <th>Estado Llamada</th>
                                 <th>Acción</th>
 
                             </tr>
@@ -286,7 +287,14 @@
                                             }
                                     }
                                 </td>
+                                <td>
+                                        @{
+                                            string LLamada = Model.InputLlamada.Where(a => a.DocEntry == item.idLlamada).FirstOrDefault() == null ? "0" : Model.InputLlamada.Where(a => a.DocEntry == item.idLlamada).FirstOrDefault().Status.Value.ToString();
+                                        
 
+                                        }
+                                        @(Model.Status.Where(a => a.idSAP == LLamada).FirstOrDefault() == null ? "" :Model.Status.Where(a => a.idSAP == LLamada).FirstOrDefault().Nombre)
+                                </td>
                                 <td>
                                     @if (item.Status == 0)
                                     {
@@ -315,6 +323,7 @@
                                 <th>Actualización Ult.</th>
                                 <th>Producto</th>
                                 <th>Status</th>
+                                <th>Estado Llamada</th>
 
                                 <th>Acción</th>
 

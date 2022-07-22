@@ -353,9 +353,9 @@
                             <div class="col-sm-6">
                                 <input id="Busqueda" list="prodHijos" class="form-control" type="text" />
                                 <datalist id="prodHijos">
-                                    @foreach (var item in Model.InputHijos.Where(a => a.idPadre == 0).ToList())
+                                    @foreach (var item in Model.InputHijos.ToList())
                                     {
-                                    <option value="@item.id _ @item.Nombre "> @item.codSAP - @item.Nombre </option>
+                                         <option value="@item.id _ @item.codSAP "> @item.codSAP - @item.Nombre </option>
                                     }
                                 </datalist>
 

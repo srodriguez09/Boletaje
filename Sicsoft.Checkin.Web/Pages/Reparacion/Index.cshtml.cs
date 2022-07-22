@@ -20,9 +20,15 @@ namespace Boletaje.Pages.Reparacion
         private readonly ICrudApi<EncReparacionViewModel, int> service;
         private readonly ICrudApi<TecnicosViewModel, int> serviceT;
         private readonly ICrudApi<ColeccionRepuestosViewModel, int> serviceColeccion;
+        private readonly ICrudApi<LlamadasViewModel, int> serviceL;
+        private readonly ICrudApi<StatusViewModel, int> status;
 
 
+        [BindProperty]
+        public LlamadasViewModel[] InputLlamada { get; set; }
+        [BindProperty]
 
+        public StatusViewModel[] Status { get; set; }
         [BindProperty]
         public EncReparacionViewModel[] Objeto { get; set; }
 
@@ -35,11 +41,13 @@ namespace Boletaje.Pages.Reparacion
         [BindProperty(SupportsGet = true)]
         public ParametrosFiltros filtro { get; set; }
 
-        public IndexModel(ICrudApi<EncReparacionViewModel, int> service, ICrudApi<TecnicosViewModel, int> serviceT, ICrudApi<ColeccionRepuestosViewModel, int> serviceColeccion)
+        public IndexModel(ICrudApi<EncReparacionViewModel, int> service, ICrudApi<TecnicosViewModel, int> serviceT, ICrudApi<ColeccionRepuestosViewModel, int> serviceColeccion, ICrudApi<LlamadasViewModel, int> serviceL, ICrudApi<StatusViewModel, int> status)
         {
             this.service = service;
             this.serviceT = serviceT;
             this.serviceColeccion = serviceColeccion;
+            this.serviceL = serviceL;
+            this.status = status;
         }
 
         public async Task<IActionResult> OnGetAsync()
@@ -81,8 +89,12 @@ namespace Boletaje.Pages.Reparacion
 
                     filtro.Codigo2 = 1;
 
-                }
+                    filtro.FechaInicial = DateTime.Now;
+                    filtro.FechaFinal = filtro.FechaInicial;
 
+                }
+                InputLlamada = await serviceL.ObtenerLista("");
+                Status = await status.ObtenerLista("");
                 Objeto = await service.ObtenerLista(filtro);
                 Tecnicos = await serviceT.ObtenerLista("");
 
