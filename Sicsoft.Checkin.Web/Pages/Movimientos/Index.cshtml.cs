@@ -93,7 +93,19 @@ namespace Boletaje.Pages.Movimientos
                 return new JsonResult(false);
             }
         }
+        public async Task<IActionResult> OnGetAprobar(int id)
+        {
+            try
+            {
 
+                await service.GenerarAprobacion(id);
+                return new JsonResult(true);
+            }
+            catch (Exception ex)
+            {
+                return new JsonResult(false);
+            }
+        }
         public async Task<IActionResult> OnGetEliminar(int id)
         {
             try

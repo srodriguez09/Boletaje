@@ -89,8 +89,8 @@ namespace Boletaje.Pages.Reparacion
 
                     filtro.Codigo2 = 1;
 
-                    filtro.FechaInicial = DateTime.Now;
-                    filtro.FechaFinal = filtro.FechaInicial;
+                    //filtro.FechaInicial = DateTime.Now.AddDays(-1);
+                    //filtro.FechaFinal = filtro.FechaInicial;
 
                 }
                 InputLlamada = await serviceL.ObtenerLista("");

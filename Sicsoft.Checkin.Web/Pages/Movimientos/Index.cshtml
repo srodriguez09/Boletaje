@@ -208,6 +208,48 @@
                      })
         }
 
+
+        function  Aprobar(id) {
+            var idEnviar = id;
+         $.ajax({
+                        type: 'GET',
+                        dataType: 'json',
+             url: '@Url.Page("Index", "Aprobar")',
+             data: { id: idEnviar },
+             success: function (result) {
+                 console.log(result);
+                             if (result == false) {
+                                 ids = 0;
+                                 Swal.fire({
+                                     icon: 'error',
+                                     title: 'Oops...',
+                                     text: 'Ha ocurrido un error al intentar Aprobar'
+
+                                 })
+
+                             } else {
+                                 Swal.fire({
+                                     title: "Ha sido Aprobado con éxito",
+
+                                     icon: 'success',
+                                     showCancelButton: false,
+                                     customClass: {
+                                         confirmButton: 'swalBtnColor',
+
+                                     },
+                                     confirmButtonText: 'OK'
+                                 }).then((result) => {
+                                     if (result.isConfirmed) {
+
+                                     }
+                                 })
+                             }
+             },
+             beforeSend: function () {
+
+             }
+                     })
+        }
     </script>
 
 }
@@ -330,14 +372,20 @@
                                 {
                                     case 1:
                                         {
-                                    <td>Oferta de Venta</td>
+                                            <td>Oferta de Venta</td>
                                             break;
                                         }
                                     case 2:
                                         {
-                                    <td>Entrega</td>
-                                            break;
+                                                    <td>Entrega</td>
+                                             break;
                                         }
+                                    case 3:
+                                        {
+                                                     <td>Cotización BackOffice</td>
+                                              break;
+                                        }
+                                        
                                 }
                                 }
                                 <td align="right">@decimal.Round(item.Subtotal, 2).ToString("N", formato)</td>
@@ -360,9 +408,16 @@
                                     &nbsp;
                                     <a asp-page="./Observar" asp-route-id="@item.id" title="Observar" class="btn btn-rounded btn-outline-primary"> Observar</a>
                                     &nbsp;
-                                    @if (item.TipoMovimiento == 1)
+                                    @if (item.TipoMovimiento == 1 || item.TipoMovimiento == 3 )
                                     {
                                         <a onclick="javascript: onClickModalEliminar('@item.id')" title="Activar/Desactivar" class="btn btn-rounded btn-outline-danger">Eliminar</a>
+
+                                    }
+
+                                    &nbsp;
+                                    @if (item.TipoMovimiento == 3)
+                                    {
+                                        <a onclick="javascript: Aprobar('@item.id')" title="Aprobar Cotizacion" class="btn btn-rounded btn-outline-secondary">Aprobar</a>
 
                                     }
                                 </td>
