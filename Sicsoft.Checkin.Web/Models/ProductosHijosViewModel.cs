@@ -14,5 +14,7 @@ namespace Boletaje.Models
         public decimal Stock { get; set; }
         public int Cantidad { get; set; }
         public string Localizacion { get; set; }
+        public decimal Costo { get; set; }
+        public int PorMinimo { get; set; }
     }
 }

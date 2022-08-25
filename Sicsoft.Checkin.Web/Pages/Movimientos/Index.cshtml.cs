@@ -19,6 +19,14 @@ namespace Boletaje.Pages.Movimientos
     {
         private readonly ICrudApi<EncMovimientoViewModel, int> service;
         private readonly ICrudApi<ClientesViewModel, int> clientes;
+        private readonly ICrudApi<StatusViewModel, int> status;
+        private readonly ICrudApi<LlamadasViewModel, int> serviceL;
+
+        [BindProperty]
+        public LlamadasViewModel[] InputLlamada { get; set; }
+        [BindProperty]
+
+        public StatusViewModel[] Status { get; set; }
 
         [BindProperty]
         public EncMovimientoViewModel[] Objeto { get; set; }
@@ -28,10 +36,12 @@ namespace Boletaje.Pages.Movimientos
         [BindProperty(SupportsGet = true)]
         public ParametrosFiltros filtro { get; set; }
 
-        public IndexModel(ICrudApi<EncMovimientoViewModel, int> service, ICrudApi<ClientesViewModel, int> clientes)
+        public IndexModel(ICrudApi<EncMovimientoViewModel, int> service, ICrudApi<ClientesViewModel, int> clientes, ICrudApi<StatusViewModel, int> status, ICrudApi<LlamadasViewModel, int> serviceL)
         {
             this.service = service;
             this.clientes = clientes;
+            this.status = status;
+            this.serviceL = serviceL;
         }
         public async Task<IActionResult> OnGetAsync()
         {
@@ -44,6 +54,7 @@ namespace Boletaje.Pages.Movimientos
                 }
 
                 DateTime time = new DateTime();
+                Status = await status.ObtenerLista("");
 
                 if (time == filtro.FechaInicial)
                 {
@@ -61,12 +72,14 @@ namespace Boletaje.Pages.Movimientos
 
                     filtro.FechaFinal = ultimoDia;
 
+                    filtro.Codigo2 = Status.Where(a => a.idSAP == "48").FirstOrDefault() == null ? 0 : Convert.ToInt32(Status.Where(a => a.idSAP == "48").FirstOrDefault().idSAP);
 
 
                 }
 
                 Objeto = await service.ObtenerLista(filtro);
-                
+                InputLlamada = await serviceL.ObtenerLista("");
+
                 Clientes = await clientes.ObtenerListaEspecial("");
 
                 return Page();

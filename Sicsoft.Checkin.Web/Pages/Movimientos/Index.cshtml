@@ -295,12 +295,41 @@
                         </div>
 
                         <div class="col-md-4 pl-1">
+                             <div class="form-group">
+                                <label>Estado de la Llamada</label>
+                                <select id="estadoLlamada" class="form-control" asp-for="filtro.Codigo2">
+                                      <option value="0">Seleccione</option>
+                                    @foreach(var item in Model.Status)
+                                    {
+                                         <option value="@item.idSAP">@item.idSAP - @item.Nombre</option>
+                                    }
 
+                                </select>
+                            </div>
+
+
+                         
+                        </div>
+                         <div class="col-md-4 pr-1">
+                             <div class="form-group">
+                                <label>Tipo Movimiento</label>
+                                <select id="tMovimiento" class="form-control" asp-for="filtro.Codigo1">
+                                      <option value="0">Seleccione</option>
+                                     
+                                         <option value="1">Oferta de Venta</option>
+                                         <option value="2">Entrega</option>
+                                         <option value="3">Cotización BackOffice</option>
+
+                                   
+
+                                </select>
+                            </div>
 
 
                          
                         </div>
 
+                        
                         <div class="col-sm-12">
                             <br />
                         </div>
@@ -345,6 +374,8 @@
                             <tr>
                                 <th>ID</th>
                                 <th>Llamada</th>
+                                <th>Estado Llamada</th>
+
                                 <th>Cliente</th>
                                 <th>Fecha</th>
                                 <th>Tipo Movimiento</th>
@@ -365,6 +396,9 @@
                             <tr>
                                 <td>@item.id</td>
                                 <td>@item.NumLlamada</td>
+                                @{var DocEntry = Convert.ToInt32(item.NumLlamada);}
+                                <td> @(Model.InputLlamada.Where(a => a.DocEntry == DocEntry).FirstOrDefault() == null ? "0" : Model.Status.Where(b => b.idSAP == Model.InputLlamada.Where(a => a.DocEntry == DocEntry).FirstOrDefault().Status.Value.ToString()).FirstOrDefault() == null ? "Sin Status" : Model.Status.Where(b => b.idSAP == Model.InputLlamada.Where(a => a.DocEntry == DocEntry).FirstOrDefault().Status.Value.ToString()).FirstOrDefault().Nombre  ) </td>
+
 
                                 <td>@item.CardCode - @item.CardName</td>
                                 <td>@item.Fecha.ToString("dd/MM/yyyy")</td>
@@ -403,7 +437,7 @@
                                     else
                                     {
                                         
-                                        <a onclick="javascript: onClickModal('@item.id', '@( Model.Clientes.Clientes.Where(a => a.CardCode == item.CardCode).FirstOrDefault() == null ? "" :  Model.Clientes.Clientes.Where(a => a.CardCode == item.CardCode).FirstOrDefault().E_Mail )')" title="Reenviar" class="btn btn-rounded btn-outline-warning">Reenviar Correo</a>
+                                        <a onclick="javascript: onClickModal('@item.id', '@(Model.InputLlamada.Where(a => a.DocEntry == DocEntry).FirstOrDefault() == null ? "" : Model.InputLlamada.Where(a => a.DocEntry == DocEntry).FirstOrDefault().EmailPersonaContacto )')" title="Reenviar" class="btn btn-rounded btn-outline-warning">Reenviar Correo</a>
                                     }
                                     &nbsp;
                                     <a asp-page="./Observar" asp-route-id="@item.id" title="Observar" class="btn btn-rounded btn-outline-primary"> Observar</a>
@@ -430,6 +464,7 @@
                             <tr>
                                 <th>ID</th>
                                 <th>Llamada</th>
+                                <th>Estado Llamada</th>
 
                                 <th>Cliente</th>
                                 <th>Fecha</th>

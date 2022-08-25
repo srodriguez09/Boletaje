@@ -638,7 +638,11 @@
                 $("#rowRepUti").hide();
                 $("#rowRepUtilizados").hide();
                 $("#rowRepDevolver").hide();
+                    $("#rowRepAprobados").hide();
+
             } else if (parseInt($("#idTraslado").val()) == 2 || parseInt($("#idTraslado").val()) == 3) {
+                    $("#rowRepAprobados").hide();
+
                 $("#rowRepUti").hide(); 
                 $("#rowRepUtilizados").hide();
                 $("#rowRepDevolver").show();
@@ -651,12 +655,17 @@
 
             } else {
                 Recuperar();
+                    $("#rowRepAprobados").hide();
+
                 $("#rowRepUti").show();
                 $("#rowRepUtilizados").show();
                 $("#rowRepDevolver").hide();
 
                 $("#titleRepUti").text("Repuestos Utilizados");
 
+                if (parseInt($("#idTraslado").val()) == 1) {
+                    $("#rowRepAprobados").show();
+                }
             }
         }
 
@@ -1018,6 +1027,55 @@
 
 
     <div class="row">
+
+          <div id="rowRepAprobados" class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <div class="row">
+                        <div class="col-sm-8">
+
+                            <h5 class="title" id="titleRepAprob"> Repuestos Aprobados</h5>
+                        </div>
+
+                        <div class="col-sm-4" style="text-align: right;">
+                             
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive tableFixHead" style="padding:inherit; overflow:scroll;    z-index: 5; height: 290px;">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+
+                                    <th align="center" style=" text-align: center;">Item</th>
+                                    <th align="center" style=" text-align: center;">Cantidad Aprobada</th>
+                                  
+                               
+                                </tr>
+
+                            </thead>
+                            <tbody id="tbody4">
+                                @foreach(var item in Model.CotizacionesAprobadas)
+                                {
+                                     <tr>
+                                    <td align="center">@item.ItemCode</td>
+                                    <td align="right">@item.Cantidad</td>
+
+                                    </tr>
+                                }
+
+                            </tbody>
+                        </table>
+
+                    </div>
+
+
+
+                </div>
+            </div>
+        </div>
+
         <div class="col-md-12" id="rowRepUti">
             <div class="card">
                 <div class="card-header">

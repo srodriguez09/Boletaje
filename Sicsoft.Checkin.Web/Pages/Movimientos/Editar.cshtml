@@ -42,9 +42,14 @@
         });
 
         var Detalles = [];
-
+var ProductosHijos = [];
+var RolAceptacion = false;
         function Recuperar() {
             var detalles = JSON.parse($("#Detalle").val());
+
+            ProductosHijos = JSON.parse($("#ProductosHijos").val());
+            RolAceptacion = '@Model.RolAceptacion' == 'True';
+
             console.log(detalles);
             for (var i = 0; i < detalles.length; i++) {
                 var detalle = {
@@ -73,6 +78,13 @@
             $("#tbody").html('');
 
             for (var i = 0; i < Detalles.length; i++) {
+                var producto = ProductosHijos.filter(a => a.codSAP == Detalles[i].ItemCode)[0];
+                  var ganancia = 0;
+                 var gananciaBruta = 0;
+                 gananciaBruta = parseFloat(Detalles[i].PrecioUnitario) - producto.Costo;
+
+                 ganancia = (gananciaBruta / parseFloat(Detalles[i].PrecioUnitario)) * 100;
+
                 sOptions += '<tr>'
                 sOptions += '<td align="center">'+ (i+1) +'</td>';
                 sOptions += '<td align="left " class="strong">' + Detalles[i].ItemCode + '</td>';
@@ -86,6 +98,8 @@
                 sOptions += '<td align="right"> <p id="'+i+'Desc">' + Detalles[i].Descuento + '</p></td>';
                 sOptions += '<td align="right"><p id="' + i +'TLinea">' + Detalles[i].TotalLinea + '</p></td>';
                 sOptions += '<td align="center">  <input class="form-check-input" type="checkbox" onclick="javascript: ModificaLinea(' + i + ')" style="position: unset;" id="' + i + 'check"><span class="form-check-sign"></span> </td>';
+                sOptions += '<td align="right"><p id="' + i +'ganancia"> '+ Math.round( ganancia * 100 ) / 100 +' %</p> </td>';
+                sOptions += '<td align="right"><p id="' + i +'gananciaM">' +  producto.PorMinimo + ' %</p></td>';
 
 
                 sOptions += '</tr>'
@@ -96,30 +110,47 @@
 
         }
 
-        function ModificaLinea(i) {
+function ModificaLinea(i) {
 
-            var Impuestos = 0;
-            var Descuentos = 0;
-            var TotalLinea = 0;
-            var Subtotal = 0;
-            var checkbox1 = document.getElementById(i+"check");
-            Detalles[i].Garantia = checkbox1.checked;
-            Subtotal = $("#" + i + "PrecioU").val() * $("#" + i + "Cantidad").text();
+    var Impuestos = 0;
+    var Descuentos = 0;
+    var TotalLinea = 0;
+    var Subtotal = 0;
+    var checkbox1 = document.getElementById(i + "check");
+    var producto = ProductosHijos.filter(a => a.codSAP == Detalles[i].ItemCode)[0];
+    var ganancia = 0;
+    var gananciaBruta = 0;
 
-            Descuentos = ($("#" + i + "PorDesc").val() / 100) * Subtotal ;
-            Impuestos = (Subtotal - Descuentos) * 0.13;
-            TotalLinea = (Subtotal - Descuentos) + Impuestos;
 
-            Detalles[i].PrecioUnitario = $("#" + i + "PrecioU").val();
-            Detalles[i].Cantidad = $("#" + i + "Cantidad").text();
-            Detalles[i].PorDescuento = $("#" + i + "PorDesc").val();
-            Detalles[i].Descuento = Descuentos;
-            Detalles[i].Impuestos = Impuestos;
-            Detalles[i].TotalLinea = TotalLinea;
+    Detalles[i].Garantia = checkbox1.checked;
+    Subtotal = $("#" + i + "PrecioU").val() * $("#" + i + "Cantidad").text();
 
-            $("#" + i + "TLinea").text(TotalLinea.toFixed(2));
-            $("#" + i + "Desc").text(Descuentos.toFixed(2));
-            $("#" + i + "Imp").text(Impuestos.toFixed(2));
+    gananciaBruta = parseFloat($("#" + i + "PrecioU").val()) - producto.Costo;
+
+    ganancia = (gananciaBruta / parseFloat($("#" + i + "PrecioU").val())) * 100;
+
+    Descuentos = ($("#" + i + "PorDesc").val() / 100) * Subtotal;
+    Impuestos = (Subtotal - Descuentos) * 0.13;
+    TotalLinea = (Subtotal - Descuentos) + Impuestos;
+
+    Detalles[i].PrecioUnitario = $("#" + i + "PrecioU").val();
+    Detalles[i].Cantidad = $("#" + i + "Cantidad").text();
+    Detalles[i].PorDescuento = $("#" + i + "PorDesc").val();
+    Detalles[i].Descuento = Descuentos;
+    Detalles[i].Impuestos = Impuestos;
+    Detalles[i].TotalLinea = TotalLinea;
+
+    $("#" + i + "TLinea").text(TotalLinea.toFixed(2));
+    $("#" + i + "Desc").text(Descuentos.toFixed(2));
+    $("#" + i + "Imp").text(Impuestos.toFixed(2));
+    $("#" + i + "ganancia").text(ganancia.toFixed(2) + " %");
+
+    if (ganancia < producto.PorMinimo) {
+        $("#" + i + "ganancia").css("color", "red");
+    } else {
+        $("#" + i + "ganancia").css("color", "green");
+
+    }
 
             ModificaTodo();
         }
@@ -161,6 +192,28 @@
 
         }
 
+function Validar(Detalles) {
+
+    var bandera = true;
+    for (var i = 0; i < Detalles.length; i++)
+    {
+             var producto = ProductosHijos.filter(a => a.codSAP == Detalles[i].ItemCode)[0];
+              var ganancia = 0;
+              var gananciaBruta = 0;
+
+              gananciaBruta = parseFloat($("#" + i + "PrecioU").val()) - producto.Costo;
+
+              ganancia = (gananciaBruta / parseFloat($("#" + i + "PrecioU").val())) * 100;
+              if (ganancia < producto.PorMinimo) {
+                  bandera = false;
+              }  
+
+
+    }
+
+    return bandera;
+}
+
         function Generar(generar) {
 
             var btn = document.getElementById('Guardar1');
@@ -189,7 +242,291 @@
 
             }
 
-                Swal.fire({
+            if(generar)
+            {
+                if (!RolAceptacion) {
+                     if(Validar(Detalles))
+                        {
+                              Swal.fire({
+                            title: '¿Desea guardar los cambios?',
+                            showDenyButton: true,
+                            showCancelButton: false,
+                            confirmButtonText: `Aceptar`,
+                            denyButtonText: `Cancelar`,
+                            customClass: {
+                                confirmButton: 'swalBtnColor',
+                                denyButton: 'swalDeny'
+                            },
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                var recibidos = JSON.stringify(recibido);
+
+                                $.ajax({
+                                    type: 'POST',
+
+                                    url: '@Url.Page("Editar", "Generar")',
+                                    dataType: 'json',
+                                    data: { recibidos: recibidos.toString() },
+                                    headers: {
+                                        RequestVerificationToken: $('input:hidden[name="__RequestVerificationToken"]').val()
+                                    },
+                                    success: function (json) {
+
+                                        $("#divProcesando").hide();
+
+                                        if ($('.modal-backdrop').is(':visible')) {
+
+                                            $('body').removeClass('modal-open');
+                                            $('.modal-backdrop').hide();
+                                        }
+                                        console.log("resultado " + json.mensaje);
+                                        if (json.success == true) {
+                                            Swal.fire({
+                                                title: "Ha sido generado con éxito",
+
+                                                icon: 'success',
+                                                showCancelButton: false,
+
+                                                confirmButtonText: 'OK',
+                                                customClass: {
+                                                    confirmButton: 'swalBtnColor',
+
+                                                },
+                                            }).then((result) => {
+                                                if (result.isConfirmed) {
+                                                    //location.reload();
+                                                    window.location.href = window.location.href.split("/Editar")[0];
+                                                }
+                                            })
+
+                                        } else {
+                                            Swal.fire({
+                                                icon: 'error',
+                                                title: 'Oops...',
+                                                text: 'Ha ocurrido un error al intentar guardar ' + json.mensaje
+
+                                            })
+                                        }
+                                    },
+
+                                    beforeSend: function (xhr) {
+
+                                        $("#divProcesando").modal("show");
+                                    },
+                                    complete: function () {
+
+                                    },
+                                    error: function (error) {
+
+                                    }
+                                });
+                            }
+                            else {
+                                btn.disabled = false;
+                                btn2.disabled = false;
+
+                            }
+
+                        }
+                       )
+                        }else{
+                            Swal.fire({
+                                                icon: 'error',
+                                                title: 'Oops...',
+                                                text: 'Los margenes de ganancia no son correcto, favor verificar ' 
+
+                                            })
+                        }
+                } else {
+                    if (Validar(Detalles)) {
+                         Swal.fire({
+                            title: '¿Desea guardar los cambios?',
+                            showDenyButton: true,
+                            showCancelButton: false,
+                            confirmButtonText: `Aceptar`,
+                            denyButtonText: `Cancelar`,
+                            customClass: {
+                                confirmButton: 'swalBtnColor',
+                                denyButton: 'swalDeny'
+                            },
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                var recibidos = JSON.stringify(recibido);
+
+                                $.ajax({
+                                    type: 'POST',
+
+                                    url: '@Url.Page("Editar", "Generar")',
+                                    dataType: 'json',
+                                    data: { recibidos: recibidos.toString() },
+                                    headers: {
+                                        RequestVerificationToken: $('input:hidden[name="__RequestVerificationToken"]').val()
+                                    },
+                                    success: function (json) {
+
+                                        $("#divProcesando").hide();
+
+                                        if ($('.modal-backdrop').is(':visible')) {
+
+                                            $('body').removeClass('modal-open');
+                                            $('.modal-backdrop').hide();
+                                        }
+                                        console.log("resultado " + json.mensaje);
+                                        if (json.success == true) {
+                                            Swal.fire({
+                                                title: "Ha sido generado con éxito",
+
+                                                icon: 'success',
+                                                showCancelButton: false,
+
+                                                confirmButtonText: 'OK',
+                                                customClass: {
+                                                    confirmButton: 'swalBtnColor',
+
+                                                },
+                                            }).then((result) => {
+                                                if (result.isConfirmed) {
+                                                    //location.reload();
+                                                    window.location.href = window.location.href.split("/Editar")[0];
+                                                }
+                                            })
+
+                                        } else {
+                                            Swal.fire({
+                                                icon: 'error',
+                                                title: 'Oops...',
+                                                text: 'Ha ocurrido un error al intentar guardar ' + json.mensaje
+
+                                            })
+                                        }
+                                    },
+
+                                    beforeSend: function (xhr) {
+
+                                        $("#divProcesando").modal("show");
+                                    },
+                                    complete: function () {
+
+                                    },
+                                    error: function (error) {
+
+                                    }
+                                });
+                            }
+                            else {
+                                btn.disabled = false;
+                                btn2.disabled = false;
+
+                            }
+
+                        }
+                       )
+                    } else {
+                        Swal.fire({
+                            title: '¿Desea aprobar los margenes actuales?',
+                            showDenyButton: true,
+                            showCancelButton: false,
+                            confirmButtonText: `Aceptar`,
+                            denyButtonText: `Cancelar`,
+                            customClass: {
+                                confirmButton: 'swalBtnColor',
+                                denyButton: 'swalDeny'
+                            },
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                Swal.fire({
+                                    title: '¿Desea guardar los cambios?',
+                                    showDenyButton: true,
+                                    showCancelButton: false,
+                                    confirmButtonText: `Aceptar`,
+                                    denyButtonText: `Cancelar`,
+                                    customClass: {
+                                        confirmButton: 'swalBtnColor',
+                                        denyButton: 'swalDeny'
+                                    },
+                                }).then((result) => {
+                                    if (result.isConfirmed) {
+                                        var recibidos = JSON.stringify(recibido);
+
+                                        $.ajax({
+                                            type: 'POST',
+
+                                            url: '@Url.Page("Editar", "Generar")',
+                                            dataType: 'json',
+                                            data: { recibidos: recibidos.toString() },
+                                            headers: {
+                                                RequestVerificationToken: $('input:hidden[name="__RequestVerificationToken"]').val()
+                                            },
+                                            success: function(json) {
+
+                                                $("#divProcesando").hide();
+
+                                                if ($('.modal-backdrop').is(':visible')) {
+
+                                                    $('body').removeClass('modal-open');
+                                                    $('.modal-backdrop').hide();
+                                                }
+                                                console.log("resultado " + json.mensaje);
+                                                if (json.success == true) {
+                                                    Swal.fire({
+                                                        title: "Ha sido generado con éxito",
+
+                                                        icon: 'success',
+                                                        showCancelButton: false,
+
+                                                        confirmButtonText: 'OK',
+                                                        customClass: {
+                                                            confirmButton: 'swalBtnColor',
+
+                                                        },
+                                                    }).then((result) => {
+                                                        if (result.isConfirmed) {
+                                                            //location.reload();
+                                                            window.location.href = window.location.href.split("/Editar")[0];
+                                                        }
+                                                    })
+
+                                                } else {
+                                                    Swal.fire({
+                                                        icon: 'error',
+                                                        title: 'Oops...',
+                                                        text: 'Ha ocurrido un error al intentar guardar ' + json.mensaje
+
+                                                    })
+                                                }
+                                            },
+
+                                            beforeSend: function(xhr) {
+
+                                                $("#divProcesando").modal("show");
+                                            },
+                                            complete: function() {
+
+                                            },
+                                            error: function(error) {
+
+                                            }
+                                        });
+                                    }
+                                    else {
+                                        btn.disabled = false;
+                                        btn2.disabled = false;
+
+                                    }
+
+                                })
+                            } else {
+                                btn.disabled = false;
+                                btn2.disabled = false;
+                            }
+
+                        }
+                        )
+                    }
+                }
+               
+            }else{
+                  Swal.fire({
                     title: '¿Desea guardar los cambios?',
                     showDenyButton: true,
                     showCancelButton: false,
@@ -271,6 +608,9 @@
 
                 }
                )
+            }
+
+              
             btn.disabled = false;
             btn2.disabled = false;
 
@@ -296,6 +636,8 @@
             <div class="card-header p-4">
                 <a asp-page="/Movimientos/Index" class="nav-link text-dark" style="text-decoration: underline;"><i class="fas fa-reply "></i>  Regresar</a>
                 <input hidden id="Detalle" value="@JsonConvert.SerializeObject(Model.Input.Detalle)" />
+                <input hidden id="ProductosHijos" value="@JsonConvert.SerializeObject(Model.ProductosHijos)" />
+
                 <input hidden id="idGeneral" value="@Model.Input.id" />
 
 
@@ -313,17 +655,17 @@
                             {
                                 case 1:
                                     {
-                                        <h3 class="text-dark mb-1">Oferta de Venta</h3>
+                                                                                                                <h3 class="text-dark mb-1">Oferta de Venta</h3>
                                         break;
                                     }
                                 case 2:
                                     {
-                                        <h3 class="text-dark mb-1">Entrega</h3>
+                                                                                                                <h3 class="text-dark mb-1">Entrega</h3>
                                         break;
                                     }
                                     case 3:
                                     {
-                                        <h3 class="text-dark mb-1">Cotización BackOffice</h3>
+                                                                                                                <h3 class="text-dark mb-1">Cotización BackOffice</h3>
                                         break;
                                     }
                             }
@@ -331,7 +673,10 @@
 
                         <div>CardCode: @Model.Input.CardCode</div>
                         <div>Cliente: @Model.Input.CardName</div>
-                        <div>Telefono: @Model.Cliente.Phone1</div>
+                        
+                        <div>Telefono: @Model.Llamada.NumeroPersonaContacto</div>
+                        <div>Persona Contacto: @Model.Llamada.PersonaContacto</div>
+                        <div>Email Persona Contacto: @Model.Llamada.EmailPersonaContacto</div>
                         <div class="row col-sm-4">
 
                             <div class="form-group">
@@ -366,6 +711,9 @@
                                 <th class="center">Descuentos</th>
                                 <th class="center">Total</th>
                                 <th class="center">Garantia</th>
+                                <th class="center">% Ganancia</th>
+                                <th class="center">% Ganancia Minima</th>
+
 
 
                             </tr>

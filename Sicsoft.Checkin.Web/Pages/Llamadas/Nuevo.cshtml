@@ -513,6 +513,27 @@
 
     <script>
         var btn = document.getElementById('Guardar');
+
+        function ValidaForm(recibido1)
+        {
+            if(recibido1.PersonaContacto == undefined || recibido1.PersonaContacto == "")
+            {
+                return false;
+            }else if(recibido1.NumeroPersonaContacto == undefined || recibido1.NumeroPersonaContacto == "")
+            {
+                return false;
+
+            }else if(recibido1.EmailPersonaContacto == undefined || recibido1.EmailPersonaContacto == "")
+            {
+                return false;
+
+            }
+            else
+            {
+                return true;
+            }
+        }
+
         function onGuardar() {
             btn.disabled = true;
 
@@ -551,11 +572,23 @@
                 ProcesadaSAP: false,
                 Firma: $("#Firma").val(),
                 Horas: $("#horas").val(),
+                PersonaContacto: $("#personaContacto").val(),
+                EmailPersonaContacto: $("#emailPersonaContacto").val(),
+                NumeroPersonaContacto: $("#telefonoPersonaContacto").val(),
+
                 Adjuntos: bases64
             }
 
+            if(!ValidaForm(recibido1))
+            {
+                Swal.fire({
+                                        icon: 'error',
+                                        title: 'Oops...',
+                                        text: 'Faltan datos por rellenar ' 
 
-             Swal.fire({
+                                    })
+            }else{
+                 Swal.fire({
                     title: '¿Desea guardar los cambios?',
                     showDenyButton: true,
                     showCancelButton: false,
@@ -633,6 +666,9 @@
                     }
                 }
                )
+            }
+
+            
             btn.disabled = false;
             //$("#formTipos").submit();
         }
@@ -884,7 +920,29 @@
                         </div>
 
                     </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label>Persona de Contacto:</label>
+                                  <input type="text" class="form-control form-control-lg" id="personaContacto" placeholder="Nombre Persona Contacto" asp-for="Input.PersonaContacto">
 
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label> Correo Persona Contacto:</label>
+                                  <input type="email" class="form-control form-control-lg" id="emailPersonaContacto" placeholder="Email Persona Contacto" asp-for="Input.EmailPersonaContacto">
+                                 
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label>Telefono Persona Contacto:</label>
+                                  <input type="tel" class="form-control form-control-lg" id="telefonoPersonaContacto" placeholder="Telefono Persona Contacto" asp-for="Input.NumeroPersonaContacto">
+                                
+                            </div>
+                        </div>
+                    </div>
                     <div class="row">
                         <div class="col-sm-6">
                             <div class="form-group">
@@ -938,7 +996,7 @@
                              
                                     @foreach (var item in Model.Tecnicos)
                                     {
-                                        if (item.Nombre.ToLower().Contains("pendiente"))
+                                        if (item.Nombre.ToLower().Contains("asignar"))
                                         {
                                             <option value="@item.idSAP" selected>@item.Nombre</option>
 

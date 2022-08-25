@@ -368,7 +368,7 @@
                                         }&nbsp;
                                         <button title="PDF" type="button" class="btn btn-rounded btn-outline-danger" onclick="javascript: ImprimeEtiqueta('@item.DocEntry', '@item.CardCode - @Model.Clientes.Clientes.Where(a => a.CardCode == item.CardCode).FirstOrDefault().CardName')">PDF</button>
                                         &nbsp;
-                                        <a onclick="javascript: onClickModal('@item.id', '@( Model.Clientes.Clientes.Where(a => a.CardCode == item.CardCode).FirstOrDefault() == null ? "" :  Model.Clientes.Clientes.Where(a => a.CardCode == item.CardCode).FirstOrDefault().E_Mail )')" title="Reenviar" class="btn btn-rounded btn-outline-warning">Reenviar Correo</a>
+                                        <a onclick="javascript: onClickModal('@item.id', '@item.EmailPersonaContacto')" title="Reenviar" class="btn btn-rounded btn-outline-warning">Reenviar Correo</a>
 
                                     </td>
                                 </tr>

@@ -18,7 +18,12 @@ namespace Boletaje.Pages.Movimientos
     {
         private readonly ICrudApi<EncMovimientoViewModel, int> service;
         private readonly ICrudApi<ClientesViewModel, int> clientes;
+        private readonly ICrudApi<LlamadasViewModel, int> serviceLlamada;
+        private readonly ICrudApi<ProductosHijosViewModel, int> service2;
 
+
+        [BindProperty]
+        public LlamadasViewModel Llamada { get; set; }
         [BindProperty]
         public EncMovimientoViewModel Input { get; set; }
         [BindProperty]
@@ -26,12 +31,18 @@ namespace Boletaje.Pages.Movimientos
         [BindProperty]
         public cliente Cliente { get; set; }
 
+        [BindProperty]
+        public bool RolAceptacion { get; set; }
 
-        public EditarModel(ICrudApi<EncMovimientoViewModel, int> service, ICrudApi<ClientesViewModel, int> clientes)
+        [BindProperty]
+        public ProductosHijosViewModel[] ProductosHijos { get; set; }
+
+        public EditarModel(ICrudApi<EncMovimientoViewModel, int> service, ICrudApi<ClientesViewModel, int> clientes, ICrudApi<LlamadasViewModel, int> serviceLlamada, ICrudApi<ProductosHijosViewModel, int> service2)
         {
             this.service = service;
             this.clientes = clientes;
-
+            this.serviceLlamada = serviceLlamada;
+            this.service2 = service2;
         }
 
         public async Task<IActionResult> OnGetAsync(int id)
@@ -44,9 +55,23 @@ namespace Boletaje.Pages.Movimientos
                     return RedirectToPage("/NoPermiso");
                 }
 
+                RolAceptacion = Roles1.Where(a => a == "36").FirstOrDefault() != null;
+
                 Input = await service.ObtenerPorId(id);
+                Llamada = await serviceLlamada.ObtenerPorDocEntry(Convert.ToInt32(Input.NumLlamada));
+
                 Clientes = await clientes.ObtenerListaEspecial("");
                 Cliente = Clientes.Clientes.Where(a => a.CardCode == Input.CardCode).FirstOrDefault();
+
+                var ProductosHijos2 = new List<ProductosHijosViewModel>();
+                var Produc = await service2.ObtenerLista("");
+ 
+                    foreach(var item in Input.Detalle)
+                {
+                    var Pr = Produc.Where(a => a.codSAP == item.ItemCode).FirstOrDefault();
+                    ProductosHijos2.Add(Pr);
+                }
+                ProductosHijos = ProductosHijos2.ToArray();
                 return Page();
             }
             catch (Exception ex)

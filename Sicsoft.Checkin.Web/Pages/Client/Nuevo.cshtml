@@ -24,6 +24,9 @@
         var btn = document.getElementById('Guardar');
         function onGuardar() {
             btn.disabled = true;
+            $("#formTipos").submit();
+            btn.disabled = false;
+
         }
     </script>
 

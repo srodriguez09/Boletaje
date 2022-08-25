@@ -54,6 +54,9 @@ namespace Boletaje.Models
         public bool? ProcesadaSAP { get; set; }
         public string Firma { get; set; }
         public int Horas { get; set; }
+        public string PersonaContacto { get; set; }
+        public string EmailPersonaContacto { get; set; }
+        public string NumeroPersonaContacto { get; set; }
         public List<AdjuntosViewModel> Adjuntos { get; set; }
     }
 }

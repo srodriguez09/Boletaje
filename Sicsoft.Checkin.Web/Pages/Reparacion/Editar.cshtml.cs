@@ -31,8 +31,11 @@ namespace Boletaje.Pages.Reparacion
         private readonly ICrudApi<ErroresViewModel, int> serviceError;
         private readonly ICrudApi<StatusViewModel, int> status;
         private readonly ICrudApi<ControlProductosViewModel, int> control;
+        private readonly ICrudApi<CotizacionesAprobadasViewModel, int> cotizaciones;
 
+        [BindProperty]
 
+        public CotizacionesAprobadasViewModel[] CotizacionesAprobadas { get; set; }
 
         [BindProperty]
 
@@ -74,7 +77,7 @@ namespace Boletaje.Pages.Reparacion
 
         public EditarModel(ICrudApi<DetReparacionViewModel, int> service, ICrudApi<LlamadasViewModel, int> serviceL, ICrudApi<ClientesViewModel, int> clientes, ICrudApi<ProductosViewModel, int> prods,
            ICrudApi<ProductosHijosViewModel, int> service2, ICrudApi<EncReparacionViewModel, int> serviceE, ICrudApi<ColeccionRepuestosViewModel, int> serviceColeccion, ICrudApi<BodegasViewModel, int> serviceBodegas, ICrudApi<BitacoraMovimientosViewModel, int> bt, ICrudApi<DiagnosticosViewModel, int> serviceD
-            ,ICrudApi<ErroresViewModel, int> serviceError, ICrudApi<StatusViewModel, int> status, ICrudApi<ControlProductosViewModel, int> control)
+            ,ICrudApi<ErroresViewModel, int> serviceError, ICrudApi<StatusViewModel, int> status, ICrudApi<ControlProductosViewModel, int> control, ICrudApi<CotizacionesAprobadasViewModel, int> cotizaciones)
         {
             this.service = service;
             this.serviceL = serviceL;
@@ -89,6 +92,7 @@ namespace Boletaje.Pages.Reparacion
             this.serviceError = serviceError;
             this.status = status;
             this.control = control;
+            this.cotizaciones = cotizaciones;
         }
 
         public async Task<IActionResult> OnGetAsync(int id)
@@ -113,13 +117,13 @@ namespace Boletaje.Pages.Reparacion
                 filt.Texto = Encabezado.idProductoArreglar;
                 InputHijos = await service2.ObtenerLista(filt); // Se trae todos los productos hijos dispobibles
                 var i = 0;
-                foreach(var item in Input)
+                foreach (var item in Input)
                 {
                     Input[i].Stock = InputHijos.Where(a => a.id == item.idProducto).FirstOrDefault().Stock;
                     InputHijos = InputHijos.Where(a => a.id != item.idProducto).ToArray();
                     i++;
                 }
-                
+
                 Productos = await prods.ObtenerListaEspecial("");
                 Producto = Productos.Productos.Where(a => a.itemCode == Encabezado.idProductoArreglar).FirstOrDefault().itemCode + " - " + Productos.Productos.Where(a => a.itemCode == Encabezado.idProductoArreglar).FirstOrDefault().itemName;
                 Diagnosticos = await serviceD.ObtenerLista("");
@@ -127,7 +131,9 @@ namespace Boletaje.Pages.Reparacion
 
                 InputLlamada = await serviceL.ObtenerPorDocEntry(Encabezado.idLlamada);
                 Status = await status.ObtenerLista("");
-
+                ParametrosFiltros filtroCoti = new ParametrosFiltros();
+                filtroCoti.Codigo1 = InputLlamada.DocEntry.Value;
+                CotizacionesAprobadas = await cotizaciones.ObtenerLista(filtroCoti);
                 Clientes = await clientes.ObtenerListaEspecial("");
                 Cliente = Clientes.Clientes.Where(a => a.CardCode == InputLlamada.CardCode).FirstOrDefault() == null ? "" : Clientes.Clientes.Where(a => a.CardCode == InputLlamada.CardCode).FirstOrDefault().CardCode + " - " + Clientes.Clientes.Where(a => a.CardCode == InputLlamada.CardCode).FirstOrDefault().CardName;
 

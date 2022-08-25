@@ -69,6 +69,7 @@ namespace Boletaje.Pages.Reparacion
                 {
                     bandera = true;
                 }
+                Status = await status.ObtenerLista("");
                 DateTime time = new DateTime();
 
                 if (time == filtro.FechaInicial)
@@ -91,10 +92,10 @@ namespace Boletaje.Pages.Reparacion
 
                     //filtro.FechaInicial = DateTime.Now.AddDays(-1);
                     //filtro.FechaFinal = filtro.FechaInicial;
+                    filtro.Codigo3 = Status.Where(a => a.idSAP == "46").FirstOrDefault() == null ? 0 : Convert.ToInt32(Status.Where(a => a.idSAP == "46").FirstOrDefault().idSAP);
 
                 }
                 InputLlamada = await serviceL.ObtenerLista("");
-                Status = await status.ObtenerLista("");
                 Objeto = await service.ObtenerLista(filtro);
                 Tecnicos = await serviceT.ObtenerLista("");
 

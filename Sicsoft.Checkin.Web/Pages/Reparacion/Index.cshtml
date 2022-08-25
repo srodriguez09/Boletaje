@@ -199,6 +199,21 @@
                                 </select>
                             </div>
                         </div>
+
+                        <div class="col-sm-4 pr-1">
+                            <div class="form-group">
+                                <label>Estado de la Llamada</label>
+                                <select id="estadoLlamada" class="form-control" asp-for="filtro.Codigo3">
+                                      <option value="0">Seleccione</option>
+                                    @foreach(var item in Model.Status)
+                                    {
+                                         <option value="@item.idSAP">@item.idSAP - @item.Nombre</option>
+                                    }
+
+                                </select>
+                            </div>
+                        </div>
+
                         <div class="col-sm-12">
                             <br />
                         </div>

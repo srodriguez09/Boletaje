@@ -184,7 +184,9 @@ namespace Boletaje.Pages.Llamadas
                 var item = recibido.ItemCode;
                 coleccion.ItemCode = item.Split("/")[0].Replace(" ", "");
                 coleccion.SerieFabricante = item.Split("/")[1].Replace(" ", "");
-
+                coleccion.PersonaContacto = recibido.PersonaContacto;
+                coleccion.EmailPersonaContacto = recibido.EmailPersonaContacto;
+                coleccion.NumeroPersonaContacto = recibido.NumeroPersonaContacto;
                 coleccion.Adjuntos = new List<AdjuntosViewModel>();
 
                 if(recibido.Adjuntos != null)
