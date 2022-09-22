@@ -37,6 +37,9 @@ namespace Boletaje.Pages.Movimientos
         [BindProperty]
         public ProductosHijosViewModel[] ProductosHijos { get; set; }
 
+        [BindProperty]
+        public ProductosHijosViewModel ManoObra { get; set; }
+
         public EditarModel(ICrudApi<EncMovimientoViewModel, int> service, ICrudApi<ClientesViewModel, int> clientes, ICrudApi<LlamadasViewModel, int> serviceLlamada, ICrudApi<ProductosHijosViewModel, int> service2)
         {
             this.service = service;
@@ -71,7 +74,13 @@ namespace Boletaje.Pages.Movimientos
                     var Pr = Produc.Where(a => a.codSAP == item.ItemCode).FirstOrDefault();
                     ProductosHijos2.Add(Pr);
                 }
+
+                ManoObra = Produc.Where(a => a.Nombre.ToUpper().Contains("Mano de Obra".ToUpper())).FirstOrDefault();
+                ProductosHijos2.Add(ManoObra);
                 ProductosHijos = ProductosHijos2.ToArray();
+
+
+
                 return Page();
             }
             catch (Exception ex)
@@ -108,6 +117,10 @@ namespace Boletaje.Pages.Movimientos
                 {
                     coleccion.Detalle[cantidad - 1] = new DetMovimientoViewModel();
                     coleccion.Detalle[cantidad - 1].id = item.id;
+                    coleccion.Detalle[cantidad - 1].ItemCode = item.ItemCode;
+                    coleccion.Detalle[cantidad - 1].ItemName = item.ItemName;
+                    coleccion.Detalle[cantidad - 1].NumLinea = item.NumLinea;
+
 
                     coleccion.Detalle[cantidad - 1].PrecioUnitario = item.PrecioUnitario;
                     coleccion.Detalle[cantidad - 1].Cantidad = item.Cantidad;

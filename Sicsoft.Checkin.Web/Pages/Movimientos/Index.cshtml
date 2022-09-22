@@ -3,7 +3,14 @@
 @{
     ViewData["Title"] = "Movimientos";
 }
+@using System.Globalization;
+@{
+    NumberFormatInfo formato = new CultureInfo("en-US").NumberFormat;
+    formato.CurrencyGroupSeparator = ",";
+    formato.NumberDecimalSeparator = ".";
 
+
+}
 @section breadcrumb{
 
     <li class="breadcrumb-item">
@@ -13,14 +20,7 @@
 
 }
 
-@using System.Globalization;
-@{
-    NumberFormatInfo formato = new CultureInfo("en-US").NumberFormat;
-    formato.CurrencyGroupSeparator = ",";
-    formato.NumberDecimalSeparator = ".";
 
-
-}
 
 
 @section styles{

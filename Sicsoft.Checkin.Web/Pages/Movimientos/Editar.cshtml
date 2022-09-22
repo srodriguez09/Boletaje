@@ -22,12 +22,13 @@
         }
 
         .input2 {
-            width: 70%;
+             
         }
     </style>
 
 }
-@section scripts{
+@section scripts
+{
    
     <script>
         $(document).ready(function () {
@@ -43,9 +44,11 @@
 
         var Detalles = [];
 var ProductosHijos = [];
+var ManoObra = "";
 var RolAceptacion = false;
         function Recuperar() {
             var detalles = JSON.parse($("#Detalle").val());
+             ManoObra = JSON.parse($("#ManoObra").val());
 
             ProductosHijos = JSON.parse($("#ProductosHijos").val());
             RolAceptacion = '@Model.RolAceptacion' == 'True';
@@ -73,6 +76,8 @@ var RolAceptacion = false;
             RellenaTabla();
         }
         function RellenaTabla() {
+      var btn = document.getElementById('agregaManoObra');
+
             var sOptions = '';
 
             $("#tbody").html('');
@@ -81,17 +86,25 @@ var RolAceptacion = false;
                 var producto = ProductosHijos.filter(a => a.codSAP == Detalles[i].ItemCode)[0];
                   var ganancia = 0;
                  var gananciaBruta = 0;
+                 
                  gananciaBruta = parseFloat(Detalles[i].PrecioUnitario) - producto.Costo;
 
                  ganancia = (gananciaBruta / parseFloat(Detalles[i].PrecioUnitario)) * 100;
 
                 sOptions += '<tr>'
-                sOptions += '<td align="center">'+ (i+1) +'</td>';
+                //sOptions += '<td align="center">'+ (i+1) +'</td>';
                 sOptions += '<td align="left " class="strong">' + Detalles[i].ItemCode + '</td>';
                 sOptions += '<td align="left ">' + Detalles[i].ItemName + '</td>';
 
                 sOptions += '<td align="right"> <input class="form-control input2" value="' + Detalles[i].PrecioUnitario + '" type="number" step="1" id="' + i +'PrecioU" onchange="javascript: ModificaLinea('+i+')"/> </td>';
-                sOptions += '<td align="center"> <p id="'+i+'Cantidad">' + Detalles[i].Cantidad + '</p></td>';
+                if(producto.Nombre.toUpperCase().includes("mano de obra".toUpperCase()))
+                {
+                    btn.disabled = true;
+                     sOptions += '<td align="center"> <input class="form-control input2" value="' + Detalles[i].Cantidad + '" type="number" step="1" id="'+i+ 'Cantidad" onchange="javascript: ModificaLinea('+i+')"/></td>';
+                }else{
+                     sOptions += '<td align="center"> <p id="'+i+'Cantidad">' + Detalles[i].Cantidad + '</p></td>';
+                }
+               
                 sOptions += '<td align="right"> <p id="' + i + 'Imp">' + Detalles[i].Impuestos + '</p></td>';
                 sOptions += '<td align="right"> <input class="form-control input2" readonnly value="' + Detalles[i].PorDescuento + '" type="number" step="1" id="' + i + 'PorDesc" onchange="javascript: ModificaLinea(' + i +')"/> </td>';
 
@@ -103,8 +116,16 @@ var RolAceptacion = false;
 
 
                 sOptions += '</tr>'
+
+                  
             }
             $("#tbody").html(sOptions);
+
+             for (var i = 0; i < Detalles.length; i++)
+             {
+                     ModificaLinea(i);
+
+             }
 
             ModificaTodo();
 
@@ -123,7 +144,13 @@ function ModificaLinea(i) {
 
 
     Detalles[i].Garantia = checkbox1.checked;
+    if (producto.Nombre.toUpperCase().includes("mano de obra".toUpperCase())) {
+    Subtotal = $("#" + i + "PrecioU").val() * $("#" + i + "Cantidad").val();
+
+    }else{
     Subtotal = $("#" + i + "PrecioU").val() * $("#" + i + "Cantidad").text();
+
+    }
 
     gananciaBruta = parseFloat($("#" + i + "PrecioU").val()) - producto.Costo;
 
@@ -134,7 +161,14 @@ function ModificaLinea(i) {
     TotalLinea = (Subtotal - Descuentos) + Impuestos;
 
     Detalles[i].PrecioUnitario = $("#" + i + "PrecioU").val();
+    if(producto.Nombre.toUpperCase().includes("mano de obra".toUpperCase()))
+    {
+    Detalles[i].Cantidad = $("#" + i + "Cantidad").val();
+
+    }else{
     Detalles[i].Cantidad = $("#" + i + "Cantidad").text();
+
+    }
     Detalles[i].PorDescuento = $("#" + i + "PorDesc").val();
     Detalles[i].Descuento = Descuentos;
     Detalles[i].Impuestos = Impuestos;
@@ -623,7 +657,31 @@ function Validar(Detalles) {
                 $(".moneda").text("$")
             }
         }
-    </script>
+    
+  function MeterManoObra()
+  {
+      
+      var btn = document.getElementById('agregaManoObra');
+       btn.disabled = true;
+      var detalle = {
+                    id: ManoObra.id,
+                    NumLinea: Detalles.length + 1,
+                    idEncabezado: 0,
+                    ItemCode: ManoObra.codSAP,
+                    ItemName: ManoObra.Nombre,
+                    PrecioUnitario: ManoObra.Precio,
+                    Cantidad: 1,
+                    PorDescuento: 0,
+                    Descuento: 0,
+                    Impuestos: 0,
+                    TotalLinea: 0,
+                    Garantia: false
+      };
+       Detalles.push(detalle);
+      RellenaTabla();
+  }
+                        
+  </script>
 }
 
 
@@ -637,6 +695,8 @@ function Validar(Detalles) {
                 <a asp-page="/Movimientos/Index" class="nav-link text-dark" style="text-decoration: underline;"><i class="fas fa-reply "></i>  Regresar</a>
                 <input hidden id="Detalle" value="@JsonConvert.SerializeObject(Model.Input.Detalle)" />
                 <input hidden id="ProductosHijos" value="@JsonConvert.SerializeObject(Model.ProductosHijos)" />
+                <input hidden id="ManoObra" value="@JsonConvert.SerializeObject(Model.ManoObra)" />
+
 
                 <input hidden id="idGeneral" value="@Model.Input.id" />
 
@@ -655,17 +715,17 @@ function Validar(Detalles) {
                             {
                                 case 1:
                                     {
-                                                                                                                <h3 class="text-dark mb-1">Oferta de Venta</h3>
+                                                                                                                                            <h3 class="text-dark mb-1">Oferta de Venta</h3>
                                         break;
                                     }
                                 case 2:
                                     {
-                                                                                                                <h3 class="text-dark mb-1">Entrega</h3>
+                                                                                                                                            <h3 class="text-dark mb-1">Entrega</h3>
                                         break;
                                     }
                                     case 3:
                                     {
-                                                                                                                <h3 class="text-dark mb-1">Cotización BackOffice</h3>
+                                                                <h3 class="text-dark mb-1">Cotización BackOffice</h3>
                                         break;
                                     }
                             }
@@ -692,15 +752,14 @@ function Validar(Detalles) {
 
                     </div>
                     <div class="col-sm-6">
-
-
+                         <button id="agregaManoObra" class="btn btn-rounded btn-outline-danger" style="margin-top: 27%;" onclick="javascript: MeterManoObra()"> <i class="fas fa-plus "></i> Mano De Obra</button>
                     </div>
                 </div>
                 <div class="table-responsive-sm">
                     <table class="table table-striped">
                         <thead>
                             <tr>
-                                <th class="center">#</th>
+                              <!--  <th class="center">#</th>-->
                                 <th>Código SAP</th>
                                 <th>Nombre</th>
                                 <th class="center">Precio Unitario</th>
@@ -721,7 +780,9 @@ function Validar(Detalles) {
                         <tbody id="tbody">
                         </tbody>
                     </table>
+                   
                 </div>
+               
                 <div class="row">
                     <div class="col-lg-4 col-sm-5">
                     </div>

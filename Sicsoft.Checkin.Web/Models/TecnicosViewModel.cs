@@ -15,5 +15,6 @@ namespace Boletaje.Models
 
         [StringLength(500)]
         public string Nombre { get; set; }
+        public int Letra { get; set; }
     }
 }
