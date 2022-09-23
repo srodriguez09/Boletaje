@@ -763,6 +763,8 @@
                 documentosbase64.push(detalle);
             };
             reader.readAsDataURL(input.files[0]);
+             
+
         }
 
         function eliminar(id) {
@@ -770,7 +772,7 @@
         }
 
         file.addEventListener('change', function (e) {
-
+            
             for (var i = 0; i < file.files.length; i++) {
                 var thumbnail_id = Math.floor(Math.random() * 30000) + '_' + Date.now();
                 createThumbnail(file, i, thumbnail_id);
@@ -1128,7 +1130,7 @@
 
                         </div>
                         <div class="preload">
-                            <img src="assets/images/preload.gif" alt="preload" />
+                            <img src="~/preloader.gif" alt="preload" />
                         </div>
                         <h2 id="success"></h2>
                     </div>
