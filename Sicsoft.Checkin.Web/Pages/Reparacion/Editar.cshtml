@@ -679,35 +679,80 @@
         var formData = new FormData();
         var documentosbase64 = [];
 
-        function getBase64(file, id) {
-            var reader = new FileReader();
-            reader.readAsDataURL(file);
-            reader.onload = function () {
-                console.log(reader.result);
-                var detalle = {
-                    id: id,
-                    idEncabezado: 0,
-                    base64: reader.result
-                }
-                documentosbase64.push(detalle);
-            };
-            reader.onerror = function (error) {
-                console.log('Error: ', error);
-            };
-        }
+     function resizedataURL(datas, wantedWidth, wantedHeight)
+    {
 
+    return new Promise((resolve, reject) => {
+        // We create an image to receive the Data URI
+        var img = document.createElement('img');
+    var retornar = "";
+     // We put the Data URI in the image's src attribute
+        img.src = datas;
+        // When the event "onload" is triggered we can resize the image.
+        img.onload = function()
+            {        
+
+            var height = this.height;
+            var width = this.width;
+
+            if(height > wantedHeight && width > wantedWidth)
+            {
+              while(height > wantedHeight )
+                {
+                     
+                      height = height - 100; 
+                }
+                while (width > wantedWidth) {
+                     width = width - 100; 
+                }
+                // We create a canvas and get its context.
+                var canvas = document.createElement('canvas');
+                var ctx = canvas.getContext('2d');
+
+                // We set the dimensions at the wanted size.
+                canvas.width = width;
+                canvas.height = height;
+
+                // We resize the image with the canvas method drawImage();
+                ctx.drawImage(this, 0, 0, width, height);
+
+                var dataURI = canvas.toDataURL();
+            retornar = dataURI;
+            resolve(retornar);
+            }else{
+                resolve(datas);
+            }
+
+                
+            };
+    })
+
+        
+
+       
+  
+
+    }
+ 
         function getBase642(event, id) {
             var input = event.target;
 
             var reader = new FileReader();
             reader.onload = function () {
                 var dataURL = reader.result;
-                console.log(dataURL);
-                var detalle = {
+
+               var imgResized = "";
+            
+                resizedataURL(dataURL, 1000, 1000).then((resized) => {
+                    imgResized = resized;
+                    var detalle = {
                     id: id,
-                    base64: dataURL
+                    base64: imgResized//dataURL
                 }
                 documentosbase64.push(detalle);
+                });
+
+                 
             };
             reader.readAsDataURL(input.files[0]);
         }
