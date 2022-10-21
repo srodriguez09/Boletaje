@@ -13,7 +13,7 @@
     </li>
 
 }
-@section styles{
+    @section styles{
     <style type="text/css">
         body {
             padding-top: 20px;
@@ -341,7 +341,7 @@
     </style>
 }
 
-@section scripts{
+    @section scripts{
 
 
     <script type="text/javascript">
@@ -352,18 +352,18 @@
             https://stipaltamar.github.io/dibujoCanvas/
             https://developer.mozilla.org/samples/domref/touchevents.html - https://developer.mozilla.org/es/docs/DOM/Touch_events
             http://bencentra.com/canvas/signature/signature.html - https://bencentra.com/code/2014/12/05/html5-canvas-touch-events.html
-*/
+        */
 
-        (function () { // Comenzamos una funcion auto-ejecutable
+        (function() { // Comenzamos una funcion auto-ejecutable
 
             // Obtenenemos un intervalo regular(Tiempo) en la pamtalla
-            window.requestAnimFrame = (function (callback) {
+            window.requestAnimFrame = (function(callback) {
                 return window.requestAnimationFrame ||
                     window.webkitRequestAnimationFrame ||
                     window.mozRequestAnimationFrame ||
                     window.oRequestAnimationFrame ||
                     window.msRequestAnimaitonFrame ||
-                    function (callback) {
+                    function(callback) {
                         window.setTimeout(callback, 1000 / 60);
                         // Retrasa la ejecucion de la funcion para mejorar la experiencia
                     };
@@ -379,7 +379,7 @@
             //var drawImage = document.getElementById("draw-image");
             var clearBtn = document.getElementById("draw-clearBtn");
             /*  *//*  var submitBtn = document.getElementById("draw-submitBtn");*/
-            clearBtn.addEventListener("click", function (e) {
+            clearBtn.addEventListener("click", function(e) {
                 // Definimos que pasa cuando el boton draw-clearBtn es pulsado
                 clearCanvas();
                 // drawImage.setAttribute("src", "");
@@ -395,7 +395,7 @@
             var drawing = false;
             var mousePos = { x: 0, y: 0 };
             var lastPos = mousePos;
-            canvas.addEventListener("mousedown", function (e) {
+            canvas.addEventListener("mousedown", function(e) {
                 /*
                   Mas alla de solo llamar a una funcion, usamos function (e){...}
                   para mas versatilidad cuando ocurre un evento
@@ -406,17 +406,17 @@
                 drawing = true;
                 lastPos = getMousePos(canvas, e);
             }, false);
-            canvas.addEventListener("mouseup", function (e) {
+            canvas.addEventListener("mouseup", function(e) {
                 drawing = false;
                 $("#Firma").val(canvas.toDataURL());
 
             }, false);
-            canvas.addEventListener("mousemove", function (e) {
+            canvas.addEventListener("mousemove", function(e) {
                 mousePos = getMousePos(canvas, e);
             }, false);
 
             // Activamos touchEvent para nuestra pagina
-            canvas.addEventListener("touchstart", function (e) {
+            canvas.addEventListener("touchstart", function(e) {
                 mousePos = getTouchPos(canvas, e);
                 console.log(mousePos);
                 e.preventDefault(); // Prevent scrolling when touching the canvas
@@ -427,14 +427,14 @@
                 });
                 canvas.dispatchEvent(mouseEvent);
             }, false);
-            canvas.addEventListener("touchend", function (e) {
+            canvas.addEventListener("touchend", function(e) {
                 e.preventDefault(); // Prevent scrolling when touching the canvas
                 var mouseEvent = new MouseEvent("mouseup", {});
                 canvas.dispatchEvent(mouseEvent);
                 $("#Firma").val(canvas.toDataURL());
 
             }, false);
-            canvas.addEventListener("touchleave", function (e) {
+            canvas.addEventListener("touchleave", function(e) {
                 // Realiza el mismo proceso que touchend en caso de que el dedo se deslice fuera del canvas
                 e.preventDefault(); // Prevent scrolling when touching the canvas
                 var mouseEvent = new MouseEvent("mouseup", {});
@@ -442,7 +442,7 @@
                 $("#Firma").val(canvas.toDataURL());
 
             }, false);
-            canvas.addEventListener("touchmove", function (e) {
+            canvas.addEventListener("touchmove", function(e) {
                 e.preventDefault(); // Prevent scrolling when touching the canvas
                 var touch = e.touches[0];
                 var mouseEvent = new MouseEvent("mousemove", {
@@ -514,165 +514,171 @@
     <script>
         var btn = document.getElementById('Guardar');
 
-        function ValidaForm(recibido1)
-        {
-            if(recibido1.PersonaContacto == undefined || recibido1.PersonaContacto == "")
-            {
+        function ValidaForm(recibido1) {
+            if (recibido1.PersonaContacto == undefined || recibido1.PersonaContacto == "") {
                 return false;
-            }else if(recibido1.NumeroPersonaContacto == undefined || recibido1.NumeroPersonaContacto == "")
-            {
+            } else if (recibido1.NumeroPersonaContacto == undefined || recibido1.NumeroPersonaContacto == "") {
                 return false;
 
-            }else if(recibido1.EmailPersonaContacto == undefined || recibido1.EmailPersonaContacto == "")
-            {
+            } else if (recibido1.EmailPersonaContacto == undefined || recibido1.EmailPersonaContacto == "") {
                 return false;
 
             }
-            else
-            {
+            else {
                 return true;
             }
         }
- 
+
         function onGuardar() {
-            btn.disabled = true;
+            try {
+                btn.disabled = true;
 
-            var bases64 = [];
+                var bases64 = [];
 
-            for (var i = 0; i < documentosbase64.length; i++) {
-               
-             var det = {
-                    id: 0,
-                    idEncabezado: 0,
-                    base64: documentosbase64[i].base64
+                for (var i = 0; i < documentosbase64.length; i++) {
 
-                };
-                bases64.push(det);
-                
-            }
-            var recibido1 =
-            {
-                id: 0,
-                TipoLlamada: null,
-                Series: 0,
-                Status: $("#status").val(),
-                CardCode: $("#cardcode").val(),
-                DocEntry: 0,
-                DocNum: 0,
-                SerieFabricante: "",
-                ItemCode: $("#productos").val(),
-                Asunto: $("#asunto").val(),
-                TipoCaso: $("#tp").val(),
-                FechaSISO: null,
-                LugarReparacion: $("#lReparacion").val(),
-                SucRecibo: $("#sr").val() ,
-                SucRetiro: $("#srt").val(),
-                Comentarios: $("#comentarios").val() ,
-                TratadoPor: 0,
-                Garantia: 0,
-                Tecnico: $("#tecnico").val(),
-                ProcesadaSAP: false,
-                Firma: $("#Firma").val(),
-                Horas: $("#horas").val(),
-                PersonaContacto: $("#personaContacto").val(),
-                EmailPersonaContacto: $("#emailPersonaContacto").val(),
-                NumeroPersonaContacto: $("#telefonoPersonaContacto").val(),
+                    var det = {
+                        id: 0,
+                        idEncabezado: 0,
+                        base64: documentosbase64[i].base64
 
-                Adjuntos: bases64
-            }
+                    };
+                    bases64.push(det);
 
-            if(!ValidaForm(recibido1))
-            {
-                Swal.fire({
-                                        icon: 'error',
-                                        title: 'Oops...',
-                                        text: 'Faltan datos por rellenar ' 
-
-                                    })
-            }else{
-                 Swal.fire({
-                    title: '¿Desea guardar los cambios?',
-                    showDenyButton: true,
-                    showCancelButton: false,
-                    confirmButtonText: `Aceptar`,
-                    denyButtonText: `Cancelar`,
-                    customClass: {
-                        confirmButton: 'swalBtnColor',
-                        denyButton: 'swalDeny'
-                    },
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        var recibidos = recibido1;
-
-                        $.ajax({
-                            type: 'POST',
-
-                            url: '@Url.Page("Nuevo", "Generar")',
-                            dataType: 'json',
-                            data: { recibido: recibidos },
-                            headers: {
-                                RequestVerificationToken: $('input:hidden[name="__RequestVerificationToken"]').val()
-                            },
-                            success: function (json) {
-
-                                $("#divProcesando").hide();
-
-                                if ($('.modal-backdrop').is(':visible')) {
-
-                                    $('body').removeClass('modal-open');
-                                    $('.modal-backdrop').hide();
-                                }
-                                console.log("resultado " + json.mensaje);
-                                if (json.success == true) {
-                                    Swal.fire({
-                                        title: "Ha sido generado con éxito",
-
-                                        icon: 'success',
-                                        showCancelButton: false,
-
-                                        confirmButtonText: 'OK',
-                                        customClass: {
-                                            confirmButton: 'swalBtnColor',
-
-                                        },
-                                    }).then((result) => {
-                                        if (result.isConfirmed) {
-
-                                            window.location.href = window.location.href.split("/Nuevo")[0];
-                                        }
-                                    })
-
-                                } else {
-                                    Swal.fire({
-                                        icon: 'error',
-                                        title: 'Oops...',
-                                        text: 'Ha ocurrido un error al intentar guardar ' + json.mensaje
-
-                                    })
-                                }
-                            },
-
-                            beforeSend: function (xhr) {
-
-                                $("#divProcesando").modal("show");
-                            },
-                            complete: function () {
-
-                            },
-                            error: function (error) {
-
-                            }
-                        });
-                    } else {
-                        btn.disabled = false;
-                    }
                 }
-               )
+                var recibido1 =
+                {
+                    id: 0,
+                    TipoLlamada: null,
+                    Series: 0,
+                    Status: $("#status").val(),
+                    CardCode: $("#cardcode").val(),
+                    DocEntry: 0,
+                    DocNum: 0,
+                    SerieFabricante: "",
+                    ItemCode: $("#productos").val(),
+                    Asunto: $("#asunto").val(),
+                    TipoCaso: $("#tp").val(),
+                    FechaSISO: null,
+                    LugarReparacion: $("#lReparacion").val(),
+                    SucRecibo: $("#sr").val(),
+                    SucRetiro: $("#srt").val(),
+                    Comentarios: $("#comentarios").val(),
+                    TratadoPor: 0,
+                    Garantia: 0,
+                    Tecnico: $("#tecnico").val(),
+                    ProcesadaSAP: false,
+                    Firma: $("#Firma").val(),
+                    Horas: $("#horas").val(),
+                    PersonaContacto: $("#personaContacto").val(),
+                    EmailPersonaContacto: $("#emailPersonaContacto").val(),
+                    NumeroPersonaContacto: $("#telefonoPersonaContacto").val(),
+
+                    Adjuntos: bases64
+                }
+
+                if (!ValidaForm(recibido1)) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: 'Faltan datos por rellenar '
+
+                    })
+                } else {
+                    Swal.fire({
+                        title: '¿Desea guardar los cambios?',
+                        showDenyButton: true,
+                        showCancelButton: false,
+                        confirmButtonText: `Aceptar`,
+                        denyButtonText: `Cancelar`,
+                        customClass: {
+                            confirmButton: 'swalBtnColor',
+                            denyButton: 'swalDeny'
+                        },
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            var recibidos = recibido1;
+
+                            $.ajax({
+                                type: 'POST',
+
+                                url: '@Url.Page("Nuevo", "Generar")',
+                                dataType: 'json',
+                                data: { recibido: recibidos },
+                                headers: {
+                                    RequestVerificationToken: $('input:hidden[name="__RequestVerificationToken"]').val()
+                                },
+                                success: function(json) {
+
+                                    $("#divProcesando").hide();
+
+                                    if ($('.modal-backdrop').is(':visible')) {
+
+                                        $('body').removeClass('modal-open');
+                                        $('.modal-backdrop').hide();
+                                    }
+                                    console.log("resultado " + json.mensaje);
+                                    if (json.success == true) {
+                                        Swal.fire({
+                                            title: "Ha sido generado con éxito",
+
+                                            icon: 'success',
+                                            showCancelButton: false,
+
+                                            confirmButtonText: 'OK',
+                                            customClass: {
+                                                confirmButton: 'swalBtnColor',
+
+                                            },
+                                        }).then((result) => {
+                                            if (result.isConfirmed) {
+
+                                                window.location.href = window.location.href.split("/Nuevo")[0];
+                                            }
+                                        })
+
+                                    } else {
+                                        Swal.fire({
+                                            icon: 'error',
+                                            title: 'Oops...',
+                                            text: 'Ha ocurrido un error al intentar guardar ' + json.mensaje
+
+                                        })
+                                    }
+                                },
+
+                                beforeSend: function(xhr) {
+
+                                    $("#divProcesando").modal("show");
+                                },
+                                complete: function() {
+
+                                },
+                                error: function(error) {
+
+                                }
+                            });
+                        } else {
+                            btn.disabled = false;
+                        }
+                    }
+                    )
+                }
+
+
+                btn.disabled = false;
+                //$("#formTipos").submit();
+            } catch (e) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Ha ocurrido un error al intentar guardar ' + e + ' - ' + e.stack
+
+                })
             }
 
-            
-            btn.disabled = false;
-            //$("#formTipos").submit();
+
+
         }
     </script>
     <script>
@@ -681,12 +687,11 @@
             var sOptions = '';
 
             $("#productos").html('');
-            for (var i = 0; i < lista.length; i++)
-            {
+            for (var i = 0; i < lista.length; i++) {
 
-                sOptions += ' <option value="' + lista[i].itemCode + ' / ' + lista[i].manufSN + '">' + lista[i].itemCode  + ' - '+lista[i].itemName + ' - ' + lista[i].manufSN +'</option>';
+                sOptions += ' <option value="' + lista[i].itemCode + ' / ' + lista[i].manufSN + '">' + lista[i].itemCode + ' - ' + lista[i].itemName + ' - ' + lista[i].manufSN + '</option>';
 
-                }
+            }
             $("#productos").html(sOptions);
         }
 
@@ -695,33 +700,33 @@
             var CardCode = $("#cardcode").val();
             CardCode = CardCode.split("/")[0];
             $.ajax({
-                        type: 'GET',
+                type: 'GET',
 
-                        url: '@Url.Page("Nuevo", "Productos")',
-                        dataType: 'json',
+                url: '@Url.Page("Nuevo", "Productos")',
+                dataType: 'json',
                 data: { idB: CardCode },
-                        headers: {
-                            RequestVerificationToken: $('input:hidden[name="__RequestVerificationToken"]').val()
-                        },
-                        success: function (json) {
+                headers: {
+                    RequestVerificationToken: $('input:hidden[name="__RequestVerificationToken"]').val()
+                },
+                success: function(json) {
 
-                            console.log(json);
+                    console.log(json);
 
-                            rellenaProductos(json);
+                    rellenaProductos(json);
 
-                        },
+                },
 
-                        beforeSend: function (xhr) {
+                beforeSend: function(xhr) {
 
 
-                        },
-                        complete: function () {
+                },
+                complete: function() {
 
-                        },
-                        error: function (error) {
+                },
+                error: function(error) {
 
-                        }
-                    });
+                }
+            });
 
         }
 
@@ -750,94 +755,90 @@
         //        console.log('Error: ', error);
         //    };
         //}
-        
-function resizedataURL(datas, wantedWidth, wantedHeight)
-    {
 
-    return new Promise((resolve, reject) => {
-        // We create an image to receive the Data URI
-        var img = document.createElement('img');
-    var retornar = "";
-     // We put the Data URI in the image's src attribute
-        img.src = datas;
-        // When the event "onload" is triggered we can resize the image.
-        img.onload = function()
-            {        
+        function resizedataURL(datas, wantedWidth, wantedHeight) {
 
-            var height = this.height;
-            var width = this.width;
+            return new Promise((resolve, reject) => {
+                // We create an image to receive the Data URI
+                var img = document.createElement('img');
+                var retornar = "";
+                // We put the Data URI in the image's src attribute
+                img.src = datas;
+                // When the event "onload" is triggered we can resize the image.
+                img.onload = function() {
 
-            
+                    var height = this.height;
+                    var width = this.width;
 
-            
 
-            if(height > wantedHeight && width > wantedWidth)
-            {
-                while(height > wantedHeight )
-                {
-                     
-                      height = height - 100; 
-                }
-                while (width > wantedWidth) {
-                     width = width - 100; 
-                }
-                // We create a canvas and get its context.
-                var canvas = document.createElement('canvas');
-                var ctx = canvas.getContext('2d');
 
-                // We set the dimensions at the wanted size.
-                canvas.width = width;
-                canvas.height = height;
 
-                // We resize the image with the canvas method drawImage();
-                ctx.drawImage(this, 0, 0, width, height);
 
-                var dataURI = canvas.toDataURL();
-            retornar = dataURI;
-            resolve(retornar);
-                /////////////////////////////////////////
-                // Use and treat your Data URI here !! //
-                /////////////////////////////////////////
-            }else{
-                resolve(datas);
-            }
+                    if (height > wantedHeight && width > wantedWidth) {
+                        while (height > wantedHeight) {
 
-                
-            };
-    })
+                            height = height - 100;
+                        }
+                        while (width > wantedWidth) {
+                            width = width - 100;
+                        }
+                        // We create a canvas and get its context.
+                        var canvas = document.createElement('canvas');
+                        var ctx = canvas.getContext('2d');
 
-        
+                        // We set the dimensions at the wanted size.
+                        canvas.width = width;
+                        canvas.height = height;
 
-       
-  
+                        // We resize the image with the canvas method drawImage();
+                        ctx.drawImage(this, 0, 0, width, height);
 
-    }
+                        var dataURI = canvas.toDataURL();
+                        retornar = dataURI;
+                        resolve(retornar);
+                        /////////////////////////////////////////
+                        // Use and treat your Data URI here !! //
+                        /////////////////////////////////////////
+                    } else {
+                        resolve(datas);
+                    }
+
+
+                };
+            })
+
+
+
+
+
+
+        }
         function getBase642(event, id) {
             var input = event.target;
 
             var reader = new FileReader();
-            reader.onload = function () {
+            reader.onload = function() {
                 var dataURL = reader.result;
-                 
 
-                 var imgResized = "";
-            
-                resizedataURL(dataURL, 1000, 1000).then((resized) => {
+
+                var imgResized = "";
+
+                resizedataURL(dataURL, 600, 600).then((resized) => {
                     imgResized = resized;
                     var detalle = {
-                    id: id,
-                    base64: imgResized//dataURL
-                }
-                documentosbase64.push(detalle);
+                        id: id,
+                        base64: imgResized//dataURL
+                    }
+                    documentosbase64.push(detalle);
                 });
-                
-                 
 
-                
-               
+
+
+
+
             };
             reader.readAsDataURL(input.files[0]);
-             
+
 
         }
 
@@ -845,8 +846,8 @@ function resizedataURL(datas, wantedWidth, wantedHeight)
             documentosbase64.splice(documentosbase64.indexOf(documentosbase64.find(a => a.id == id)), 1)
         }
 
-        file.addEventListener('change', function (e) {
-            
+        file.addEventListener('change', function(e) {
+
             for (var i = 0; i < file.files.length; i++) {
                 var thumbnail_id = Math.floor(Math.random() * 30000) + '_' + Date.now();
                 createThumbnail(file, i, thumbnail_id);
@@ -859,7 +860,7 @@ function resizedataURL(datas, wantedWidth, wantedHeight)
 
 
 
-        var createThumbnail = function (file, iterator, thumbnail_id) {
+        var createThumbnail = function(file, iterator, thumbnail_id) {
             var thumbnail = document.createElement('div');
             thumbnail.classList.add('thumbnail', thumbnail_id);
             thumbnail.dataset.id = thumbnail_id;
@@ -869,25 +870,25 @@ function resizedataURL(datas, wantedWidth, wantedHeight)
             createCloseButton(thumbnail_id);
         }
 
-        var createCloseButton = function (thumbnail_id) {
+        var createCloseButton = function(thumbnail_id) {
             var closeButton = document.createElement('div');
             closeButton.classList.add('close-button');
             closeButton.innerText = 'x';
             document.getElementsByClassName(thumbnail_id)[0].appendChild(closeButton);
         }
 
-        var clearFormDataAndThumbnails = function () {
+        var clearFormDataAndThumbnails = function() {
             for (var key of formData.keys()) {
                 formData.delete(key);
             }
 
-            document.querySelectorAll('.thumbnail').forEach(function (thumbnail) {
+            document.querySelectorAll('.thumbnail').forEach(function(thumbnail) {
                 thumbnail.remove();
             });
         }
 
 
-        document.body.addEventListener('click', function (e) {
+        document.body.addEventListener('click', function(e) {
             if (e.target.classList.contains('close-button')) {
                 e.target.parentNode.remove();
                 formData.delete(e.target.parentNode.dataset.id);
@@ -900,8 +901,8 @@ function resizedataURL(datas, wantedWidth, wantedHeight)
     </script>
 }
 
-<img hidden id="imagenPrueba" />
-@*<form method="post" id="formTipos" role="form" novalidate class="needs-validation " enctype="multipart/form-data">*@
+    <img hidden id="imagenPrueba" />
+    @*<form method="post" id="formTipos" role="form" novalidate class="needs-validation " enctype="multipart/form-data">*@
     <div class="row">
         <div class="col-md-12">
             <div class="card">
@@ -932,294 +933,297 @@ function resizedataURL(datas, wantedWidth, wantedHeight)
 
                                 <datalist id="cardcodes">
                                     @foreach (var item in Model.Clientes.Clientes)
+                                {
+                                    <option value="@item.CardCode / @item.CardName"> </option>
+                                }
+                            </datalist>
+                            <a asp-page="/Client/Nuevo" style="text-decoration: underline;" class="nav-link" target="_blank">Crear Cliente</a>
+
+
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Producto:</label>
+                            <select id="productos" class="form-control" asp-for="Input.ItemCode" required>
+                                <option value="0">Seleccione</option>
+
+                            </select>
+                            <a asp-page="/Boletas/Nuevo" style="text-decoration: underline;" class="nav-link" target="_blank">Crear Tarjeta Equipo</a>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label>Estado:</label>
+                            <select id="status" class="form-control" asp-for="Input.Status" required>
+                                <!-- <option value="0">Seleccione</option>-->
+                                @foreach (var item in Model.Status)
+                                {
+                                    if (item.Nombre.ToLower().Contains("ABRIR".ToLower()))
                                     {
-                                        <option value="@item.CardCode / @item.CardName"> </option>
+                                        <option value="@item.idSAP" selected>@item.Nombre</option>
+
                                     }
-                                </datalist>
-                                <a asp-page="/Client/Nuevo" style="text-decoration: underline;" class="nav-link" target="_blank">Crear Cliente</a>
-
-
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label>Producto:</label>
-                                <select id="productos" class="form-control" asp-for="Input.ItemCode" required>
-                                    <option value="0">Seleccione</option>
-
-                                </select>
-                                <a asp-page="/Boletas/Nuevo" style="text-decoration: underline;" class="nav-link" target="_blank">Crear Tarjeta Equipo</a>
-                            </div>
-                        </div>
-
-                        <div class="col-md-4">
-                            <div class="form-group">
-                                <label>Estado:</label>
-                                <select id="status" class="form-control" asp-for="Input.Status" required>
-                                    <!-- <option value="0">Seleccione</option>-->
-                                    @foreach (var item in Model.Status)
+                                    else
                                     {
-                                        if (item.Nombre.ToLower().Contains("ABRIR".ToLower()))
-                                        {
-                                            <option value="@item.idSAP" selected>@item.Nombre</option>
+                                        <option value="@item.idSAP">@item.Nombre</option>
 
-                                        }
-                                        else
-                                        {
-                                            <option value="@item.idSAP">@item.Nombre</option>
-
-                                        }
                                     }
-                                </select>
-                            </div>
+                                }
+                            </select>
                         </div>
-                        <div class="col-md-4">
-                            <div class="form-group">
-                                <label>Tipo de Caso:</label>
-                                <select id="tp" class="form-control" asp-for="Input.TipoCaso" required>
-                                    <option value="0">Seleccione</option>
-                                    @foreach (var item in Model.TP)
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label>Tipo de Caso:</label>
+                            <select id="tp" class="form-control" asp-for="Input.TipoCaso" required>
+                                <option value="0">Seleccione</option>
+                                @foreach (var item in Model.TP)
+                                {
+                                    <option value="@item.idSAP">@item.Nombre</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label>Lugar Reparación:</label>
+                            <select id="lReparacion" class="form-control" asp-for="Input.LugarReparacion" required>
+                                <option value="1">Taller</option>
+                                <option value="2">Visita</option>
+
+                            </select>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label>Persona de Contacto:</label>
+                            <input type="text" class="form-control form-control-lg" id="personaContacto" placeholder="Nombre Persona Contacto" asp-for="Input.PersonaContacto">
+
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label> Correo Persona Contacto:</label>
+                            <input type="email" class="form-control form-control-lg" id="emailPersonaContacto" placeholder="Email Persona Contacto" asp-for="Input.EmailPersonaContacto">
+
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label>Telefono Persona Contacto:</label>
+                            <input type="tel" class="form-control form-control-lg" id="telefonoPersonaContacto" placeholder="Telefono Persona Contacto" asp-for="Input.NumeroPersonaContacto">
+
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label>Sucursal de Recibo:</label>
+                            <select id="sr" class="form-control" asp-for="Input.SucRecibo" required>
+                                <option value="0">Seleccione</option>
+                                @{
+                                    var i = 0;
+                                }
+                                @foreach (var item in Model.Sucursales)
+                                {
+                                    @if (i == 0)
+                                    {
+                                        <option value="@item.idSAP" selected>@item.Nombre</option>
+                                    }
+                                    else
                                     {
                                         <option value="@item.idSAP">@item.Nombre</option>
                                     }
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="form-group">
-                                <label>Lugar Reparación:</label>
-                                <select id="lReparacion" class="form-control" asp-for="Input.LugarReparacion" required>
-                                    <option value="1">Taller</option>
-                                    <option value="2">Visita</option>
-
-                                </select>
-                            </div>
-                        </div>
-
-                    </div>
-                    <div class="row">
-                        <div class="col-md-4">
-                            <div class="form-group">
-                                <label>Persona de Contacto:</label>
-                                  <input type="text" class="form-control form-control-lg" id="personaContacto" placeholder="Nombre Persona Contacto" asp-for="Input.PersonaContacto">
-
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="form-group">
-                                <label> Correo Persona Contacto:</label>
-                                  <input type="email" class="form-control form-control-lg" id="emailPersonaContacto" placeholder="Email Persona Contacto" asp-for="Input.EmailPersonaContacto">
-                                 
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="form-group">
-                                <label>Telefono Persona Contacto:</label>
-                                  <input type="tel" class="form-control form-control-lg" id="telefonoPersonaContacto" placeholder="Telefono Persona Contacto" asp-for="Input.NumeroPersonaContacto">
-                                
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-sm-6">
-                            <div class="form-group">
-                                <label>Sucursal de Recibo:</label>
-                                <select id="sr" class="form-control" asp-for="Input.SucRecibo" required>
-                                    <option value="0">Seleccione</option>
-                                    @{var i = 0;}
-                                    @foreach (var item in Model.Sucursales)
-                                    {
-                                    @if(i == 0)
-                                    {
-                                    <option value="@item.idSAP" selected>@item.Nombre</option>
-                                    }else
-                                    {
-                                    <option value="@item.idSAP">@item.Nombre</option>
-                                    }
                                     i++;
-                                    }
-                                </select>
-                            </div>
+                                }
+                            </select>
                         </div>
-                        <div class="col-sm-6">
-                            <div class="form-group">
-                                <label>Sucursal de Retiro:</label>
-                                <select id="srt" class="form-control" asp-for="Input.SucRetiro" required>
-                                    @{var i = 0;}
-                                    <option value="0">Seleccione</option>
-                                    @foreach (var item in Model.Sucursales)
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label>Sucursal de Retiro:</label>
+                            <select id="srt" class="form-control" asp-for="Input.SucRetiro" required>
+                                @{
+                                    var i = 0;
+                                }
+                                <option value="0">Seleccione</option>
+                                @foreach (var item in Model.Sucursales)
+                                {
+                                    @if (i == 0)
                                     {
-                                    @if(i == 0)
+                                        <option value="@item.idSAP" selected>@item.Nombre</option>
+                                    }
+                                    else
                                     {
-                                    <option value="@item.idSAP" selected>@item.Nombre</option>
-                                    }else
-                                    {
-                                    <option value="@item.idSAP">@item.Nombre</option>
+                                        <option value="@item.idSAP">@item.Nombre</option>
                                     }
 
 
 
-                                        i++;
-                                    }
-                                </select>
-                            </div>
+                                    i++;
+                                }
+                            </select>
                         </div>
-
-                        <div class="col-sm-6">
-
-                            <div class="form-group">
-                                <label>Técnico:</label>
-                                <select id="tecnico" class="form-control" asp-for="Input.Tecnico" required>
-                             
-                                    @foreach (var item in Model.Tecnicos)
-                                    {
-                                        if (item.Nombre.ToLower().Contains("asignar"))
-                                        {
-                                            <option value="@item.idSAP" selected>@item.Nombre</option>
-
-                                        }
-                                        else
-                                        {
-                                            <option value="@item.idSAP">@item.Nombre</option>
-
-                                        }
-                                    }
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-sm-6">
-                            <div class="form-group">
-                                <label>Horas:</label>
-                                <input type="number" min="0" step="1" class="form-control" asp-for="Input.Horas" id="horas" required />
-                            </div>
-                        </div>
-
                     </div>
 
+                    <div class="col-sm-6">
 
+                        <div class="form-group">
+                            <label>Técnico:</label>
+                            <select id="tecnico" class="form-control" asp-for="Input.Tecnico" required>
+
+                                @foreach (var item in Model.Tecnicos)
+                                {
+                                    if (item.Nombre.ToLower().Contains("asignar"))
+                                    {
+                                        <option value="@item.idSAP" selected>@item.Nombre</option>
+
+                                    }
+                                    else
+                                    {
+                                        <option value="@item.idSAP">@item.Nombre</option>
+
+                                    }
+                                }
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label>Horas:</label>
+                            <input type="number" min="0" step="1" class="form-control" asp-for="Input.Horas" id="horas" required />
+                        </div>
+                    </div>
+
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label>Asunto:</label>
+
+                            <input type="text" class="form-control form-control-lg" id="asunto" placeholder="Asunto" asp-for="Input.Asunto">
+
+
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label>Comentarios:</label>
+
+                            <textarea class="form-control form-control-lg" id="comentarios" placeholder="Comentarios" asp-for="Input.Comentarios"> </textarea>
+
+
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
+</div>
 
+<div class="row">
+    <div class="col-sm-12">
+        <div class="card">
 
-    <div class="row">
-        <div class="col-md-12">
-            <div class="card">
-                <div class="card-body">
+            <div class="card-body">
+                <p>Firmar a continuación:</p>
+                <div class="contenedor">
+
                     <div class="row">
                         <div class="col-md-12">
-                            <div class="form-group">
-                                <label>Asunto:</label>
-
-                                <input type="text" class="form-control form-control-lg" id="asunto" placeholder="Asunto" asp-for="Input.Asunto">
-
-
-                            </div>
-                        </div>
-                        <div class="col-md-12">
-                            <div class="form-group">
-                                <label>Comentarios:</label>
-
-                                <textarea class="form-control form-control-lg" id="comentarios" placeholder="Comentarios" asp-for="Input.Comentarios"> </textarea>
-
-
-                            </div>
+                            <canvas id="draw-canvas" width="300" height="300">
+                                No tienes un buen navegador.
+                            </canvas>
                         </div>
                     </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="row">
-        <div class="col-sm-12">
-            <div class="card">
-
-                <div class="card-body">
-                    <p>Firmar a continuación:</p>
-                    <div class="contenedor">
-
-                        <div class="row">
-                            <div class="col-md-12">
-                                <canvas id="draw-canvas" width="300" height="300">
-                                    No tienes un buen navegador.
-                                </canvas>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-12">
-
-                                <input type="button" class="btn btn-rounded btn-outline-primary" id="draw-clearBtn" value="Borrar Firma"></input>
-
-                                <label hidden>Color</label>
-                                <input type="color" id="color" hidden>
-                                <label>Tamaño Puntero</label>
-                                <input type="range" id="puntero" min="1" default="1" max="5" width="10%">
-
-
-                            </div>
-
-                        </div>
-
-
-                    </div>
-                    <input hidden type="text" id="Firma" asp-for="Input.Firma" />
-
-                </div>
-            </div>
-
-        </div>
-
-    </div>
-    <div class="row">
-        <div class="col-sm-12">
-            <div class="card">
-                <div class="card-header">
                     <div class="row">
-                        <div class="col-sm-6">
-                            <h5 class="title">Subir Imágenes</h5>
+                        <div class="col-md-12">
+
+                            <input type="button" class="btn btn-rounded btn-outline-primary" id="draw-clearBtn" value="Borrar Firma"></input>
+
+                            <label hidden>Color</label>
+                            <input type="color" id="color" hidden>
+                            <label>Tamaño Puntero</label>
+                            <input type="range" id="puntero" min="1" default="1" max="5" width="10%">
+
 
                         </div>
 
-                        <div class="col-sm-6" style="text-align: right">
+                    </div>
 
 
-                        </div>
+                </div>
+                <input hidden type="text" id="Firma" asp-for="Input.Firma" />
+
+            </div>
+        </div>
+
+    </div>
+
+</div>
+<div class="row">
+    <div class="col-sm-12">
+        <div class="card">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-sm-6">
+                        <h5 class="title">Subir Imágenes</h5>
+
+                    </div>
+
+                    <div class="col-sm-6" style="text-align: right">
                     </div>
                 </div>
-                <div class="card-body">
+            </div>
+            <div class="card-body">
 
-                    <div id="wrapper">
+                <div id="wrapper">
 
-                        <div id="container-input">
-                            <div class="wrap-file">
-                                <div class="content-icon-camera">
-                                    <input type="file" id="file" name="file[]" accept="image/*" multiple asp-for="Adjuntos" />
-                                    <div class="icon-camera"></div>
-                                </div>
-                                <div id="preview-images">
-
-                                </div>
+                    <div id="container-input">
+                        <div class="wrap-file">
+                            <div class="content-icon-camera">
+                                <input type="file" id="file" name="file[]" accept="image/*" multiple asp-for="Adjuntos" />
+                                <div class="icon-camera"></div>
                             </div>
+                            <div id="preview-images">
+                            </div>
+                        </div>
 
-                        </div>
-                        <div class="preload">
-                            <img src="~/preloader.gif" alt="preload" />
-                        </div>
-                        <h2 id="success"></h2>
                     </div>
+                    <div class="preload">
+                        <img src="~/preloader.gif" alt="preload" />
+                    </div>
+                    <h2 id="success"></h2>
                 </div>
             </div>
         </div>
-
     </div>
 
-    <div class="row">
-        <div class="col-md-12">
-            <div class="form-group">
-                <button type="button" id="Guardar" class="btn btn-rounded btn-outline-success" onclick="javascript: onGuardar()">Guardar Cambios</button>
-            </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="form-group">
+            <button type="button" id="Guardar" class="btn btn-rounded btn-outline-success" onclick="javascript: onGuardar()">Guardar Cambios</button>
         </div>
     </div>
+</div>
 @*</form>*@

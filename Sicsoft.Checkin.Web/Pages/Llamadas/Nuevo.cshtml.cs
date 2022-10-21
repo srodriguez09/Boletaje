@@ -223,7 +223,7 @@ namespace Boletaje.Pages.Llamadas
                 var obj = new
                 {
                     success = false,
-                    mensaje = "Error en el exception: -> " + ex.Message
+                    mensaje = "Error en el exception: -> " + ex.Message + " -> " + ex.StackTrace.ToString()
                 };
                 return new JsonResult(obj);
             }
