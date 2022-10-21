@@ -13,7 +13,7 @@
     </li>
 
 }
-@section styles{
+    @section styles{
 
     <style>
 
@@ -163,14 +163,14 @@
 
 }
 
-@section scripts{
+    @section scripts{
     @*@{await Html.RenderPartialAsync("_ValidationScriptsPartial");}*@
 
     <script>
-        $(document).ready(function () {
+        $(document).ready(function() {
 
-            jQuery(document).ready(function ($) {
-                $(document).ready(function () {
+            jQuery(document).ready(function($) {
+                $(document).ready(function() {
                 });
             });
             onChangeTipoMovimiento();
@@ -179,12 +179,12 @@
 
 
         var ProdCadena = [];
-    var ProdCadenaM = [];
-    var ErroresP = [];
+        var ProdCadenaM = [];
+        var ErroresP = [];
         var Errores = [];
         var Control = [];
         function Recuperar() {
-           
+
             ProdCadena = [];
             ProdCadenaM = [];
             ErroresP = [];
@@ -192,11 +192,11 @@
 
             var disponibles = JSON.parse($("#HijosDisponibles").val());
             var seleccionados = JSON.parse($("#HijosSeleccionados").val());  //Viene de input
-        Errores = JSON.parse($("#Errores").val());
-        Control = JSON.parse($("#Control").val());
-        var idError = '@Model.Encabezado.idDiagnostico';
+            Errores = JSON.parse($("#Errores").val());
+            Control = JSON.parse($("#Control").val());
+            var idError = '@Model.Encabezado.idDiagnostico';
 
-        console.log(disponibles);
+            console.log(disponibles);
 
             for (var i = 0; i < disponibles.length; i++) {
                 var detalle = {
@@ -227,53 +227,53 @@
                 };
                 ProdCadenaM.push(detalle);
 
-        }
-
-        if (parseInt(idError) > 0) {
-            var ErroresTemp = Errores.filter(a => a.idDiagnostico == parseInt(idError));
-            for (var i = 0; i < ErroresTemp.length; i++) {
-                var detalle = {
-                    id: ErroresTemp[i].id,
-                    idDiagnostico: ErroresTemp[i].idDiagnostico,
-                    Descripcion: ErroresTemp[i].Descripcion,
-                    Diagnostico: ErroresTemp[i].Diagnostico
-
-
-                };
-                ErroresP.push(detalle);
-
             }
 
-        }
-        $("#rowRepDevolver").hide();
+            if (parseInt(idError) > 0) {
+                var ErroresTemp = Errores.filter(a => a.idDiagnostico == parseInt(idError));
+                for (var i = 0; i < ErroresTemp.length; i++) {
+                    var detalle = {
+                        id: ErroresTemp[i].id,
+                        idDiagnostico: ErroresTemp[i].idDiagnostico,
+                        Descripcion: ErroresTemp[i].Descripcion,
+                        Diagnostico: ErroresTemp[i].Diagnostico
+
+
+                    };
+                    ErroresP.push(detalle);
+
+                }
+
+            }
+            $("#rowRepDevolver").hide();
             RellenaTablaG();
             RellenaTablaM();
-    }
+        }
 
-    function onChangeDiagnostico() {
-        var idError = $("#idDiag").val();
-        ErroresP = [];
-        if (parseInt(idError) > 0) {
-           var ErroresTemp = Errores.filter(a => a.idDiagnostico == parseInt(idError));
-            for (var i = 0; i < ErroresTemp.length; i++) {
-                var detalle = {
-                    id: ErroresTemp[i].id,
-                    idDiagnostico: ErroresTemp[i].idDiagnostico,
-                    Descripcion: ErroresTemp[i].Descripcion,
-                    Diagnostico: ErroresTemp[i].Diagnostico
+        function onChangeDiagnostico() {
+            var idError = $("#idDiag").val();
+            ErroresP = [];
+            if (parseInt(idError) > 0) {
+                var ErroresTemp = Errores.filter(a => a.idDiagnostico == parseInt(idError));
+                for (var i = 0; i < ErroresTemp.length; i++) {
+                    var detalle = {
+                        id: ErroresTemp[i].id,
+                        idDiagnostico: ErroresTemp[i].idDiagnostico,
+                        Descripcion: ErroresTemp[i].Descripcion,
+                        Diagnostico: ErroresTemp[i].Diagnostico
 
 
-                };
-                ErroresP.push(detalle);
+                    };
+                    ErroresP.push(detalle);
+
+                }
 
             }
 
+            RellenaTablaG();
+            RellenaTablaM();
+
         }
-
-        RellenaTablaG();
-        RellenaTablaM();
-
-    }
 
         function InsertarProductoTablaMia(i) {
             var detalle =
@@ -281,7 +281,7 @@
                 id: 0,
                 idEncabezado: "",
                 idProducto: ProdCadena[i].idProducto,
-                ItemCode: ProdCadena[i].ItemCode  ,
+                ItemCode: ProdCadena[i].ItemCode,
                 Cantidad: ProdCadena[i].Cantidad,
                 Stock: ProdCadena[i].Stock
 
@@ -304,7 +304,7 @@
                 idProducto: ProdCadenaM[i].idProducto,
                 ItemCode: ProdCadenaM[i].ItemCode,
                 Cantidad: ProdCadenaM[i].Cantidad,
-                    Stock: ProdCadenaM[i].Stock
+                Stock: ProdCadenaM[i].Stock
 
 
             }
@@ -416,8 +416,7 @@
                     if (ProdCadenaM[i].idError == ErroresP[a].id) {
                         sOptions += '<option value="' + ErroresP[a].id + '" selected>' + ErroresP[a].Descripcion + '</option>';
 
-                    } else
-                    {
+                    } else {
                         sOptions += '<option value="' + ErroresP[a].id + '">' + ErroresP[a].Descripcion + '</option>';
 
                     }
@@ -453,7 +452,7 @@
                     ProdCadenaM.push(detalle);
                 }
             }
-           
+
 
 
             var sOptions = '';
@@ -472,10 +471,10 @@
 
                 }
 
-                    sOptions += '<td align="center" style="padding-top:15px;">  <p style="font-size:15px;">' + ProdCadenaM[i].Stock + '</p></td>';
+                sOptions += '<td align="center" style="padding-top:15px;">  <p style="font-size:15px;">' + ProdCadenaM[i].Stock + '</p></td>';
 
 
-                 
+
                 if (parseInt($("#idTraslado").val()) == 3) {
                     sOptions += '<td align="center" style="padding-top:15px;"> </td> ';
 
@@ -547,86 +546,86 @@
             console.log(JSON.stringify(recibido));
 
             Swal.fire({
-                    title: '¿Desea guardar los cambios?',
-                    showDenyButton: true,
-                    showCancelButton: false,
-                    confirmButtonText: `Aceptar`,
-                    denyButtonText: `Cancelar`,
-                    customClass: {
-                        confirmButton: 'swalBtnColor',
-                        denyButton: 'swalDeny'
-                    },
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        var recibidos = JSON.stringify(recibido);
+                title: '¿Desea guardar los cambios?',
+                showDenyButton: true,
+                showCancelButton: false,
+                confirmButtonText: `Aceptar`,
+                denyButtonText: `Cancelar`,
+                customClass: {
+                    confirmButton: 'swalBtnColor',
+                    denyButton: 'swalDeny'
+                },
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    var recibidos = JSON.stringify(recibido);
 
-                        $.ajax({
-                            type: 'POST',
+                    $.ajax({
+                        type: 'POST',
 
-                            url: '@Url.Page("Editar", "Generar")',
-                            dataType: 'json',
-                            data: { recibidos: recibidos.toString() },
-                            headers: {
-                                RequestVerificationToken: $('input:hidden[name="__RequestVerificationToken"]').val()
-                            },
-                            success: function (json) {
+                        url: '@Url.Page("Editar", "Generar")',
+                        dataType: 'json',
+                        data: { recibidos: recibidos.toString() },
+                        headers: {
+                            RequestVerificationToken: $('input:hidden[name="__RequestVerificationToken"]').val()
+                        },
+                        success: function(json) {
 
-                                $("#divProcesando").hide();
+                            $("#divProcesando").hide();
 
-                                if ($('.modal-backdrop').is(':visible')) {
+                            if ($('.modal-backdrop').is(':visible')) {
 
-                                    $('body').removeClass('modal-open');
-                                    $('.modal-backdrop').hide();
-                                }
-                                console.log("resultado " + json.mensaje);
-                                if (json.success == true) {
-                                    Swal.fire({
-                                        title: "Ha sido generado con éxito",
-
-                                        icon: 'success',
-                                        showCancelButton: false,
-
-                                        confirmButtonText: 'OK',
-                                        customClass: {
-                                            confirmButton: 'swalBtnColor',
-
-                                        },
-                                    }).then((result) => {
-                                        if (result.isConfirmed) {
-                                            if ($("#status").val() == "0") {
-                                                location.reload();
-                                            } else {
-                                                 window.location.href = window.location.href.split("/Editar")[0];
-                                            }
-                                            
-                                           
-                                        }
-                                    })
-
-                                } else {
-                                    Swal.fire({
-                                        icon: 'error',
-                                        title: 'Oops...',
-                                        text: 'Ha ocurrido un error al intentar guardar ' + json.mensaje
-
-                                    })
-                                }
-                            },
-
-                            beforeSend: function (xhr) {
-
-                                $("#divProcesando").modal("show");
-                            },
-                            complete: function () {
-
-                            },
-                            error: function (error) {
-
+                                $('body').removeClass('modal-open');
+                                $('.modal-backdrop').hide();
                             }
-                        });
-                    }
+                            console.log("resultado " + json.mensaje);
+                            if (json.success == true) {
+                                Swal.fire({
+                                    title: "Ha sido generado con éxito",
+
+                                    icon: 'success',
+                                    showCancelButton: false,
+
+                                    confirmButtonText: 'OK',
+                                    customClass: {
+                                        confirmButton: 'swalBtnColor',
+
+                                    },
+                                }).then((result) => {
+                                    if (result.isConfirmed) {
+                                        if ($("#status").val() == "0") {
+                                            location.reload();
+                                        } else {
+                                            window.location.href = window.location.href.split("/Editar")[0];
+                                        }
+
+
+                                    }
+                                })
+
+                            } else {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Oops...',
+                                    text: 'Ha ocurrido un error al intentar guardar ' + json.mensaje
+
+                                })
+                            }
+                        },
+
+                        beforeSend: function(xhr) {
+
+                            $("#divProcesando").modal("show");
+                        },
+                        complete: function() {
+
+                        },
+                        error: function(error) {
+
+                        }
+                    });
                 }
-               )
+            }
+            )
 
 
 
@@ -638,12 +637,12 @@
                 $("#rowRepUti").hide();
                 $("#rowRepUtilizados").hide();
                 $("#rowRepDevolver").hide();
-                    $("#rowRepAprobados").hide();
+                $("#rowRepAprobados").hide();
 
             } else if (parseInt($("#idTraslado").val()) == 2 || parseInt($("#idTraslado").val()) == 3) {
-                    $("#rowRepAprobados").hide();
+                $("#rowRepAprobados").hide();
 
-                $("#rowRepUti").hide(); 
+                $("#rowRepUti").hide();
                 $("#rowRepUtilizados").hide();
                 $("#rowRepDevolver").show();
                 RellenaTablaRD(true);
@@ -651,11 +650,11 @@
                 if (parseInt($("#idTraslado").val()) == 3) {
                     $("#titleRepDevolver").text("Repuestos a cotizar");
                 }
-                
+
 
             } else {
                 Recuperar();
-                    $("#rowRepAprobados").hide();
+                $("#rowRepAprobados").hide();
 
                 $("#rowRepUti").show();
                 $("#rowRepUtilizados").show();
@@ -679,80 +678,76 @@
         var formData = new FormData();
         var documentosbase64 = [];
 
-     function resizedataURL(datas, wantedWidth, wantedHeight)
-    {
+        function resizedataURL(datas, wantedWidth, wantedHeight) {
 
-    return new Promise((resolve, reject) => {
-        // We create an image to receive the Data URI
-        var img = document.createElement('img');
-    var retornar = "";
-     // We put the Data URI in the image's src attribute
-        img.src = datas;
-        // When the event "onload" is triggered we can resize the image.
-        img.onload = function()
-            {        
+            return new Promise((resolve, reject) => {
+                // We create an image to receive the Data URI
+                var img = document.createElement('img');
+                var retornar = "";
+                // We put the Data URI in the image's src attribute
+                img.src = datas;
+                // When the event "onload" is triggered we can resize the image.
+                img.onload = function() {
 
-            var height = this.height;
-            var width = this.width;
+                    var height = this.height;
+                    var width = this.width;
 
-            if(height > wantedHeight && width > wantedWidth)
-            {
-              while(height > wantedHeight )
-                {
-                     
-                      height = height - 100; 
-                }
-                while (width > wantedWidth) {
-                     width = width - 100; 
-                }
-                // We create a canvas and get its context.
-                var canvas = document.createElement('canvas');
-                var ctx = canvas.getContext('2d');
+                    if (height > wantedHeight && width > wantedWidth) {
+                        while (height > wantedHeight) {
 
-                // We set the dimensions at the wanted size.
-                canvas.width = width;
-                canvas.height = height;
+                            height = height - 100;
+                        }
+                        while (width > wantedWidth) {
+                            width = width - 100;
+                        }
+                        // We create a canvas and get its context.
+                        var canvas = document.createElement('canvas');
+                        var ctx = canvas.getContext('2d');
 
-                // We resize the image with the canvas method drawImage();
-                ctx.drawImage(this, 0, 0, width, height);
+                        // We set the dimensions at the wanted size.
+                        canvas.width = width;
+                        canvas.height = height;
 
-                var dataURI = canvas.toDataURL();
-            retornar = dataURI;
-            resolve(retornar);
-            }else{
-                resolve(datas);
-            }
+                        // We resize the image with the canvas method drawImage();
+                        ctx.drawImage(this, 0, 0, width, height);
 
-                
-            };
-    })
+                        var dataURI = canvas.toDataURL();
+                        retornar = dataURI;
+                        resolve(retornar);
+                    } else {
+                        resolve(datas);
+                    }
 
-        
 
-       
-  
+                };
+            })
 
-    }
- 
+
+
+
+
+
+        }
+
         function getBase642(event, id) {
             var input = event.target;
 
             var reader = new FileReader();
-            reader.onload = function () {
+            reader.onload = function() {
                 var dataURL = reader.result;
 
-               var imgResized = "";
-            
-                resizedataURL(dataURL, 1000, 1000).then((resized) => {
+                var imgResized = "";
+
+                resizedataURL(dataURL, 600, 600).then((resized) => {
                     imgResized = resized;
                     var detalle = {
-                    id: id,
-                    base64: imgResized//dataURL
-                }
-                documentosbase64.push(detalle);
+                        id: id,
+                        base64: imgResized//dataURL
+                    }
+                    documentosbase64.push(detalle);
                 });
 
-                 
+
             };
             reader.readAsDataURL(input.files[0]);
         }
@@ -761,7 +756,7 @@
             documentosbase64.splice(documentosbase64.indexOf(documentosbase64.find(a => a.id == id)), 1)
         }
 
-        file.addEventListener('change', function (e) {
+        file.addEventListener('change', function(e) {
 
             for (var i = 0; i < file.files.length; i++) {
                 var thumbnail_id = Math.floor(Math.random() * 30000) + '_' + Date.now();
@@ -775,7 +770,7 @@
 
 
 
-        var createThumbnail = function (file, iterator, thumbnail_id) {
+        var createThumbnail = function(file, iterator, thumbnail_id) {
             var thumbnail = document.createElement('div');
             thumbnail.classList.add('thumbnail', thumbnail_id);
             thumbnail.dataset.id = thumbnail_id;
@@ -785,25 +780,25 @@
             createCloseButton(thumbnail_id);
         }
 
-        var createCloseButton = function (thumbnail_id) {
+        var createCloseButton = function(thumbnail_id) {
             var closeButton = document.createElement('div');
             closeButton.classList.add('close-button');
             closeButton.innerText = 'x';
             document.getElementsByClassName(thumbnail_id)[0].appendChild(closeButton);
         }
 
-        var clearFormDataAndThumbnails = function () {
+        var clearFormDataAndThumbnails = function() {
             for (var key of formData.keys()) {
                 formData.delete(key);
             }
 
-            document.querySelectorAll('.thumbnail').forEach(function (thumbnail) {
+            document.querySelectorAll('.thumbnail').forEach(function(thumbnail) {
                 thumbnail.remove();
             });
         }
 
 
-        document.body.addEventListener('click', function (e) {
+        document.body.addEventListener('click', function(e) {
             if (e.target.classList.contains('close-button')) {
                 e.target.parentNode.remove();
                 formData.delete(e.target.parentNode.dataset.id);
@@ -833,83 +828,83 @@
         var span = document.getElementsByClassName("close")[0];
 
         // When the user clicks on <span> (x), close the modal
-        span.onclick = function () {
+        span.onclick = function() {
             modal.style.display = "none";
         }
     </script>
 
 
 }
-@using Newtonsoft.Json;
+    @using Newtonsoft.Json;
 
-<form method="post" id="formTipos" role="form" novalidate class="needs-validation " enctype="multipart/form-data">
-    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <form method="post" id="formTipos" role="form" novalidate class="needs-validation " enctype="multipart/form-data">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
-    <div class="row">
-        <div class="col-md-12">
-            <div class="card">
-                <div class="card-header">
-                    <div class="row">
-                        <div class="col-sm-6">
-                            <h5 class="title">Editar Repuestos</h5>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <h5 class="title">Editar Repuestos</h5>
 
-                        </div>
+                            </div>
 
-                        <div class="col-sm-6" style="text-align: right">
+                            <div class="col-sm-6" style="text-align: right">
 
-                            <a asp-page="./Index" class="nav-link text-dark" style="text-decoration: underline;"><i class="fas fa-reply "></i>  Regresar</a>
+                                <a asp-page="./Index" class="nav-link text-dark" style="text-decoration: underline;"><i class="fas fa-reply "></i>  Regresar</a>
 
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="card-body">
-                    <input hidden id="HijosDisponibles" value="@JsonConvert.SerializeObject(Model.InputHijos)" />
-                    <input hidden id="HijosSeleccionados" value="@JsonConvert.SerializeObject(Model.Input)" />
-                    <input hidden id="Errores" value="@JsonConvert.SerializeObject(Model.Errores)" />
-                    <input hidden id="Control" value="@JsonConvert.SerializeObject(Model.Control)" />
+                    <div class="card-body">
+                        <input hidden id="HijosDisponibles" value="@JsonConvert.SerializeObject(Model.InputHijos)" />
+                        <input hidden id="HijosSeleccionados" value="@JsonConvert.SerializeObject(Model.Input)" />
+                        <input hidden id="Errores" value="@JsonConvert.SerializeObject(Model.Errores)" />
+                        <input hidden id="Control" value="@JsonConvert.SerializeObject(Model.Control)" />
 
 
-                    <div class="row">
-                        <div class="col-md-4 pr-1">
+                        <div class="row">
+                            <div class="col-md-4 pr-1">
 
-                            <div class="form-group">
-                                <label>Producto</label>
-                                <input type="text" class="form-control form-control-lg" id="desc" asp-for="Producto" readonly>
-                                <input id="idGeneral" asp-for="Encabezado.id" hidden />
-                            </div>
+                                <div class="form-group">
+                                    <label>Producto</label>
+                                    <input type="text" class="form-control form-control-lg" id="desc" asp-for="Producto" readonly>
+                                    <input id="idGeneral" asp-for="Encabezado.id" hidden />
+                                </div>
 
-
-                        </div>
-
-
-
-
-                        <div class="col-md-4 pr-1">
-
-                            <div class="form-group">
-                                <label>Estado de la Reparación</label>
-                                <select id="status" class="form-control" asp-for="Encabezado.Status">
-                                    <option value="0" selected>Abierto</option>
-
-
-                                    <option value="1">Cerrado </option>
-                                    <option value="2">Cerrado y Reparado </option>
-
-
-
-                                </select>
 
                             </div>
 
 
-                        </div>
-                        <div class="col-md-4 pl-1">
-                            <div class="form-group">
-                                <label>Estado de la Llamada:</label>
-                                <input asp-for="InputLlamada.id" id="idLlamada" hidden />
-                                <select id="statusLlamada" class="form-control" asp-for="InputLlamada.Status" required>
-                                    <option value="0">Seleccione</option>
-                                    @foreach (var item in Model.Status.Where(a => a.idSAP == "-3" || a.idSAP == "47" || a.idSAP == "46" || a.idSAP == "48"))
+
+
+                            <div class="col-md-4 pr-1">
+
+                                <div class="form-group">
+                                    <label>Estado de la Reparación</label>
+                                    <select id="status" class="form-control" asp-for="Encabezado.Status">
+                                        <option value="0" selected>Abierto</option>
+
+
+                                        <option value="1">Cerrado </option>
+                                        <option value="2">Cerrado y Reparado </option>
+
+
+
+                                    </select>
+
+                                </div>
+
+
+                            </div>
+                            <div class="col-md-4 pl-1">
+                                <div class="form-group">
+                                    <label>Estado de la Llamada:</label>
+                                    <input asp-for="InputLlamada.id" id="idLlamada" hidden />
+                                    <select id="statusLlamada" class="form-control" asp-for="InputLlamada.Status" required>
+                                        <option value="0">Seleccione</option>
+                                        @foreach (var item in Model.Status.Where(a => a.idSAP == "-3" || a.idSAP == "47" || a.idSAP == "46" || a.idSAP == "48"))
                                     {
                                         <option value="@item.idSAP">@item.Nombre</option>
                                     }
@@ -936,7 +931,7 @@
 
 
                         </div>
-                        <div class="col-md-4 pr-1">
+                        <div class="col-md-4 pl-1">
 
                             <div class="form-group">
                                 <label>Diagnóstico</label>
@@ -954,6 +949,17 @@
 
 
                                 </select>
+
+                            </div>
+
+
+                        </div>
+
+                        <div class="col-md-4 pr-1">
+
+                            <div class="form-group">
+                                <label>Asunto de la Llamada</label>
+                                <input class="form-control" asp-for="InputLlamada.Asunto" readonly />
 
                             </div>
 
@@ -982,8 +988,6 @@
                         </div>
 
                         <div class="col-sm-6" style="text-align: right">
-
-
                         </div>
                     </div>
                 </div>
@@ -1027,7 +1031,7 @@
                                     @foreach (var item in Model.Bodegas)
                                     {
 
-                                    <option value="@item.codSAP"> @item.codSAP - @item.Nombre </option>
+                                        <option value="@item.codSAP"> @item.codSAP - @item.Nombre </option>
                                     }
 
 
@@ -1050,7 +1054,7 @@
                                     @foreach (var item in Model.Bodegas)
                                     {
 
-                                    <option value="@item.codSAP"> @item.codSAP - @item.Nombre </option>
+                                        <option value="@item.codSAP"> @item.codSAP - @item.Nombre </option>
                                     }
 
 
@@ -1073,7 +1077,7 @@
 
     <div class="row">
 
-          <div id="rowRepAprobados" class="col-md-12">
+        <div id="rowRepAprobados" class="col-md-12">
             <div class="card">
                 <div class="card-header">
                     <div class="row">
@@ -1083,7 +1087,6 @@
                         </div>
 
                         <div class="col-sm-4" style="text-align: right;">
-                             
                         </div>
                     </div>
                 </div>
@@ -1095,17 +1098,17 @@
 
                                     <th align="center" style=" text-align: center;">Item</th>
                                     <th align="center" style=" text-align: center;">Cantidad Aprobada</th>
-                                  
-                               
+
+
                                 </tr>
 
                             </thead>
                             <tbody id="tbody4">
-                                @foreach(var item in Model.CotizacionesAprobadas)
+                                @foreach (var item in Model.CotizacionesAprobadas)
                                 {
-                                     <tr>
-                                    <td align="center">@item.ItemCode</td>
-                                    <td align="right">@item.Cantidad</td>
+                                    <tr>
+                                        <td align="center">@item.ItemCode</td>
+                                        <td align="right">@item.Cantidad</td>
 
                                     </tr>
                                 }
@@ -1223,7 +1226,6 @@
                         </div>
 
                         <div class="col-sm-4" style="text-align: right;">
-                             
                         </div>
                     </div>
                 </div>
@@ -1236,7 +1238,7 @@
                                     <th align="center" style=" text-align: center;">Item</th>
                                     <th align="center" style=" text-align: center;">Cantidad Devuelta</th>
                                     <th align="center" style=" text-align: center;">Cantidad Pedida </th>
-                               
+
 
 
 
@@ -1278,8 +1280,6 @@
                             <h5>Movimientos</h5>
                         </div>
                         <div class="col-md-4">
-
-
                         </div>
                     </div>
                 </div>
@@ -1305,17 +1305,17 @@
                             <tbody>
                                 @foreach (var item in Model.BTS)
                                 {
-                                <tr>
-                                    <td>@item.id</td>
-                                    <td>@item.DocEntry</td>
+                                    <tr>
+                                        <td>@item.id</td>
+                                        <td>@item.DocEntry</td>
 
-                                    <td>@(item.TipoMovimiento == 1 ? "Solicitud" : "Devolución")</td>
-                                    <td>@item.Fecha</td>
-                                    <td>@item.BodegaInicial</td>
-                                    <td>@item.BodegaFinal</td>
-                                    <td>@((item.Status == "0" ? "En espera" : item.Status == "1" ? "Aceptado" : "Rechazado"))</td>
+                                        <td>@(item.TipoMovimiento == 1 ? "Solicitud" : "Devolución")</td>
+                                        <td>@item.Fecha</td>
+                                        <td>@item.BodegaInicial</td>
+                                        <td>@item.BodegaFinal</td>
+                                        <td>@((item.Status == "0" ? "En espera" : item.Status == "1" ? "Aceptado" : "Rechazado"))</td>
 
-                                </tr>
+                                    </tr>
                                 }
 
 
@@ -1352,8 +1352,6 @@
                         </div>
 
                         <div class="col-sm-6" style="text-align: right">
-
-
                         </div>
                     </div>
                 </div>
@@ -1368,7 +1366,6 @@
                                     <div class="icon-camera"></div>
                                 </div>
                                 <div id="preview-images">
-
                                 </div>
                             </div>
 
@@ -1395,7 +1392,7 @@
                     <div id="menu">
                         @foreach (var item in Model.Encabezado.Adjuntos)
                         {
-                              <img src='data:image/png;base64,@item.base64' id="@item.id" name='fotos1' onclick="javascript: onclickImage(@item.id)" />
+                            <img src='data:image/png;base64,@item.base64' id="@item.id" name='fotos1' onclick="javascript: onclickImage(@item.id)" />
 
                         }
 
@@ -1417,5 +1414,5 @@
 <div id="myModal" class="modal">
     <span class="close">×</span>
     <img class="modal-content" id="img01">
-    
+
 </div>

@@ -23,6 +23,7 @@ namespace Boletaje.Pages.Reparacion
         private readonly ICrudApi<ProductosViewModel, int> prods;
         private readonly ICrudApi<ClientesViewModel, int> clientes;
         private readonly ICrudApi<LlamadasViewModel, int> llamada;
+        private readonly ICrudApi<LlamadasViewModel, int> serviceL;
 
         private readonly ICrudApi<TecnicosViewModel, int> serviceT;
         private readonly ICrudApi<BitacoraMovimientosViewModel, int> bt;
@@ -45,7 +46,8 @@ namespace Boletaje.Pages.Reparacion
         public EncReparacionViewModel Encabezado { get; set; }
         [BindProperty]
         public string Producto { get; set; }
-
+        [BindProperty]
+        public LlamadasViewModel InputLlamada { get; set; }
         [BindProperty]
         public string Cliente { get; set; }
 
@@ -58,7 +60,7 @@ namespace Boletaje.Pages.Reparacion
         [BindProperty]
         public ControlProductosViewModel[] Control { get; set; }
         public ObservarModel(ICrudApi<EncReparacionViewModel, int> service, ICrudApi<ProductosViewModel, int> prods, ICrudApi<TecnicosViewModel, int> serviceT, ICrudApi<BitacoraMovimientosViewModel, int> bt, ICrudApi<DiagnosticosViewModel, int> serviceD,
-            ICrudApi<ErroresViewModel, int> serviceError, ICrudApi<ClientesViewModel, int> clientes, ICrudApi<LlamadasViewModel, int> llamada, ICrudApi<ControlProductosViewModel, int> control
+            ICrudApi<ErroresViewModel, int> serviceError, ICrudApi<ClientesViewModel, int> clientes, ICrudApi<LlamadasViewModel, int> llamada, ICrudApi<ControlProductosViewModel, int> control , ICrudApi<LlamadasViewModel, int> serviceL
             )
         {
             this.service = service;
@@ -70,6 +72,7 @@ namespace Boletaje.Pages.Reparacion
             this.clientes = clientes;
             this.llamada = llamada;
             this.control = control;
+            this.serviceL = serviceL; 
         }
         public async Task<IActionResult> OnGetAsync(int id)
         {
@@ -92,7 +95,7 @@ namespace Boletaje.Pages.Reparacion
                 Clientes = await clientes.ObtenerListaEspecial("");
                 var Llamada = await llamada.ObtenerPorDocEntry(Encabezado.idLlamada);
                 Cliente = Clientes.Clientes.Where(a => a.CardCode == Llamada.CardCode).FirstOrDefault() == null ? "" : Clientes.Clientes.Where(a => a.CardCode == Llamada.CardCode).FirstOrDefault().CardCode +  " - " + Clientes.Clientes.Where(a => a.CardCode == Llamada.CardCode).FirstOrDefault().CardName;
-
+                InputLlamada = Llamada;
 
                 Tecnicos = await serviceT.ObtenerLista("");
                 var ids = Encabezado.idTecnico.ToString();
