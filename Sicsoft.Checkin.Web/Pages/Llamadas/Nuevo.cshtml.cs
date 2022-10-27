@@ -141,8 +141,8 @@ namespace Boletaje.Pages.Llamadas
                 Input.TratadoPor = Convert.ToInt32( ((ClaimsIdentity)User.Identity).Claims.Where(d => d.Type == "CodVendedor").Select(s1 => s1.Value).FirstOrDefault());
                 Input.CardCode = Input.CardCode.Split("/")[0].Replace(" ", "");
                 var item = Input.ItemCode;
-                Input.ItemCode = item.Split("/")[0].Replace(" ", "");
-                Input.SerieFabricante = item.Split("/")[1].Replace(" ", "");
+                Input.ItemCode = item.Split("/")[0].TrimEnd();
+                Input.SerieFabricante = item.Split("/")[1].TrimEnd();
                 await service.Agregar(Input);
 
 

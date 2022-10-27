@@ -37,7 +37,7 @@
                 });
             });
 
-           
+
             ModificaMoneda();
         });
         function ModificaMoneda() {
@@ -88,7 +88,7 @@
                                         <h3 class="text-dark mb-1">Entrega</h3>
                                         break;
                                     }
-                                      case 3:
+                                case 3:
                                     {
                                         <h3 class="text-dark mb-1">Cotización BackOffice</h3>
                                         break;
@@ -107,7 +107,7 @@
                             <div class="form-group">
                                 <label>Moneda</label>
                                 <select disabled="disabled" id="Moneda" class="form-control" asp-for="Input.Moneda" required onchange="javascript: ModificaMoneda()">
-                                    <option value="COL" selected>Colones</option>
+                                    <option value="COL">Colones</option>
                                     <option value="USD">Dólares</option>
 
                                 </select>
@@ -142,32 +142,32 @@
                             @{int i = 1; }
                             @{ foreach (var item in Model.Input.Detalle)
                                 {
-                                                        <tr>
+                                    <tr>
 
-                                                            <td align="center">@i</td>
-                                                            <td align="left" class="strong">@item.ItemCode </td>
-                                                            <td align="left"> @item.ItemName</td>
-                                                            <td align="right"> @decimal.Round(item.PrecioUnitario, 2).ToString("N", formato)</td>
-                                                            <td align="center"> @decimal.Round(item.Cantidad, 2).ToString("N", formato)</td>
-                                                            <td align="right"> @decimal.Round(item.Impuestos, 2).ToString("N", formato)</td>
-                                                            <td align="center"> @decimal.Round(item.PorDescuento, 2).ToString("N", formato) %</td>
-                                                            <td align="right"> @decimal.Round(item.Descuento, 2).ToString("N", formato)</td>
-                                                            <td align="right"> @decimal.Round(item.TotalLinea, 2).ToString("N", formato)</td>
-                                                            <td align="center">
-                                                                @if (item.Garantia)
-                                                                {
+                                        <td align="center">@i</td>
+                                        <td align="left" class="strong">@item.ItemCode </td>
+                                        <td align="left"> @item.ItemName</td>
+                                        <td align="right"> @decimal.Round(item.PrecioUnitario, 2).ToString("N", formato)</td>
+                                        <td align="center"> @decimal.Round(item.Cantidad, 2).ToString("N", formato)</td>
+                                        <td align="right"> @decimal.Round(item.Impuestos, 2).ToString("N", formato)</td>
+                                        <td align="center"> @decimal.Round(item.PorDescuento, 2).ToString("N", formato) %</td>
+                                        <td align="right"> @decimal.Round(item.Descuento, 2).ToString("N", formato)</td>
+                                        <td align="right"> @decimal.Round(item.TotalLinea, 2).ToString("N", formato)</td>
+                                        <td align="center">
+                                            @if (item.Garantia)
+                                            {
 
 
-                                                                    <input class="form-check-input" disabled checked type="checkbox" style="position: unset;" /><span class="form-check-sign"></span>
-                                                                }
-                                                                else
-                                                                {
-                                                                    <input class="form-check-input" disabled type="checkbox" style="position: unset;" /><span class="form-check-sign"></span>
-                                                                }
+                                                <input class="form-check-input" disabled checked type="checkbox" style="position: unset;" /><span class="form-check-sign"></span>
+                                            }
+                                            else
+                                            {
+                                                <input class="form-check-input" disabled type="checkbox" style="position: unset;" /><span class="form-check-sign"></span>
+                                            }
 
-                                                            </td>
+                                        </td>
 
-                                                        </tr>
+                                    </tr>
                                     i++;
                                 }
 
