@@ -281,7 +281,7 @@
 
                                     <td>@item.FechaCreacion.ToString("dd/MM/yyyy")</td>
                                     <td>@item.FechaModificacion.ToString("dd/MM/yyyy HH:mm:ss")</td>
-                                    <td>@item.idProductoArreglar</td>
+                                    <td>@item.idProductoArreglar - @(Model.InputLlamada.Where(a => a.DocEntry == item.idLlamada).FirstOrDefault() == null ? "" : Model.InputLlamada.Where(a => a.DocEntry == item.idLlamada).FirstOrDefault().SerieFabricante )</td>
                                     <td>
                                         @switch (item.Status)
                                         {
