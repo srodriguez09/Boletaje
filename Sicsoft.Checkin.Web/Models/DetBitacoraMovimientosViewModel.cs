@@ -10,7 +10,7 @@ namespace Boletaje.Models
         public int id { get; set; }
         public int idEncabezado { get; set; }
         public int idProducto { get; set; }
-        public int Cantidad { get; set; }
+        public decimal Cantidad { get; set; }
         public string ItemCode { get; set; }
     }
 }
