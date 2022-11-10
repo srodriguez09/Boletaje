@@ -16,8 +16,8 @@
 
 }
 
-@using System.Globalization;
-@{
+    @using System.Globalization;
+    @{
     NumberFormatInfo formato = new CultureInfo("en-US").NumberFormat;
     formato.CurrencyGroupSeparator = ",";
     formato.NumberDecimalSeparator = ".";
@@ -34,13 +34,14 @@
             top: 0;
             background: white;
         }
-        .createPDF{
-                font-size: 14px;
-            }
+
+        .createPDF {
+            font-size: 14px;
+        }
     </style>
 
 }
-@section scripts{
+    @section scripts{
     <script>
         var btn = document.getElementById('Guardar');
         function onGuardar() {
@@ -52,13 +53,12 @@
     </script>
 
     <script>
-var html = '';
-var specialElementHandlers = null;
-        $(document).ready(function () {
-            jQuery(document).ready(function ($) {
-                 specialElementHandlers = {
-                    "#editor": function(element, render)
-                    {
+        var html = '';
+        var specialElementHandlers = null;
+        $(document).ready(function() {
+            jQuery(document).ready(function($) {
+                specialElementHandlers = {
+                    "#editor": function(element, render) {
                         return true;
                     }
                 }
@@ -66,45 +66,43 @@ var specialElementHandlers = null;
 
 
 
-            $(document).ready(function () {
+            $(document).ready(function() {
                 $('#tablita').DataTable();
             });
 
 
         });
 
-        function ImprimirPantalla()
-        {
+        function ImprimirPantalla() {
             try {
-               // window.print();
+                // window.print();
                 var margins = {
                     top: 10,
                     bottom: 10,
                     left: 10,
                     width: 595
-                  };
-                
+                };
+
 
                 html = $(".html").html();
                 html2pdf(html, {
-                margin:1,
-                padding:0,
-                filename: 'Movimientos.pdf',
-                image: { type: 'jpeg', quality: 1 },
-                html2canvas: { scale: 2,  logging: true },
-                jsPDF: { unit: 'in', format: 'A2', orientation: 'P' },
-                class: ImprimirPantalla
-            });
+                    margin: 1,
+                    padding: 0,
+                    filename: 'Movimientos.pdf',
+                    image: { type: 'jpeg', quality: 1 },
+                    html2canvas: { scale: 2, logging: true },
+                    jsPDF: { unit: 'in', format: 'A2', orientation: 'P' },
+                    class: ImprimirPantalla
+                });
 
-            }catch(e)
-            {
+            } catch (e) {
                 console.log(e);
                 Swal.fire({
-                                     icon: 'error',
-                                     title: 'Oops...',
-                                     text: 'Ha ocurrido un error al intentar imprimir ' + e
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Ha ocurrido un error al intentar imprimir ' + e
 
-                                 })
+                })
             }
         }
 
@@ -114,62 +112,62 @@ var specialElementHandlers = null;
     </script>
 
 }
-@using Microsoft.AspNetCore.Http
-@using System;
-@using System.Collections.Generic;
-@using System.IO;
-@using System.Linq;
-@using System.Security.Claims;
-@using System.Threading.Tasks;
-@using Microsoft.AspNetCore.Mvc;
-@using Microsoft.AspNetCore.Mvc.RazorPages;
-@using Microsoft.Extensions.Configuration;
-@using Refit;
-@using Sicsoft.Checkin.Web.Models;
-@inject IHttpContextAccessor httpContextAccessor
+    @using Microsoft.AspNetCore.Http
+    @using System;
+    @using System.Collections.Generic;
+    @using System.IO;
+    @using System.Linq;
+    @using System.Security.Claims;
+    @using System.Threading.Tasks;
+    @using Microsoft.AspNetCore.Mvc;
+    @using Microsoft.AspNetCore.Mvc.RazorPages;
+    @using Microsoft.Extensions.Configuration;
+    @using Refit;
+    @using Sicsoft.Checkin.Web.Models;
+    @inject IHttpContextAccessor httpContextAccessor
 <form method="post" id="formTipos" role="form" novalidate class="needs-validation " enctype="multipart/form-data">
-    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-    <input type="text" class="form-control form-control-lg" id="id" asp-for="BTS.id" hidden>
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <input type="text" class="form-control form-control-lg" id="id" asp-for="BTS.id" hidden>
 
-    <div class="row ">
-        <div class="col-md-12">
-            <div class="card">
-                <div class="card-header">
-                    <div class="row">
-                        <div class="col-sm-6">
-                            <h5 class="title">Observar Movimiento</h5>
+        <div class="row ">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <h5 class="title">Observar Movimiento</h5>
 
-                        </div>
+                            </div>
 
-                        <div class="col-sm-6" style="text-align: right">
+                            <div class="col-sm-6" style="text-align: right">
 
-                            <a asp-page="./Index" class="nav-link text-dark" style="text-decoration: underline;"><i class="fas fa-reply "></i>  Regresar</a>
+                                <a asp-page="./Index" class="nav-link text-dark" style="text-decoration: underline;"><i class="fas fa-reply "></i>  Regresar</a>
 
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="card-body">
+                    <div class="card-body">
 
-                    <div class="row">
-                        <div class="col-md-4 pr-1">
+                        <div class="row">
+                            <div class="col-md-4 pr-1">
 
-                            <div class="form-group">
-                                <label>Producto</label>
-                                <input type="text" class="form-control form-control-lg" id="desc" asp-for="Producto" readonly>
+                                <div class="form-group">
+                                    <label>Producto</label>
+                                    <input type="text" class="form-control form-control-lg" id="desc" asp-for="Producto" readonly>
+
+                                </div>
+
 
                             </div>
 
 
-                        </div>
 
 
+                            <div class="col-md-4 pr-1">
 
-
-                        <div class="col-md-4 pr-1">
-
-                            <div class="form-group">
-                                <label>Aceptar / Rechazar</label>
-                                @if (Model.BTS.ProcesadaSAP)
+                                <div class="form-group">
+                                    <label>Aceptar / Rechazar</label>
+                                    @if (Model.BTS.ProcesadaSAP)
                                 {
                                     <select id="status" class="form-control" asp-for="BTS.Status" disabled="disabled" readonly>
                                         <option value="0" selected>Sin Acción</option>
@@ -300,8 +298,6 @@ var specialElementHandlers = null;
                             <h5>Materiales</h5>
                         </div>
                         <div class="col-md-4">
-
-
                         </div>
                     </div>
                 </div>
@@ -329,8 +325,10 @@ var specialElementHandlers = null;
                                         <td>@(item.ItemCode)</td>
 
 
-                                        <td>@item.Cantidad</td>
-                                        @{var itemCode = item.ItemCode.Trim().Split('|')[0].ToString().Trim();}
+                                        <td>@item.Cantidad.ToString("N",formato)</td>
+                                        @{
+                                            var itemCode = item.ItemCode.Trim().Split('|')[0].ToString().Trim();
+                                        }
                                         <td>@( Model.ProductosHijos.Where(a => a.codSAP == itemCode).FirstOrDefault() == null ? "" : Model.ProductosHijos.Where(a => a.codSAP == itemCode).FirstOrDefault().Localizacion )</td>
 
 
@@ -360,21 +358,19 @@ var specialElementHandlers = null;
 </form>
 
 
-                                <!--HTML PARA IMPRIMIR-->
+<!--HTML PARA IMPRIMIR-->
 
 
-<div class="html" hidden >
+<div class="html" hidden>
     <div class="row">
         <div class="col-md-12">
             <div class="card">
-                 <div class="card-header">
+                <div class="card-header">
                     <div class="row">
                         <div class="col-md-8">
                             <h2>Traslado # @Model.BTS.DocEntry</h2>
                         </div>
                         <div class="col-md-4">
-
-
                         </div>
                     </div>
                 </div>
@@ -385,7 +381,7 @@ var specialElementHandlers = null;
 
                             <div class="form-group">
                                 <label>Producto</label>
-                                <input type="text" class="form-control form-control-lg"  asp-for="Producto" readonly>
+                                <input type="text" class="form-control form-control-lg" asp-for="Producto" readonly>
 
                             </div>
 
@@ -397,7 +393,7 @@ var specialElementHandlers = null;
 
                         <div class="col-md-6 pr-1">
 
-                             <div class="form-group">
+                            <div class="form-group">
                                 <label>Fecha Creación</label>
                                 <input type="date" class="form-control form-control-lg" id="" asp-for="BTS.Fecha" readonly>
 
@@ -426,7 +422,7 @@ var specialElementHandlers = null;
 
                         </div>
 
-                       
+
                         <div class="col-md-4 pr-1">
 
                             <div class="form-group">
@@ -485,7 +481,7 @@ var specialElementHandlers = null;
         </div>
     </div>
 
-     <div class="row">
+    <div class="row">
         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
             <div class="card">
                 <div class="card-header">
@@ -494,8 +490,6 @@ var specialElementHandlers = null;
                             <h5>Materiales</h5>
                         </div>
                         <div class="col-md-4">
-
-
                         </div>
                     </div>
                 </div>
@@ -524,7 +518,9 @@ var specialElementHandlers = null;
 
 
                                         <td>@item.Cantidad</td>
-                                        @{var itemCode = item.ItemCode.Trim().Split('|')[0].ToString().Trim();}
+                                        @{
+                                            var itemCode = item.ItemCode.Trim().Split('|')[0].ToString().Trim();
+                                        }
                                         <td>@( Model.ProductosHijos.Where(a => a.codSAP == itemCode).FirstOrDefault() == null ? "" : Model.ProductosHijos.Where(a => a.codSAP == itemCode).FirstOrDefault().Localizacion )</td>
 
 
@@ -554,15 +550,15 @@ var specialElementHandlers = null;
     <br />
     <div class="row">
         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
-             <div class="card">
+            <div class="card">
 
-                 <div class="card-body">
-                     <div class="row">
-                          <div class="col-md-6 pr-1">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6 pr-1">
 
-                             _________________________________
-                             <br />
-                             <h5>Firma Entregado</h5>
+                            _________________________________
+                            <br />
+                            <h5>Firma Entregado</h5>
 
 
                         </div>
@@ -570,17 +566,17 @@ var specialElementHandlers = null;
 
                         <div class="col-md-6 pl-1">
 
-                             _________________________________
-                             <br />
-                             <h5>Firma Recibido</h5>
+                            _________________________________
+                            <br />
+                            <h5>Firma Recibido</h5>
 
 
                         </div>
-                     </div>
-                     
+                    </div>
 
-                 </div>
-                 </div>
+
+                </div>
+            </div>
         </div>
     </div>
 </div>

@@ -304,7 +304,7 @@
                                     <td>@item.Item </td>
                                     <td>@item.ItemName </td>
 
-                                    <td>@item.CantidadUsado</td>
+                                    <td>@item.CantidadUsado.ToString("N", formato)</td>
                                     @*<td>@(Model.Errores.Where(a => a.id == Model.Encabezado.Detalle.Where(b => b.idProducto == item.idProducto).FirstOrDefault().idError).FirstOrDefault() == null ? "Sin Diagnostico": Model.Errores.Where(a => a.id == Model.Encabezado.Detalle.Where(b => b.idProducto == item.idProducto).FirstOrDefault().idError).FirstOrDefault().Descripcion  )</td>*@
                                 </tr>
                             }
