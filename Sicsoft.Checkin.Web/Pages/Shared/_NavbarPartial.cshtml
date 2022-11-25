@@ -144,7 +144,26 @@
                                     }
 
                                 </li>
+                                <li class="nav-item">
+                                    @{if (!string.IsNullOrEmpty(Roles.Where(a => a == "37").FirstOrDefault()))
+                                        {
 
+                                            <a class="nav-link" asp-page="/Impuestos/Index">Impuestos</a>
+                                        }
+
+                                    }
+
+                                </li>
+                                <li class="nav-item">
+                                    @{if (!string.IsNullOrEmpty(Roles.Where(a => a == "40").FirstOrDefault()))
+                                        {
+
+                                            <a class="nav-link" asp-page="/Asuntos/Index">Asuntos</a>
+                                        }
+
+                                    }
+
+                                </li>
                             </ul>
                         </div>
                     </li>

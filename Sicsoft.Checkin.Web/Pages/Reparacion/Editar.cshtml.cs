@@ -32,6 +32,8 @@ namespace Boletaje.Pages.Reparacion
         private readonly ICrudApi<StatusViewModel, int> status;
         private readonly ICrudApi<ControlProductosViewModel, int> control;
         private readonly ICrudApi<CotizacionesAprobadasViewModel, int> cotizaciones;
+        private readonly ICrudApi<TiposCasosViewModel, int> tp;
+
 
         [BindProperty]
 
@@ -74,10 +76,13 @@ namespace Boletaje.Pages.Reparacion
 
         [BindProperty]
         public ControlProductosViewModel[] Control { get; set; }
+        [BindProperty]
+
+        public TiposCasosViewModel[] TP { get; set; }
 
         public EditarModel(ICrudApi<DetReparacionViewModel, int> service, ICrudApi<LlamadasViewModel, int> serviceL, ICrudApi<ClientesViewModel, int> clientes, ICrudApi<ProductosViewModel, int> prods,
            ICrudApi<ProductosHijosViewModel, int> service2, ICrudApi<EncReparacionViewModel, int> serviceE, ICrudApi<ColeccionRepuestosViewModel, int> serviceColeccion, ICrudApi<BodegasViewModel, int> serviceBodegas, ICrudApi<BitacoraMovimientosViewModel, int> bt, ICrudApi<DiagnosticosViewModel, int> serviceD
-            ,ICrudApi<ErroresViewModel, int> serviceError, ICrudApi<StatusViewModel, int> status, ICrudApi<ControlProductosViewModel, int> control, ICrudApi<CotizacionesAprobadasViewModel, int> cotizaciones)
+            ,ICrudApi<ErroresViewModel, int> serviceError, ICrudApi<StatusViewModel, int> status, ICrudApi<ControlProductosViewModel, int> control, ICrudApi<CotizacionesAprobadasViewModel, int> cotizaciones, ICrudApi<TiposCasosViewModel, int> tp)
         {
             this.service = service;
             this.serviceL = serviceL;
@@ -93,6 +98,7 @@ namespace Boletaje.Pages.Reparacion
             this.status = status;
             this.control = control;
             this.cotizaciones = cotizaciones;
+            this.tp = tp;
         }
 
         public async Task<IActionResult> OnGetAsync(int id)
@@ -106,7 +112,7 @@ namespace Boletaje.Pages.Reparacion
                 }
                 ParametrosFiltros filt = new ParametrosFiltros();
                 filt.Codigo1 = id;
-
+                TP = await tp.ObtenerLista("");
                 Control = await control.ObtenerLista(filt);
                 BTS = await bt.ObtenerLista(filt);
                 Bodegas = await serviceBodegas.ObtenerLista("");

@@ -13,8 +13,8 @@
     </li>
 
 }
-@using Newtonsoft.Json;
-@section styles{
+    @using Newtonsoft.Json;
+    @section styles{
     <style>
         .input {
             width: 40%;
@@ -26,14 +26,38 @@
     </style>
 
 }
-@section scripts{
+    @section scripts{
 
 
     <script>
-        $(document).ready(function () {
+        var Detalles = [];
 
-            jQuery(document).ready(function ($) {
-                $(document).ready(function () {
+        $(document).ready(function() {
+
+            jQuery(document).ready(function($) {
+                $(document).ready(function() {
+
+            var detalles = JSON.parse($("#Detalle").val());
+                     for (var i = 0; i < detalles.length; i++) {
+                var detalle = {
+                    id: detalles[i].id,
+                    NumLinea: i + 1,
+                    idEncabezado: 0,
+                    idImpuesto: detalles[i].idImpuesto,
+                    ItemCode: detalles[i].ItemCode,
+                    ItemName: detalles[i].ItemName,
+                    PrecioUnitario: detalles[i].PrecioUnitario,
+                    Cantidad: detalles[i].Cantidad,
+                    PorDescuento: detalles[i].PorDescuento,
+                    Descuento: detalles[i].Descuento,
+                    Impuestos: detalles[i].Impuestos,
+                    TotalLinea: detalles[i].TotalLinea,
+                    Garantia: detalles[i].Garantia
+                };
+                Detalles.push(detalle);
+
+            }
+
                 });
             });
 
@@ -47,10 +71,84 @@
                 $(".moneda").text("$")
             }
         }
+
+        function ImprimeEtiqueta(boleta, cliente) {
+            var html = htmlOferta;
+            html = html.replace("DocEntry", "@Model.Input.NumLlamada");
+            html = html.replace("Fecha", '@Model.Input.Fecha.ToString("dd/MMMM/yyyy")');
+            html = html.replace("NombreClienteR", "@Model.Input.CardName");
+            html = html.replace("TelefonoCliente", "@Model.Llamada.NumeroPersonaContacto");
+
+            html = html.replace("Diagnosticos", "@Model.Llamada.Comentarios");
+
+
+            if ($("#Moneda").val() == "COL") {
+
+                html = html.replace("SubtotalR", "₡" + $("#SubtotalGeneral").text());
+                html = html.replace("Descuento", "₡" + $("#DescGeneral").text());
+
+                html = html.replace("Impuestos", "₡" + $("#ImpGeneral").text());
+                html = html.replace("TotalR", "₡" + $("#TotalGeneral").text());
+
+
+
+            } else {
+
+                html = html.replace("SubtotalR", "$" + $("#SubtotalGeneral").text());
+                html = html.replace("Descuento", "$" + $("#DescGeneral").text());
+
+                html = html.replace("Impuestos", "$" + $("#ImpGeneral").text());
+                html = html.replace("TotalR", "$" + $("#TotalGeneral").text());
+            }
+
+            html = html.replace("PorDesc", $("#DescuentoPorcentar").text());
+
+            var inyectado = "";
+
+            for (var i = 0; i < Detalles.length; i++)
+            {
+                if(i == 0)
+                {
+                    inyectado = htmlInyectadoOferta.replace("NumLinea", (i + 1)).replace("ItemCode", Detalles[i].ItemCode ).replace("ItemName",Detalles[i].ItemName).replace("Cantidad",Detalles[i].Cantidad).replace("PrecioUnitario",Detalles[i].PrecioUnitario).replace("TotalLinea",Detalles[i].TotalLinea);
+                }else{
+                    inyectado += htmlInyectadoOferta.replace("NumLinea", (i + 1)).replace("ItemCode", Detalles[i].ItemCode ).replace("ItemName",Detalles[i].ItemName).replace("Cantidad",Detalles[i].Cantidad).replace("PrecioUnitario",Detalles[i].PrecioUnitario).replace("TotalLinea",Detalles[i].TotalLinea);
+
+                }
+            }
+
+            html = html.replace("INYECTADO", inyectado);
+
+
+
+            var item = html;
+
+            var opt = {
+                margin: 1,
+                pagebreak: { mode: 'avoid-all', before: '#page2el' },
+
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2 },
+                jsPDF: { format: 'letter', orientation: 'portrait' }
+            };
+
+
+            if ("@Model.Input.TipoMovimiento" == "1" || "@Model.Input.TipoMovimiento" == "3") {
+                html2pdf().set(opt)
+                    .from(item)
+                    .save("Oferta.pdf");
+            } else {
+                html2pdf().set(opt)
+                    .from(item)
+                    .save("Entrega.pdf");
+            }
+
+
+
+        }
     </script>
 }
-@using System.Globalization;
-@{
+    @using System.Globalization;
+    @{
     NumberFormatInfo formato = new CultureInfo("en-US").NumberFormat;
     formato.CurrencyGroupSeparator = ",";
     formato.NumberDecimalSeparator = ".";
@@ -64,6 +162,7 @@
                 <a asp-page="/Movimientos/Index" class="nav-link text-dark" style="text-decoration: underline;"><i class="fas fa-reply "></i>  Regresar</a>
                 <input hidden id="Detalle" value="@JsonConvert.SerializeObject(Model.Input.Detalle)" />
                 <input hidden id="idGeneral" value="@Model.Input.id" />
+                    <input hidden id="Detalle" value="@JsonConvert.SerializeObject(Model.Input.Detalle)" />
 
 
 
@@ -76,21 +175,22 @@
                 <div class="row mb-4">
                     <div class="col-sm-6">
 
-                        @{switch (Model.Input.TipoMovimiento)
+                        @{
+                            switch (Model.Input.TipoMovimiento)
                             {
                                 case 1:
                                     {
-                                        <h3 class="text-dark mb-1">Oferta de Venta</h3>
+                                                    <h3 class="text-dark mb-1">Oferta de Venta</h3>
                                         break;
                                     }
                                 case 2:
                                     {
-                                        <h3 class="text-dark mb-1">Entrega</h3>
+                                                    <h3 class="text-dark mb-1">Entrega</h3>
                                         break;
                                     }
                                 case 3:
                                     {
-                                        <h3 class="text-dark mb-1">Cotización BackOffice</h3>
+                                                    <h3 class="text-dark mb-1">Cotización BackOffice</h3>
                                         break;
                                     }
                             }
@@ -116,8 +216,6 @@
                         </div>
                     </div>
                     <div class="col-sm-6">
-
-
                     </div>
                 </div>
                 <div class="table-responsive-sm">
@@ -139,35 +237,42 @@
                             </tr>
                         </thead>
                         <tbody id="tbody">
-                            @{int i = 1; }
-                            @{ foreach (var item in Model.Input.Detalle)
+                            @{
+                                int i = 1;
+                            }
+                            @{
+                                foreach (var item in Model.Input.Detalle)
                                 {
-                                    <tr>
+                                                <tr>
 
-                                        <td align="center">@i</td>
-                                        <td align="left" class="strong">@item.ItemCode </td>
-                                        <td align="left"> @item.ItemName</td>
-                                        <td align="right"> @decimal.Round(item.PrecioUnitario, 2).ToString("N", formato)</td>
-                                        <td align="center"> @decimal.Round(item.Cantidad, 2).ToString("N", formato)</td>
-                                        <td align="right"> @decimal.Round(item.Impuestos, 2).ToString("N", formato)</td>
-                                        <td align="center"> @decimal.Round(item.PorDescuento, 2).ToString("N", formato) %</td>
-                                        <td align="right"> @decimal.Round(item.Descuento, 2).ToString("N", formato)</td>
-                                        <td align="right"> @decimal.Round(item.TotalLinea, 2).ToString("N", formato)</td>
-                                        <td align="center">
-                                            @if (item.Garantia)
+                                                    <td align="center">@i</td>
+                                                    <td align="left" class="strong">@item.ItemCode </td>
+                                                    <td align="left"> @item.ItemName</td>
+                                                    <td align="right"> @decimal.Round(item.PrecioUnitario, 2).ToString("N", formato)</td>
+                                                    <td align="center"> @decimal.Round(item.Cantidad, 2).ToString("N", formato)</td>
+                                                    <td align="right"> @decimal.Round(item.Impuestos, 2).ToString("N", formato)</td>
+                                                    <td align="center"> @decimal.Round(item.PorDescuento, 2).ToString("N", formato) %</td>
+                                                    <td align="right"> @decimal.Round(item.Descuento, 2).ToString("N", formato)</td>
+                                                    <td align="right"> @decimal.Round(item.TotalLinea, 2).ToString("N", formato)</td>
+                                                    <td align="center">
+                                                        @if (item.Garantia)
                                             {
 
 
-                                                <input class="form-check-input" disabled checked type="checkbox" style="position: unset;" /><span class="form-check-sign"></span>
+                                                            <input class="form-check-input" disabled checked type="checkbox" style="position: unset;" />
+
+                                                            <span class="form-check-sign"></span>
                                             }
                                             else
                                             {
-                                                <input class="form-check-input" disabled type="checkbox" style="position: unset;" /><span class="form-check-sign"></span>
+                                                            <input class="form-check-input" disabled type="checkbox" style="position: unset;" />
+
+                                                            <span class="form-check-sign"></span>
                                             }
 
-                                        </td>
+                                                    </td>
 
-                                    </tr>
+                                                </tr>
                                     i++;
                                 }
 
@@ -247,6 +352,14 @@
                     </div>
                 </div>
             </div>
+
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <div class="form-group">
+            <button title="PDF" type="button" class="btn btn-rounded btn-outline-danger" onclick="javascript: ImprimeEtiqueta()">PDF</button>
 
         </div>
     </div>

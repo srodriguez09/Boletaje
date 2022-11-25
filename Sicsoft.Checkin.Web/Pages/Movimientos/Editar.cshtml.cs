@@ -20,6 +20,8 @@ namespace Boletaje.Pages.Movimientos
         private readonly ICrudApi<ClientesViewModel, int> clientes;
         private readonly ICrudApi<LlamadasViewModel, int> serviceLlamada;
         private readonly ICrudApi<ProductosHijosViewModel, int> service2;
+        private readonly ICrudApi<ImpuestosViewModel, int> impuestos;
+
 
 
         [BindProperty]
@@ -38,14 +40,21 @@ namespace Boletaje.Pages.Movimientos
         public ProductosHijosViewModel[] ProductosHijos { get; set; }
 
         [BindProperty]
+        public ImpuestosViewModel[] Imp { get; set; }
+
+        [BindProperty]
         public ProductosHijosViewModel ManoObra { get; set; }
 
-        public EditarModel(ICrudApi<EncMovimientoViewModel, int> service, ICrudApi<ClientesViewModel, int> clientes, ICrudApi<LlamadasViewModel, int> serviceLlamada, ICrudApi<ProductosHijosViewModel, int> service2)
+        [BindProperty]
+        public ProductosHijosViewModel[] ProductosHijosInsertar { get; set; }
+
+        public EditarModel(ICrudApi<EncMovimientoViewModel, int> service, ICrudApi<ClientesViewModel, int> clientes, ICrudApi<LlamadasViewModel, int> serviceLlamada, ICrudApi<ProductosHijosViewModel, int> service2, ICrudApi<ImpuestosViewModel, int> impuestos)
         {
             this.service = service;
             this.clientes = clientes;
             this.serviceLlamada = serviceLlamada;
             this.service2 = service2;
+            this.impuestos = impuestos;
         }
 
         public async Task<IActionResult> OnGetAsync(int id)
@@ -58,6 +67,9 @@ namespace Boletaje.Pages.Movimientos
                     return RedirectToPage("/NoPermiso");
                 }
 
+                Imp = await impuestos.ObtenerLista("");
+
+
                 RolAceptacion = Roles1.Where(a => a == "36").FirstOrDefault() != null;
 
                 Input = await service.ObtenerPorId(id);
@@ -68,8 +80,8 @@ namespace Boletaje.Pages.Movimientos
 
                 var ProductosHijos2 = new List<ProductosHijosViewModel>();
                 var Produc = await service2.ObtenerLista("");
- 
-                    foreach(var item in Input.Detalle)
+
+                foreach (var item in Input.Detalle)
                 {
                     var Pr = Produc.Where(a => a.codSAP == item.ItemCode).FirstOrDefault();
                     ProductosHijos2.Add(Pr);
@@ -78,7 +90,12 @@ namespace Boletaje.Pages.Movimientos
                 ManoObra = Produc.Where(a => a.Nombre.ToUpper().Contains("Mano de Obra".ToUpper())).FirstOrDefault();
                 ProductosHijos2.Add(ManoObra);
                 ProductosHijos = ProductosHijos2.ToArray();
+                ProductosHijosInsertar = await service2.ObtenerLista("");
 
+                foreach (var item in ProductosHijos2)
+                {
+                    ProductosHijosInsertar = ProductosHijosInsertar.Where(a => a.id != item.id).ToArray();
+                }
 
 
                 return Page();
@@ -98,9 +115,9 @@ namespace Boletaje.Pages.Movimientos
                 RecibidoMovimientos recibido = JsonConvert.DeserializeObject<RecibidoMovimientos>(recibidos);
 
                 EncMovimientoViewModel coleccion = new EncMovimientoViewModel();
-                 
+
                 coleccion.Detalle = new DetMovimientoViewModel[recibido.Detalle.Length];
-             
+
                 coleccion.id = recibido.id;
                 coleccion.CreadoPor = ((ClaimsIdentity)User.Identity).Claims.Where(d => d.Type == "CodVendedor").Select(s1 => s1.Value).FirstOrDefault();
                 coleccion.Comentarios = recibido.Comentarios;
@@ -129,6 +146,7 @@ namespace Boletaje.Pages.Movimientos
                     coleccion.Detalle[cantidad - 1].Impuestos = item.Impuestos;
                     coleccion.Detalle[cantidad - 1].TotalLinea = item.TotalLinea;
                     coleccion.Detalle[cantidad - 1].Garantia = item.Garantia;
+                    coleccion.Detalle[cantidad - 1].idImpuesto = item.idImpuesto;
 
 
                     cantidad++;

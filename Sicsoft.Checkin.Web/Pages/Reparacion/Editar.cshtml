@@ -193,119 +193,149 @@
         var Errores = [];
         var Control = [];
         function Recuperar() {
+            try {
+                ProdCadena = [];
+                ProdCadenaM = [];
+                ErroresP = [];
+                Errores = [];
 
-            ProdCadena = [];
-            ProdCadenaM = [];
-            ErroresP = [];
-            Errores = [];
+                var disponibles = JSON.parse($("#HijosDisponibles").val());
+                var seleccionados = JSON.parse($("#HijosSeleccionados").val());  //Viene de input
+                Errores = JSON.parse($("#Errores").val());
+                Control = JSON.parse($("#Control").val());
+                var idError = '@Model.Encabezado.idDiagnostico';
 
-            var disponibles = JSON.parse($("#HijosDisponibles").val());
-            var seleccionados = JSON.parse($("#HijosSeleccionados").val());  //Viene de input
-            Errores = JSON.parse($("#Errores").val());
-            Control = JSON.parse($("#Control").val());
-            var idError = '@Model.Encabezado.idDiagnostico';
+                console.log(disponibles);
 
-            console.log(disponibles);
-
-            for (var i = 0; i < disponibles.length; i++) {
-                var detalle = {
-                    id: 0,
-                    idEncabezado: "",
-                    idProducto: disponibles[i].id,
-                    ItemCode: disponibles[i].codSAP + " | " + disponibles[i].Nombre,
-                    Cantidad: disponibles[i].Cantidad,
-                    idError: disponibles[i].idError,
-                    Stock: disponibles[i].Stock
-
-                };
-                ProdCadena.push(detalle);
-
-            }
-            for (var i = 0; i < seleccionados.length; i++) {
-                var detalle = {
-                    id: 0,
-                    idEncabezado: "",
-                    idProducto: seleccionados[i].idProducto,
-                    ItemCode: seleccionados[i].ItemCode,
-                    Cantidad: seleccionados[i].Cantidad,
-                    idError: seleccionados[i].idError,
-                    Stock: seleccionados[i].Stock
-
-
-
-                };
-                ProdCadenaM.push(detalle);
-
-            }
-
-            if (parseInt(idError) > 0) {
-                var ErroresTemp = Errores.filter(a => a.idDiagnostico == parseInt(idError));
-                for (var i = 0; i < ErroresTemp.length; i++) {
+                for (var i = 0; i < disponibles.length; i++) {
                     var detalle = {
-                        id: ErroresTemp[i].id,
-                        idDiagnostico: ErroresTemp[i].idDiagnostico,
-                        Descripcion: ErroresTemp[i].Descripcion,
-                        Diagnostico: ErroresTemp[i].Diagnostico
+                        id: 0,
+                        idEncabezado: "",
+                        idProducto: disponibles[i].id,
+                        ItemCode: disponibles[i].codSAP + " | " + disponibles[i].Nombre,
+                        Cantidad: disponibles[i].Cantidad,
+                        idError: disponibles[i].idError,
+                        Stock: disponibles[i].Stock
+
+                    };
+                    ProdCadena.push(detalle);
+
+                }
+                for (var i = 0; i < seleccionados.length; i++) {
+                    var detalle = {
+                        id: 0,
+                        idEncabezado: "",
+                        idProducto: seleccionados[i].idProducto,
+                        ItemCode: seleccionados[i].ItemCode,
+                        Cantidad: seleccionados[i].Cantidad,
+                        idError: seleccionados[i].idError,
+                        Stock: seleccionados[i].Stock
+
 
 
                     };
-                    ErroresP.push(detalle);
+                    ProdCadenaM.push(detalle);
 
                 }
 
+                if (parseInt(idError) > 0) {
+                    var ErroresTemp = Errores.filter(a => a.idDiagnostico == parseInt(idError));
+                    for (var i = 0; i < ErroresTemp.length; i++) {
+                        var detalle = {
+                            id: ErroresTemp[i].id,
+                            idDiagnostico: ErroresTemp[i].idDiagnostico,
+                            Descripcion: ErroresTemp[i].Descripcion,
+                            Diagnostico: ErroresTemp[i].Diagnostico
+
+
+                        };
+                        ErroresP.push(detalle);
+
+                    }
+
+                }
+                $("#rowRepDevolver").hide();
+                RellenaTablaG();
+                RellenaTablaM();
+
+            } catch (e) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Ha ocurrido un error ' + e + ' - ' + e.stack
+
+                })
             }
-            $("#rowRepDevolver").hide();
-            RellenaTablaG();
-            RellenaTablaM();
         }
 
         function onChangeDiagnostico() {
-            var idError = $("#idDiag").val();
-            ErroresP = [];
-            if (parseInt(idError) > 0) {
-                var ErroresTemp = Errores.filter(a => a.idDiagnostico == parseInt(idError));
-                for (var i = 0; i < ErroresTemp.length; i++) {
-                    var detalle = {
-                        id: ErroresTemp[i].id,
-                        idDiagnostico: ErroresTemp[i].idDiagnostico,
-                        Descripcion: ErroresTemp[i].Descripcion,
-                        Diagnostico: ErroresTemp[i].Diagnostico
+            try {
+
+                var idError = $("#idDiag").val();
+                ErroresP = [];
+                if (parseInt(idError) > 0) {
+                    var ErroresTemp = Errores.filter(a => a.idDiagnostico == parseInt(idError));
+                    for (var i = 0; i < ErroresTemp.length; i++) {
+                        var detalle = {
+                            id: ErroresTemp[i].id,
+                            idDiagnostico: ErroresTemp[i].idDiagnostico,
+                            Descripcion: ErroresTemp[i].Descripcion,
+                            Diagnostico: ErroresTemp[i].Diagnostico
 
 
-                    };
-                    ErroresP.push(detalle);
+                        };
+                        ErroresP.push(detalle);
+
+                    }
 
                 }
 
-            }
+                RellenaTablaG();
+                RellenaTablaM();
+            } catch (e) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Ha ocurrido un error ' + e + ' - ' + e.stack
 
-            RellenaTablaG();
-            RellenaTablaM();
+                })
+            }
 
         }
 
         function InsertarProductoTablaMia(i) {
-            var detalle =
-            {
-                id: 0,
-                idEncabezado: "",
-                idProducto: ProdCadena[i].idProducto,
-                ItemCode: ProdCadena[i].ItemCode,
-                Cantidad: ProdCadena[i].Cantidad,
-                Stock: ProdCadena[i].Stock
+            try {
+                var detalle =
+                {
+                    id: 0,
+                    idEncabezado: "",
+                    idProducto: ProdCadena[i].idProducto,
+                    ItemCode: ProdCadena[i].ItemCode,
+                    Cantidad: ProdCadena[i].Cantidad,
+                    Stock: ProdCadena[i].Stock
 
 
 
+                }
+                ProdCadenaM.push(detalle);
+
+                ProdCadena.splice(i, 1);
+                RellenaTablaM();
+                RellenaTablaG();
+
+            } catch (e) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Ha ocurrido un error ' + e + ' - ' + e.stack
+
+                })
             }
-            ProdCadenaM.push(detalle);
-
-            ProdCadena.splice(i, 1);
-            RellenaTablaM();
-            RellenaTablaG();
 
         }
 
         function InsertarProductoTablaG(i) {
+
             var detalle =
             {
                 id: 0,
@@ -974,6 +1004,23 @@
 
 
                         </div>
+
+                        <div class="col-md-4 pr-1">
+
+                            <div class="form-group">
+                                <label>Tipo de Caso</label>
+                               <select id="tp" class="form-control" asp-for="InputLlamada.TipoCaso" disabled="disabled">
+                                
+                                @foreach (var item in Model.TP)
+                                {
+                                    <option value="@item.idSAP">@item.Nombre</option>
+                                }
+                            </select>
+
+                            </div>
+
+
+                        </div>
                     </div>
 
 
@@ -1275,6 +1322,15 @@
                 <label>Comentarios</label>
 
                 <textarea id="comentarios" maxlength="500" class="form-control" asp-for="Encabezado.Comentarios"></textarea>
+
+            </div>
+        </div>
+
+         <div class="col-sm-6">
+            <div class="form-group">
+                <label>Comentarios Llamada</label>
+
+                <textarea id="comentariosLlamada" readonly disabled maxlength="500" class="form-control" asp-for="InputLlamada.Comentarios"></textarea>
 
             </div>
         </div>

@@ -9,6 +9,7 @@ namespace Boletaje.Models
     {
         public int id { get; set; }
         public int idEncabezado { get; set; }
+        public int idImpuesto { get; set; }
         public int NumLinea { get; set; }
         public string ItemCode { get; set; }
         public string ItemName { get; set; }

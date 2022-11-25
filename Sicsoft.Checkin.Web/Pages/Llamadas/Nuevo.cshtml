@@ -672,7 +672,7 @@
                 Swal.fire({
                     icon: 'error',
                     title: 'Oops...',
-                    text: 'Ha ocurrido un error al intentar guardar ' + e + ' - ' + e.stack
+                    text: 'Ha ocurrido un error al intentar guardar ' + e 
 
                 })
             }
@@ -683,50 +683,80 @@
     </script>
     <script>
 
+        $(document).ready(function() {
+            $('.select2').select2({
+                width: 'resolve',
+                theme: "classic"
+            });
+        });
+
         function rellenaProductos(lista) {
-            var sOptions = '';
+            try
+            {
+                var sOptions = '';
 
-            $("#productos").html('');
-            for (var i = 0; i < lista.length; i++) {
+                $("#productos").html('');
+                for (var i = 0; i < lista.length; i++) {
 
-                sOptions += ' <option value="' + lista[i].itemCode + ' / ' + lista[i].manufSN + '">' + lista[i].itemCode + ' - ' + lista[i].itemName + ' - ' + lista[i].manufSN + '</option>';
+                    sOptions += ' <option value="' + lista[i].itemCode + ' / ' + lista[i].manufSN + '">' + lista[i].itemCode + ' - ' + lista[i].itemName + ' - ' + lista[i].manufSN + '</option>';
 
+                }
+                $("#productos").html(sOptions);
+
+            }catch(e)
+            {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Ha ocurrido un error al intentar guardar ' + e + ' - ' + e.stack
+
+                })
             }
-            $("#productos").html(sOptions);
         }
 
         function cambiarProducto() {
+            try 
+            {
+                var CardCode = $("#cardcode").val();
+                CardCode = CardCode.split("/")[0];
+                $.ajax({
+                    type: 'GET',
 
-            var CardCode = $("#cardcode").val();
-            CardCode = CardCode.split("/")[0];
-            $.ajax({
-                type: 'GET',
+                    url: '@Url.Page("Nuevo", "Productos")',
+                    dataType: 'json',
+                    data: { idB: CardCode },
+                    headers: {
+                        RequestVerificationToken: $('input:hidden[name="__RequestVerificationToken"]').val()
+                    },
+                    success: function(json) {
 
-                url: '@Url.Page("Nuevo", "Productos")',
-                dataType: 'json',
-                data: { idB: CardCode },
-                headers: {
-                    RequestVerificationToken: $('input:hidden[name="__RequestVerificationToken"]').val()
-                },
-                success: function(json) {
+                        console.log(json);
 
-                    console.log(json);
+                        rellenaProductos(json);
 
-                    rellenaProductos(json);
+                    },
 
-                },
-
-                beforeSend: function(xhr) {
+                    beforeSend: function(xhr) {
 
 
-                },
-                complete: function() {
+                    },
+                    complete: function() {
 
-                },
-                error: function(error) {
+                    },
+                    error: function(error) {
 
-                }
-            });
+                    }
+                });
+
+            }catch(e)
+            {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Ha ocurrido un error  ' + e + ' - ' + e.stack
+
+                })
+            }
 
         }
 
@@ -945,7 +975,7 @@
                     <div class="col-md-6">
                         <div class="form-group">
                             <label>Producto:</label>
-                            <select id="productos" class="form-control" asp-for="Input.ItemCode" required>
+                            <select id="productos" class="form-control select2" asp-for="Input.ItemCode" required>
                                 <option value="0">Seleccione</option>
 
                             </select>
@@ -1119,7 +1149,18 @@
                         <div class="form-group">
                             <label>Asunto:</label>
 
-                            <input type="text" class="form-control form-control-lg" id="asunto" placeholder="Asunto" asp-for="Input.Asunto">
+                             <select id="asunto" class="form-control" asp-for="Input.Asunto" required>
+
+                                @foreach (var item in Model.Asuntos)
+                                {
+                                    
+                                        <option value="@item.Asunto">@item.Asunto</option>
+
+                                     
+                                }
+                            </select>
+
+                        @*    <input type="text" class="form-control form-control-lg" id="asunto" placeholder="Asunto" asp-for="Input.Asunto">*@
 
 
                         </div>

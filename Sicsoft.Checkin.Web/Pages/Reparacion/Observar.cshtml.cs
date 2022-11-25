@@ -30,6 +30,7 @@ namespace Boletaje.Pages.Reparacion
         private readonly ICrudApi<DiagnosticosViewModel, int> serviceD;
         private readonly ICrudApi<ErroresViewModel, int> serviceError;
         private readonly ICrudApi<ControlProductosViewModel, int> control;
+        private readonly ICrudApi<TiposCasosViewModel, int> tp;
 
 
         [BindProperty]
@@ -59,9 +60,13 @@ namespace Boletaje.Pages.Reparacion
 
         [BindProperty]
         public ControlProductosViewModel[] Control { get; set; }
+
+        [BindProperty]
+
+        public TiposCasosViewModel[] TP { get; set; }
         public ObservarModel(ICrudApi<EncReparacionViewModel, int> service, ICrudApi<ProductosViewModel, int> prods, ICrudApi<TecnicosViewModel, int> serviceT, ICrudApi<BitacoraMovimientosViewModel, int> bt, ICrudApi<DiagnosticosViewModel, int> serviceD,
             ICrudApi<ErroresViewModel, int> serviceError, ICrudApi<ClientesViewModel, int> clientes, ICrudApi<LlamadasViewModel, int> llamada, ICrudApi<ControlProductosViewModel, int> control , ICrudApi<LlamadasViewModel, int> serviceL
-            )
+            , ICrudApi<TiposCasosViewModel, int> tp)
         {
             this.service = service;
             this.prods = prods;
@@ -72,7 +77,8 @@ namespace Boletaje.Pages.Reparacion
             this.clientes = clientes;
             this.llamada = llamada;
             this.control = control;
-            this.serviceL = serviceL; 
+            this.serviceL = serviceL;
+            this.tp = tp;
         }
         public async Task<IActionResult> OnGetAsync(int id)
         {
@@ -85,6 +91,7 @@ namespace Boletaje.Pages.Reparacion
                 }
                 ParametrosFiltros filt = new ParametrosFiltros();
                 filt.Codigo1 = id;
+                TP = await tp.ObtenerLista("");
 
                 Control = await control.ObtenerLista(filt);
                 BTS = await bt.ObtenerLista(filt);

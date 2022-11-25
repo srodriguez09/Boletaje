@@ -14,51 +14,66 @@
     </li>
 
 }
-@using Newtonsoft.Json;
-@section styles{
+    @using Newtonsoft.Json;
+    @section styles{
     <style>
         .input {
             width: 40%;
         }
 
         .input2 {
-             
         }
     </style>
 
 }
-@section scripts
-{
-   
-    <script>
-        $(document).ready(function () {
+    @section scripts
+    {
 
-            jQuery(document).ready(function ($) {
-                $(document).ready(function () {
+    <script>
+        $(document).ready(function() {
+
+            jQuery(document).ready(function($) {
+                $(document).ready(function() {
                 });
             });
 
             Recuperar();
-            ModificaMoneda();
+            //ModificaMoneda();
         });
 
         var Detalles = [];
-var ProductosHijos = [];
-var ManoObra = "";
-var RolAceptacion = false;
+        var ProductosHijos = [];
+        var ProductosHijosInsertar = [];
+        var ImpuestosS = [];
+        var ManoObra = "";
+        var RolAceptacion = false;
+        var Rate = 0;
+        var banderaConversion = false;
+
         function Recuperar() {
+
             var detalles = JSON.parse($("#Detalle").val());
-             ManoObra = JSON.parse($("#ManoObra").val());
-
+            ManoObra = JSON.parse($("#ManoObra").val());
+            ImpuestosS = JSON.parse($("#Impuestos").val());
             ProductosHijos = JSON.parse($("#ProductosHijos").val());
-            RolAceptacion = '@Model.RolAceptacion' == 'True';
+            ProductosHijosInsertar = JSON.parse($("#ProductosHijosInsertar").val());
 
+            for (var i = 0; i < ProductosHijos.length; i++)
+            {
+                ProductosHijosInsertar.splice(ProductosHijosInsertar.indexOf(ProductosHijosInsertar.find(a => a.id == ProductosHijos[i].id)), 1);
+            }
+            
+
+
+            RolAceptacion = '@Model.RolAceptacion' == 'True';
+            $("#Moneda").val("@Model.Input.Moneda");
             console.log(detalles);
             for (var i = 0; i < detalles.length; i++) {
                 var detalle = {
                     id: detalles[i].id,
                     NumLinea: i + 1,
                     idEncabezado: 0,
+                    idImpuesto: detalles[i].idImpuesto,
                     ItemCode: detalles[i].ItemCode,
                     ItemName: detalles[i].ItemName,
                     PrecioUnitario: detalles[i].PrecioUnitario,
@@ -74,9 +89,12 @@ var RolAceptacion = false;
             }
 
             RellenaTabla();
+
+
         }
         function RellenaTabla() {
-      var btn = document.getElementById('agregaManoObra');
+
+            var btn = document.getElementById('agregaManoObra');
 
             var sOptions = '';
 
@@ -84,108 +102,179 @@ var RolAceptacion = false;
 
             for (var i = 0; i < Detalles.length; i++) {
                 var producto = ProductosHijos.filter(a => a.codSAP == Detalles[i].ItemCode)[0];
-                  var ganancia = 0;
-                 var gananciaBruta = 0;
-                 
-                 gananciaBruta = parseFloat(Detalles[i].PrecioUnitario) - producto.Costo;
+                if (producto == undefined) {
+                    producto = ProductosHijosInsertar.filter(a => a.codSAP == Detalles[i].ItemCode)[0];
+                }
+                var ganancia = 0;
+                var gananciaBruta = 0;
+                Rate = producto.Rate;
 
-                 ganancia = (gananciaBruta / parseFloat(Detalles[i].PrecioUnitario)) * 100;
+               
+
+                gananciaBruta = parseFloat(Detalles[i].PrecioUnitario) - producto.Costo;
+
+                ganancia = (gananciaBruta / parseFloat(Detalles[i].PrecioUnitario)) * 100;
 
                 sOptions += '<tr>'
-                //sOptions += '<td align="center">'+ (i+1) +'</td>';
-                sOptions += '<td align="left " class="strong">' + Detalles[i].ItemCode + '</td>';
-                sOptions += '<td align="left ">' + Detalles[i].ItemName + '</td>';
+                sOptions += '<td align="center "> <a style="margin-left: -1%; position: inherit !important;" onclick="javascript: EliminarLinea(' + i + ')" title="Eliminar" class="fa fa-trash icono"></a> </td>'
+                sOptions += '<td align="left ">' + Detalles[i].ItemCode + ' - ' + Detalles[i].ItemName + '</td>';
 
-                sOptions += '<td align="right"> <input class="form-control input2" value="' + Detalles[i].PrecioUnitario + '" type="number" step="1" id="' + i +'PrecioU" onchange="javascript: ModificaLinea('+i+')"/> </td>';
-                if(producto.Nombre.toUpperCase().includes("mano de obra".toUpperCase()))
-                {
-                    btn.disabled = true;
-                     sOptions += '<td align="center"> <input class="form-control input2" value="' + Detalles[i].Cantidad + '" type="number" step="1" id="'+i+ 'Cantidad" onchange="javascript: ModificaLinea('+i+')"/></td>';
-                }else{
-                     sOptions += '<td align="center"> <p id="'+i+'Cantidad">' + Detalles[i].Cantidad + '</p></td>';
+                sOptions += '<td align="right"> <input class="form-control input2" value="' + Detalles[i].PrecioUnitario + '" type="number" step="1" id="' + i + 'PrecioU" onchange="javascript: ModificaLinea(' + i + ', false)"/> </td>';
+                if (producto.Nombre.toUpperCase().includes("mano de obra".toUpperCase()) || ProductosHijos.filter(a => a.codSAP == Detalles[i].ItemCode)[0] == undefined) {
+                    if (producto.Nombre.toUpperCase().includes("mano de obra".toUpperCase())) {
+                        btn.disabled = true;
+
+                    }
+                    sOptions += '<td align="center"> <input class="form-control input2" value="' + Detalles[i].Cantidad + '" type="number" step="1" id="' + i + 'Cantidad" onchange="javascript: ModificaLinea(' + i + ', false)"/></td>';
+                } else {
+                    sOptions += '<td align="center"> <input class="form-control input2" value="' + Detalles[i].Cantidad + '" type="number" step="1" id="' + i + 'Cantidad" onchange="javascript: ModificaLinea(' + i + ', false)"/></td>';
+
+                   // sOptions += '<td align="center"> <p id="' + i + 'Cantidad">' + Detalles[i].Cantidad + '</p></td>';
                 }
-               
-                sOptions += '<td align="right"> <p id="' + i + 'Imp">' + Detalles[i].Impuestos + '</p></td>';
-                sOptions += '<td align="right"> <input class="form-control input2" readonnly value="' + Detalles[i].PorDescuento + '" type="number" step="1" id="' + i + 'PorDesc" onchange="javascript: ModificaLinea(' + i +')"/> </td>';
 
-                sOptions += '<td align="right"> <p id="'+i+'Desc">' + Detalles[i].Descuento + '</p></td>';
-                sOptions += '<td align="right"><p id="' + i +'TLinea">' + Detalles[i].TotalLinea + '</p></td>';
-                sOptions += '<td align="center">  <input class="form-check-input" type="checkbox" onclick="javascript: ModificaLinea(' + i + ')" style="position: unset;" id="' + i + 'check"><span class="form-check-sign"></span> </td>';
-                sOptions += '<td align="right"><p id="' + i +'ganancia"> '+ Math.round( ganancia * 100 ) / 100 +' %</p> </td>';
-                sOptions += '<td align="right"><p id="' + i +'gananciaM">' +  producto.PorMinimo + ' %</p></td>';
+                sOptions += '<td align="center"> <select class=" form-control " id="' + i + 'impSelector" onchange="javascript: ModificaLinea(' + i + ', false)"> <option value="0"> Seleccione </option>';
+                for (var z = 0; z < ImpuestosS.length; z++) {
+                    if (Detalles[i].idImpuesto == ImpuestosS[z].id) {
+                        sOptions += '<option value="' + ImpuestosS[z].id + '" selected> ' + ImpuestosS[z].CodSAP + '</option>'
+
+                    } else {
+                        if (ImpuestosS[z].Tarifa == 13) {
+                            sOptions += '<option selected value="' + ImpuestosS[z].id + '" > ' + ImpuestosS[z].CodSAP + '</option>'
+
+                        } else {
+                            sOptions += '<option value="' + ImpuestosS[z].id + '" > ' + ImpuestosS[z].CodSAP + '</option>'
+
+                        }
+
+                    }
+                }
+                sOptions += '</select> </td>';
+
+
+
+                sOptions += '<td align="right"> <p id="' + i + 'Imp">' + Detalles[i].Impuestos + '</p></td>';
+                sOptions += '<td align="right"> <input class="form-control input2" disabled readonnly value="' + Detalles[i].PorDescuento + '" type="number" step="1" id="' + i + 'PorDesc" onchange="javascript: ModificaLinea(' + i + ', false)"/> </td>';
+
+                sOptions += '<td align="right"> <p id="' + i + 'Desc">' + Detalles[i].Descuento + '</p></td>';
+                sOptions += '<td align="right"><p id="' + i + 'TLinea">' + Detalles[i].TotalLinea + '</p></td>';
+                sOptions += '<td align="center">  <input class="form-check-input" type="checkbox" onclick="javascript: ModificaLinea(' + i + ', false)" style="position: unset;" id="' + i + 'check"><span class="form-check-sign"></span> </td>';
+                sOptions += '<td align="right"><p id="' + i + 'ganancia"> ' + Math.round(ganancia * 100) / 100 + ' %</p> </td>';
+                sOptions += '<td align="right"><p id="' + i + 'gananciaM">' + producto.PorMinimo + ' %</p></td>';
 
 
                 sOptions += '</tr>'
 
-                  
+
             }
             $("#tbody").html(sOptions);
 
-             for (var i = 0; i < Detalles.length; i++)
-             {
-                     ModificaLinea(i);
+            for (var i = 0; i < Detalles.length; i++) {
+                ModificaLinea(i, "false");
 
-             }
+            }
 
             ModificaTodo();
 
+
+
         }
 
-function ModificaLinea(i) {
+        function ModificaLinea(i, ban) {
 
-    var Impuestos = 0;
-    var Descuentos = 0;
-    var TotalLinea = 0;
-    var Subtotal = 0;
-    var checkbox1 = document.getElementById(i + "check");
-    var producto = ProductosHijos.filter(a => a.codSAP == Detalles[i].ItemCode)[0];
-    var ganancia = 0;
-    var gananciaBruta = 0;
+            var Impuestos = 0;
+            var Descuentos = 0;
+            var TotalLinea = 0;
+            var Subtotal = 0;
+            var checkbox1 = document.getElementById(i + "check");
+            var producto = ProductosHijos.filter(a => a.codSAP == Detalles[i].ItemCode)[0];
+            if (producto == undefined) {
+                producto = ProductosHijosInsertar.filter(a => a.codSAP == Detalles[i].ItemCode)[0];
+            }
+            var ganancia = 0;
+            var gananciaBruta = 0;
+            var banderaConverAntes = banderaConversion;
+            if (ban == 'false' || ban == false) {
+                banderaConversion = false;
+            }
+
+            Detalles[i].Garantia = checkbox1.checked;
+
+            if (banderaConversion) {
+                var PrecioUnitario = parseFloat($("#" + i + "PrecioU").val());
+                if ($("#Moneda").val() == "COL") {
+                    $("#" + i + "PrecioU").val((PrecioUnitario * Rate).toFixed(2))
+                } else {
+                    $("#" + i + "PrecioU").val((PrecioUnitario / Rate).toFixed(4))
+
+                }
+            }
+
+            if (producto.Nombre.toUpperCase().includes("mano de obra".toUpperCase()) || ProductosHijos.filter(a => a.codSAP == Detalles[i].ItemCode)[0] == undefined) {
+                Subtotal = $("#" + i + "PrecioU").val() * $("#" + i + "Cantidad").val();
+
+            } else {
+                Subtotal = $("#" + i + "PrecioU").val() * $("#" + i + "Cantidad").val();
+
+               // Subtotal = $("#" + i + "PrecioU").val() * $("#" + i + "Cantidad").text();
+
+            }
 
 
-    Detalles[i].Garantia = checkbox1.checked;
-    if (producto.Nombre.toUpperCase().includes("mano de obra".toUpperCase())) {
-    Subtotal = $("#" + i + "PrecioU").val() * $("#" + i + "Cantidad").val();
 
-    }else{
-    Subtotal = $("#" + i + "PrecioU").val() * $("#" + i + "Cantidad").text();
 
-    }
+            //if (banderaConversion) {
+            if ($("#Moneda").val() == "COL") {
+                gananciaBruta = parseFloat($("#" + i + "PrecioU").val()) - (producto.Costo);
 
-    gananciaBruta = parseFloat($("#" + i + "PrecioU").val()) - producto.Costo;
+            } else {
+                gananciaBruta = parseFloat($("#" + i + "PrecioU").val()) - (producto.Costo / Rate);
 
-    ganancia = (gananciaBruta / parseFloat($("#" + i + "PrecioU").val())) * 100;
 
-    Descuentos = ($("#" + i + "PorDesc").val() / 100) * Subtotal;
-    Impuestos = (Subtotal - Descuentos) * 0.13;
-    TotalLinea = (Subtotal - Descuentos) + Impuestos;
+            }
+            //} else {
+            //    gananciaBruta = parseFloat($("#" + i + "PrecioU").val()) - (producto.Costo);
+            //}
 
-    Detalles[i].PrecioUnitario = $("#" + i + "PrecioU").val();
-    if(producto.Nombre.toUpperCase().includes("mano de obra".toUpperCase()))
-    {
-    Detalles[i].Cantidad = $("#" + i + "Cantidad").val();
+            ganancia = (gananciaBruta / parseFloat($("#" + i + "PrecioU").val())) * 100;
 
-    }else{
-    Detalles[i].Cantidad = $("#" + i + "Cantidad").text();
+            Descuentos = ($("#" + i + "PorDesc").val() / 100) * Subtotal;
+            var idImpuesto = ImpuestosS.find(a => a.id == $("#" + i + "impSelector").val());
+            if (idImpuesto != undefined) {
+                Detalles[i].idImpuesto = idImpuesto.id;
+                Impuestos = (Subtotal - Descuentos) * (idImpuesto.Tarifa / 100);
 
-    }
-    Detalles[i].PorDescuento = $("#" + i + "PorDesc").val();
-    Detalles[i].Descuento = Descuentos;
-    Detalles[i].Impuestos = Impuestos;
-    Detalles[i].TotalLinea = TotalLinea;
+            } else {
+                Impuestos = 0;
+            }
+            TotalLinea = (Subtotal - Descuentos) + Impuestos;
 
-    $("#" + i + "TLinea").text(TotalLinea.toFixed(2));
-    $("#" + i + "Desc").text(Descuentos.toFixed(2));
-    $("#" + i + "Imp").text(Impuestos.toFixed(2));
-    $("#" + i + "ganancia").text(ganancia.toFixed(2) + " %");
+            Detalles[i].PrecioUnitario = $("#" + i + "PrecioU").val();
+            if (producto.Nombre.toUpperCase().includes("mano de obra".toUpperCase()) || ProductosHijos.filter(a => a.codSAP == Detalles[i].ItemCode)[0] == undefined) {
+                Detalles[i].Cantidad = $("#" + i + "Cantidad").val();
 
-    if (ganancia < producto.PorMinimo) {
-        $("#" + i + "ganancia").css("color", "red");
-    } else {
-        $("#" + i + "ganancia").css("color", "green");
+            } else {
+                Detalles[i].Cantidad = $("#" + i + "Cantidad").val();
 
-    }
+               // Detalles[i].Cantidad = $("#" + i + "Cantidad").text();
 
+            }
+            Detalles[i].PorDescuento = $("#" + i + "PorDesc").val();
+            Detalles[i].Descuento = Descuentos;
+            Detalles[i].Impuestos = Impuestos;
+            Detalles[i].TotalLinea = TotalLinea;
+
+            $("#" + i + "TLinea").text(TotalLinea.toFixed(2));
+            $("#" + i + "Desc").text(Descuentos.toFixed(2));
+            $("#" + i + "Imp").text(Impuestos.toFixed(2));
+            $("#" + i + "ganancia").text(ganancia.toFixed(2) + " %");
+
+            if (ganancia < producto.PorMinimo) {
+                $("#" + i + "ganancia").css("color", "red");
+            } else {
+                $("#" + i + "ganancia").css("color", "green");
+
+            }
+            banderaConversion = banderaConverAntes;
             ModificaTodo();
         }
 
@@ -199,10 +288,14 @@ function ModificaLinea(i) {
             PorDescuento = $("#descGeneral").val();
             for (var i = 0; i < Detalles.length; i++) {
                 var ImpLocal = parseFloat($("#" + i + "Imp").text());
+
+
                 var DescuentoLocal = parseFloat($("#" + i + "Desc").text());
+
                 var TotalLocal = parseFloat($("#" + i + "TLinea").text());
-                var subtotalLocal = (TotalLocal - ImpLocal) ;
-               
+
+                var subtotalLocal = (TotalLocal - ImpLocal);
+
                 var checkbox1 = document.getElementById(i + "check");
                 if (Detalles[i].Garantia) {
                     checkbox1.checked = true;
@@ -226,27 +319,29 @@ function ModificaLinea(i) {
 
         }
 
-function Validar(Detalles) {
+        function Validar(Detalles) {
 
-    var bandera = true;
-    for (var i = 0; i < Detalles.length; i++)
-    {
-             var producto = ProductosHijos.filter(a => a.codSAP == Detalles[i].ItemCode)[0];
-              var ganancia = 0;
-              var gananciaBruta = 0;
+            var bandera = true;
+            for (var i = 0; i < Detalles.length; i++) {
+                var producto = ProductosHijos.filter(a => a.codSAP == Detalles[i].ItemCode)[0];
+                if (producto == undefined) {
+                    producto = ProductosHijosInsertar.filter(a => a.codSAP == Detalles[i].ItemCode)[0];
+                }
+                var ganancia = 0;
+                var gananciaBruta = 0;
 
-              gananciaBruta = parseFloat($("#" + i + "PrecioU").val()) - producto.Costo;
+                gananciaBruta = parseFloat($("#" + i + "PrecioU").val()) - producto.Costo;
 
-              ganancia = (gananciaBruta / parseFloat($("#" + i + "PrecioU").val())) * 100;
-              if (ganancia < producto.PorMinimo) {
-                  bandera = false;
-              }  
+                ganancia = (gananciaBruta / parseFloat($("#" + i + "PrecioU").val())) * 100;
+                if (ganancia < producto.PorMinimo) {
+                    bandera = false;
+                }
 
 
-    }
+            }
 
-    return bandera;
-}
+            return bandera;
+        }
 
         function Generar(generar) {
 
@@ -276,12 +371,10 @@ function Validar(Detalles) {
 
             }
 
-            if(generar)
-            {
+            if (generar) {
                 if (!RolAceptacion) {
-                     if(Validar(Detalles))
-                        {
-                              Swal.fire({
+                    if (Validar(Detalles)) {
+                        Swal.fire({
                             title: '¿Desea guardar los cambios?',
                             showDenyButton: true,
                             showCancelButton: false,
@@ -304,7 +397,7 @@ function Validar(Detalles) {
                                     headers: {
                                         RequestVerificationToken: $('input:hidden[name="__RequestVerificationToken"]').val()
                                     },
-                                    success: function (json) {
+                                    success: function(json) {
 
                                         $("#divProcesando").hide();
 
@@ -343,14 +436,14 @@ function Validar(Detalles) {
                                         }
                                     },
 
-                                    beforeSend: function (xhr) {
+                                    beforeSend: function(xhr) {
 
                                         $("#divProcesando").modal("show");
                                     },
-                                    complete: function () {
+                                    complete: function() {
 
                                     },
-                                    error: function (error) {
+                                    error: function(error) {
 
                                     }
                                 });
@@ -362,18 +455,18 @@ function Validar(Detalles) {
                             }
 
                         }
-                       )
-                        }else{
-                            Swal.fire({
-                                                icon: 'error',
-                                                title: 'Oops...',
-                                                text: 'Los margenes de ganancia no son correcto, favor verificar ' 
+                        )
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Oops...',
+                            text: 'Los margenes de ganancia no son correcto, favor verificar '
 
-                                            })
-                        }
+                        })
+                    }
                 } else {
                     if (Validar(Detalles)) {
-                         Swal.fire({
+                        Swal.fire({
                             title: '¿Desea guardar los cambios?',
                             showDenyButton: true,
                             showCancelButton: false,
@@ -396,7 +489,7 @@ function Validar(Detalles) {
                                     headers: {
                                         RequestVerificationToken: $('input:hidden[name="__RequestVerificationToken"]').val()
                                     },
-                                    success: function (json) {
+                                    success: function(json) {
 
                                         $("#divProcesando").hide();
 
@@ -435,14 +528,14 @@ function Validar(Detalles) {
                                         }
                                     },
 
-                                    beforeSend: function (xhr) {
+                                    beforeSend: function(xhr) {
 
                                         $("#divProcesando").modal("show");
                                     },
-                                    complete: function () {
+                                    complete: function() {
 
                                     },
-                                    error: function (error) {
+                                    error: function(error) {
 
                                     }
                                 });
@@ -454,7 +547,7 @@ function Validar(Detalles) {
                             }
 
                         }
-                       )
+                        )
                     } else {
                         Swal.fire({
                             title: '¿Desea aprobar los margenes actuales?',
@@ -558,9 +651,9 @@ function Validar(Detalles) {
                         )
                     }
                 }
-               
-            }else{
-                  Swal.fire({
+
+            } else {
+                Swal.fire({
                     title: '¿Desea guardar los cambios?',
                     showDenyButton: true,
                     showCancelButton: false,
@@ -583,7 +676,7 @@ function Validar(Detalles) {
                             headers: {
                                 RequestVerificationToken: $('input:hidden[name="__RequestVerificationToken"]').val()
                             },
-                            success: function (json) {
+                            success: function(json) {
 
                                 $("#divProcesando").hide();
 
@@ -622,14 +715,14 @@ function Validar(Detalles) {
                                 }
                             },
 
-                            beforeSend: function (xhr) {
+                            beforeSend: function(xhr) {
 
                                 $("#divProcesando").modal("show");
                             },
-                            complete: function () {
+                            complete: function() {
 
                             },
-                            error: function (error) {
+                            error: function(error) {
 
                             }
                         });
@@ -641,10 +734,10 @@ function Validar(Detalles) {
                     }
 
                 }
-               )
+                )
             }
 
-              
+
             btn.disabled = false;
             btn2.disabled = false;
 
@@ -652,80 +745,216 @@ function Validar(Detalles) {
 
         function ModificaMoneda() {
             if ($("#Moneda").val() == "COL") {
+                banderaConversion = true;
+
                 $(".moneda").text("₡");
             } else {
+                banderaConversion = true;
                 $(".moneda").text("$")
             }
+
+            for (var i = 0; i < Detalles.length; i++) {
+                ModificaLinea(i, "true");
+
+            }
         }
-    
-  function MeterManoObra()
-  {
-      
-      var btn = document.getElementById('agregaManoObra');
-       btn.disabled = true;
-      var detalle = {
-                    id: ManoObra.id,
-                    NumLinea: Detalles.length + 1,
-                    idEncabezado: 0,
-                    ItemCode: ManoObra.codSAP,
-                    ItemName: ManoObra.Nombre,
-                    PrecioUnitario: ManoObra.Precio,
-                    Cantidad: 1,
-                    PorDescuento: 0,
-                    Descuento: 0,
-                    Impuestos: 0,
-                    TotalLinea: 0,
-                    Garantia: false
-      };
-       Detalles.push(detalle);
-      RellenaTabla();
-  }
-                        
-  </script>
+
+        function MeterManoObra() {
+
+            var btn = document.getElementById('agregaManoObra');
+            btn.disabled = true;
+            var detalle = {
+                id: ManoObra.id,
+                NumLinea: Detalles.length + 1,
+                idEncabezado: 0,
+                ItemCode: ManoObra.codSAP,
+                ItemName: ManoObra.Nombre,
+                PrecioUnitario: ManoObra.Precio,
+                Cantidad: 1,
+                PorDescuento: 0,
+                Descuento: 0,
+                Impuestos: 0,
+                TotalLinea: 0,
+                Garantia: false
+            };
+            Detalles.push(detalle);
+            RellenaTabla();
+        }
+
+    </script>
+
+
+    <script>
+        function onChangeProducto() {
+            try {
+                var idB = $("#Busqueda").val().toString().split("_")[0].trim();
+
+                var Prod = ProductosHijosInsertar.find(a => a.id == parseInt(idB));
+                $("#id").text(idB);
+                $("#Nombre").text(Prod.codSAP + " - " + Prod.Nombre);
+                $("#cantidad").text(Prod.Stock);
+
+                $("#Busqueda").val("");
+            } catch (e) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Ha ocurrido un error ' + e
+
+                })
+            }
+
+        }
+        function LimpiarDatos() {
+            try {
+                $("#id").text("");
+                $("#Nombre").text("");
+                $("#cantidad").text("");
+
+            } catch (e) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Ha ocurrido un error ' + e + ' - ' + e.stack
+
+                })
+            }
+        }
+
+        function InsertarProductoTabla() {
+            try {
+
+                if (ValidarAntesTabla()) {
+
+                    var idB = $("#id").text();
+                    var Prod = ProductosHijosInsertar.find(a => a.id == parseInt(idB));
+
+
+                    var detalle = {
+                        id: 0,
+                        NumLinea: Detalles.length + 1,
+                        idEncabezado: 0,
+                        idImpuesto: 0,
+                        ItemCode: Prod.codSAP,
+                        ItemName: Prod.Nombre,
+                        PrecioUnitario: $("#Moneda").val() == "COL" ? Prod.Precio.toFixed(2) : (Prod.Precio / Rate).toFixed(2),
+                        Cantidad: 1,
+                        PorDescuento: 0,
+                        Descuento: 0,
+                        Impuestos: 0,
+                        TotalLinea: 0,
+                        Garantia: false
+                    };
+                    Detalles.push(detalle);
+
+                    RellenaTabla();
+                    LimpiarDatos();
+                }
+            } catch (e) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Ha ocurrido un error ' + e + ' - ' + e.stack
+
+                })
+            }
+
+        }
+        function ValidarAntesTabla() {
+            try {
+                if ($("#Nombre").text().trim() == "") {
+                    return false;
+                }
+                else if (parseInt($("#cantidad").text()) <= 0) {
+                    return false;
+                } else {
+                    return true;
+                }
+
+            } catch (e) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Ha ocurrido un error  ' + e
+
+                })
+                return false;
+            }
+        }
+
+        function EliminarLinea(i) {
+            try {
+                var btn = document.getElementById('agregaManoObra');
+
+                var producto = ProductosHijos.filter(a => a.codSAP == Detalles[i].ItemCode)[0];
+                if (producto != undefined) {
+                    if (producto.Nombre.toUpperCase().includes("mano de obra".toUpperCase())) {
+                        btn.disabled = false;
+                    }
+                }
+                Detalles.splice(i, 1);
+                RellenaTabla();
+            } catch (e) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Ha ocurrido un error  ' + e
+
+                })
+
+            }
+        }
+    </script>
+
 }
 
 
 
 
 
-<div class="row">
-    <div class=" col-md-12 col-sm-12 col-12">
-        <div class="card">
-            <div class="card-header p-4">
-                <a asp-page="/Movimientos/Index" class="nav-link text-dark" style="text-decoration: underline;"><i class="fas fa-reply "></i>  Regresar</a>
-                <input hidden id="Detalle" value="@JsonConvert.SerializeObject(Model.Input.Detalle)" />
-                <input hidden id="ProductosHijos" value="@JsonConvert.SerializeObject(Model.ProductosHijos)" />
-                <input hidden id="ManoObra" value="@JsonConvert.SerializeObject(Model.ManoObra)" />
+    <div class="row">
+        <div class=" col-md-12 col-sm-12 col-12">
+            <div class="card">
+                <div class="card-header p-4">
+                    <a asp-page="/Movimientos/Index" class="nav-link text-dark" style="text-decoration: underline;"><i class="fas fa-reply "></i>  Regresar</a>
+                    <input hidden id="Detalle" value="@JsonConvert.SerializeObject(Model.Input.Detalle)" />
+                    <input hidden id="ProductosHijos" value="@JsonConvert.SerializeObject(Model.ProductosHijos)" />
+                    <input hidden id="ManoObra" value="@JsonConvert.SerializeObject(Model.ManoObra)" />
+                    <input hidden id="Impuestos" value="@JsonConvert.SerializeObject(Model.Imp)" />
+                    <input hidden id="ProductosHijosInsertar" value="@JsonConvert.SerializeObject(Model.ProductosHijosInsertar)" />
 
 
-                <input hidden id="idGeneral" value="@Model.Input.id" />
+
+
+                    <input hidden id="idGeneral" value="@Model.Input.id" />
 
 
 
-                <div class="float-right">
-                    <h3 class="mb-0">Llamada #@Model.Input.NumLlamada</h3>
-                    Fecha: @Model.Input.Fecha.ToString("dd/MMMM/yyyy")
+                    <div class="float-right">
+                        <h3 class="mb-0">Llamada #@Model.Input.NumLlamada</h3>
+                        Fecha: @Model.Input.Fecha.ToString("dd/MMMM/yyyy")
+                    </div>
                 </div>
-            </div>
-            <div class="card-body">
-                <div class="row mb-4">
-                    <div class="col-sm-6">
+                <div class="card-body">
+                    <div class="row mb-4">
+                        <div class="col-sm-6">
 
-                        @{switch (Model.Input.TipoMovimiento)
+                            @{
+                            switch (Model.Input.TipoMovimiento)
                             {
                                 case 1:
                                     {
-                                                                                                                                            <h3 class="text-dark mb-1">Oferta de Venta</h3>
+                                                    <h3 class="text-dark mb-1">Oferta de Venta</h3>
                                         break;
                                     }
                                 case 2:
                                     {
-                                                                                                                                            <h3 class="text-dark mb-1">Entrega</h3>
+                                                    <h3 class="text-dark mb-1">Entrega</h3>
                                         break;
                                     }
-                                    case 3:
+                                case 3:
                                     {
-                                                                <h3 class="text-dark mb-1">Cotización BackOffice</h3>
+                                                    <h3 class="text-dark mb-1">Cotización BackOffice</h3>
                                         break;
                                     }
                             }
@@ -733,7 +962,7 @@ function Validar(Detalles) {
 
                         <div>CardCode: @Model.Input.CardCode</div>
                         <div>Cliente: @Model.Input.CardName</div>
-                        
+
                         <div>Telefono: @Model.Llamada.NumeroPersonaContacto</div>
                         <div>Persona Contacto: @Model.Llamada.PersonaContacto</div>
                         <div>Email Persona Contacto: @Model.Llamada.EmailPersonaContacto</div>
@@ -752,18 +981,94 @@ function Validar(Detalles) {
 
                     </div>
                     <div class="col-sm-6">
-                         <button id="agregaManoObra" class="btn btn-rounded btn-outline-danger" style="margin-top: 27%;" onclick="javascript: MeterManoObra()"> <i class="fas fa-plus "></i> Mano De Obra</button>
+                        <button id="agregaManoObra" class="btn btn-rounded btn-outline-danger" style="margin-top: 27%;" onclick="javascript: MeterManoObra()"> <i class="fas fa-plus "></i> Mano De Obra</button>
                     </div>
                 </div>
+
+                <hr />
+
+                <div class="row">
+                    <div class="col-sm-12">
+                        <label class="col-form-label">Producto Hijo:</label>
+                        <div class="form-group row">
+
+
+                            <label id="id" hidden style="line-height: 32px;">
+                            </label>
+                            <div class="col-sm-6">
+                                <input id="Busqueda" list="prodHijos" class="form-control" type="text" />
+                                <datalist id="prodHijos">
+                                    @foreach (var item in Model.ProductosHijosInsertar.ToList())
+                                    {
+                                        <option value="@item.id _ @item.codSAP "> @item.codSAP - @item.Nombre </option>
+                                    }
+                                </datalist>
+
+                            </div>
+                            <div class="col-sm-3">
+
+                                <button title="Buscar" type="submit" class="btn btn btn-primary" onclick="javascript: onChangeProducto();"> <i class="fa fa-search"></i></button>
+                            </div>
+                        </div>
+
+
+                        <div class="row">
+                            <div class="col-sm-4">
+
+                                <div class="form-group row">
+                                    <div class="col-sm-12">
+                                        <label class="col-form-label">Nombre:</label>
+                                    </div>
+                                    <div class="col-sm-12">
+                                        <label id="Nombre" style="line-height: 32px;">
+                                        </label>
+
+                                    </div>
+                                </div>
+
+
+
+
+                            </div>
+                            <div class="col-sm-4">
+                                <div class="form-group row">
+                                    <div class="col-sm-12">
+                                        <label class="col-form-label">Stock:</label>
+                                    </div>
+                                    <div class="col-sm-12">
+                                        <label id="cantidad" style="line-height: 32px;">
+                                        </label>
+
+
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <div class="col-sm-4" style="text-align: center;">
+
+                                <a title="Agregar" id="Agregar" onclick="javascript: InsertarProductoTabla();" style=" color: #fff; width: 25%;" class="btn btn-rounded btn-primary">+</a>
+                            </div>
+
+
+                        </div>
+
+                    </div>
+                </div>
+                <div class="row">
+                </div>
+                <hr />
+
                 <div class="table-responsive-sm">
                     <table class="table table-striped">
                         <thead>
                             <tr>
-                              <!--  <th class="center">#</th>-->
-                                <th>Código SAP</th>
-                                <th>Nombre</th>
+                                <th>Acción</th>
+                                <th>Producto</th>
                                 <th class="center">Precio Unitario</th>
                                 <th class="center">Cantidad</th>
+                                <th class="center">Imp</th>
+
                                 <th class="center">Impuestos</th>
                                 <th class="center">% Descuento</th>
 
@@ -780,9 +1085,9 @@ function Validar(Detalles) {
                         <tbody id="tbody">
                         </tbody>
                     </table>
-                   
+
                 </div>
-               
+
                 <div class="row">
                     <div class="col-lg-4 col-sm-5">
                     </div>
@@ -831,7 +1136,7 @@ function Validar(Detalles) {
                                         <strong class="text-dark">Total</strong>
                                     </td>
                                     <td align="right">
-                                       <span class="moneda"></span> 
+                                        <span class="moneda"></span>
                                         <strong class="text-dark" id="TotalGeneral"></strong>
                                     </td>
                                 </tr>

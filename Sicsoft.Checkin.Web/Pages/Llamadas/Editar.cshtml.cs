@@ -26,6 +26,8 @@ namespace Boletaje.Pages.Llamadas
         private readonly ICrudApi<TecnicosViewModel, int> tecnicos;
         private readonly ICrudApi<StatusViewModel, int> status;
         private readonly ICrudApi<TiposCasosViewModel, int> tp;
+        private readonly ICrudApi<AsuntosViewModel, int> asuntos;
+
 
 
         [BindProperty]
@@ -63,9 +65,11 @@ namespace Boletaje.Pages.Llamadas
         [BindProperty]
 
         public StatusViewModel[] Status { get; set; }
+        [BindProperty]
+        public AsuntosViewModel[] Asuntos { get; set; }
 
         public EditarModel(ICrudApi<LlamadasViewModel, int> service, ICrudApi<ClientesViewModel, int> clientes, ICrudApi<ProductosViewModel, int> prods, ICrudApi<GarantiasViewModel, int> garantias,
-            ICrudApi<SucursalesViewModel, int> sucursales, ICrudApi<TecnicosViewModel, int> tecnicos, ICrudApi<StatusViewModel, int> status, ICrudApi<TiposCasosViewModel, int> tp)
+            ICrudApi<SucursalesViewModel, int> sucursales, ICrudApi<TecnicosViewModel, int> tecnicos, ICrudApi<StatusViewModel, int> status, ICrudApi<TiposCasosViewModel, int> tp, ICrudApi<AsuntosViewModel, int> asuntos)
         {
             this.service = service;
             this.clientes = clientes;
@@ -75,6 +79,7 @@ namespace Boletaje.Pages.Llamadas
             this.tecnicos = tecnicos;
             this.status = status;
             this.tp = tp;
+            this.asuntos = asuntos;
         }
         public async Task<IActionResult> OnGetAsync(int id)
         {
@@ -85,6 +90,7 @@ namespace Boletaje.Pages.Llamadas
                 {
                     return RedirectToPage("/NoPermiso");
                 }
+                Asuntos = await asuntos.ObtenerLista("");
 
                 Input = await service.ObtenerPorId(id);
                 Clientes = await clientes.ObtenerListaEspecial("");

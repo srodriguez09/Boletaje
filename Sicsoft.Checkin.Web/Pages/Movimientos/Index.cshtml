@@ -437,7 +437,12 @@
                                     else
                                     {
                                         
-                                        <a onclick="javascript: onClickModal('@item.id', '@(Model.InputLlamada.Where(a => a.DocEntry == DocEntry).FirstOrDefault() == null ? "" : Model.InputLlamada.Where(a => a.DocEntry == DocEntry).FirstOrDefault().EmailPersonaContacto )')" title="Reenviar" class="btn btn-rounded btn-outline-warning">Reenviar Correo</a>
+                                        <a onclick="javascript: onClickModal('@item.id', '@(Model.InputLlamada.Where(a => a.DocEntry == DocEntry).FirstOrDefault() == null ? "" : Model.InputLlamada.Where(a => a.DocEntry == DocEntry).FirstOrDefault().EmailPersonaContacto )')" title="Reenviar" class="btn btn-rounded btn-outline-warning">Reenviar Correo</a> 
+                                        @if (item.TipoMovimiento == 1 || item.TipoMovimiento == 3 )
+                                       {
+                                         <a asp-page="./Editar" asp-route-id="@item.id" title="Generar" class="btn btn-rounded btn-outline-warning"> Regenerar</a>
+                                           
+                                       }
                                     }
                                     &nbsp;
                                     <a asp-page="./Observar" asp-route-id="@item.id" title="Observar" class="btn btn-rounded btn-outline-primary"> Observar</a>

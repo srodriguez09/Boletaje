@@ -17,6 +17,7 @@ namespace Boletaje.Models
         public decimal Costo { get; set; }
         public int PorMinimo { get; set; }
         public decimal Precio { get; set; }
+        public decimal Rate { get; set; }
 
     }
 }

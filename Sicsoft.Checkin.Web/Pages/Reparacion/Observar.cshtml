@@ -260,6 +260,23 @@
 
 
                     </div>
+
+                    <div class="col-md-4 pr-1">
+
+                        <div class="form-group">
+                            <label>Tipo de Caso</label>
+                            <select id="tp" class="form-control" asp-for="InputLlamada.TipoCaso" disabled="disabled">
+
+                                @foreach (var item in Model.TP)
+                                {
+                                    <option value="@item.idSAP">@item.Nombre</option>
+                                }
+                            </select>
+
+                        </div>
+
+
+                    </div>
                 </div>
 
 

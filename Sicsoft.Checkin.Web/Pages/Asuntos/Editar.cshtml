@@ -1,0 +1,76 @@
+﻿@page "{id}"
+@model Boletaje.Pages.Asuntos.EditarModel
+@{
+    ViewData["Title"] = "Editar Asuntos";
+}
+
+@section breadcrumb{
+
+    <li class="breadcrumb-item">
+        <a asp-page="./Index">Asuntos</a>
+    </li>
+    <li class="breadcrumb-item active">
+        <a>Edición de Asuntos</a>
+    </li>
+
+}
+
+@section styles{
+
+
+}
+@section scripts{
+
+
+
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-sm-6">
+                        <h5 class="title">Edición de Asuntos</h5>
+                    </div>
+
+                    <div class="col-sm-6" style="text-align: right">
+
+                        <a asp-page="/Asuntos/Index" class="nav-link text-dark" style="text-decoration: underline;"><i class="fas fa-reply "></i>  Regresar</a>
+
+                    </div>
+                </div>
+
+
+            </div>
+            <div class="card-body">
+                <form method="post" id="formTipos" role="form" novalidate class="needs-validation " enctype="multipart/form-data">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <input asp-for="Input.id" hidden />
+
+                    <div class="row">
+                         <div class="col-md-8">
+                            <div class="form-group">
+                                <label>Asunto</label>
+                                <input type="text" class="form-control form-control-lg" id="asunto" placeholder="Asunto" maxlength="100" asp-for="Input.Asunto" required>
+                            </div>
+                        </div>
+                        
+                         
+                    </div>
+
+
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <button type="submit" id="Guardar" class="btn btn-rounded btn-outline-success">Guardar Cambios</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+

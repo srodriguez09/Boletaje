@@ -15,17 +15,17 @@
 
 }
 
-@section styles{
+    @section styles{
 
 
 }
-@section scripts{
+    @section scripts{
 
     <script>
-        $(document).ready(function () {
+        $(document).ready(function() {
 
-            jQuery(document).ready(function ($) {
-                $(document).ready(function () {
+            jQuery(document).ready(function($) {
+                $(document).ready(function() {
                 });
             });
 
@@ -66,53 +66,74 @@
         }
 
         function RellenaTabla() {
-            var sOptions = '';
+            try {
+                var sOptions = '';
 
-            $("#tbody2").html('');
+                $("#tbody2").html('');
 
-            for (var i = 0; i < ProdCadena.length; i++) {
-                sOptions += '<tr>';
-
-
-
-                sOptions += '<td align="center" style="padding-top:15px;">  <p style="font-size:13px;">' + ProdCadena[i].codSAP + '</p></td>';
-                sOptions += '<td align="left" style="padding-top:15px;">  <p style="font-size:13px;">' + ProdCadena[i].nombre + '</p></td>';
-                sOptions += '<td align="center" style="padding-top:15px;">  <p style="font-size:13px;">' + ProdCadena[i].cantidad + '</p></td>';
-                sOptions += '<td align="center" style="padding-top:13px;">    <a style="margin-left: -1%; position: inherit !important;" onclick = "javascript: EliminaProducto(' + i + ')" title="Eliminar" class="fa fa-trash icono"></a> ';
+                for (var i = 0; i < ProdCadena.length; i++) {
+                    sOptions += '<tr>';
 
 
 
+                    sOptions += '<td align="center" style="padding-top:15px;">  <p style="font-size:13px;">' + ProdCadena[i].codSAP + '</p></td>';
+                    sOptions += '<td align="left" style="padding-top:15px;">  <p style="font-size:13px;">' + ProdCadena[i].nombre + '</p></td>';
+                    sOptions += '<td align="center" style="padding-top:15px;">  <p style="font-size:13px;">' + ProdCadena[i].cantidad + '</p></td>';
+                    sOptions += '<td align="center" style="padding-top:13px;">    <a style="margin-left: -1%; position: inherit !important;" onclick = "javascript: EliminaProducto(' + i + ')" title="Eliminar" class="fa fa-trash icono"></a> ';
 
 
-                sOptions += '</tr>'
+
+
+
+                    sOptions += '</tr>'
+                }
+                $("#tbody2").html(sOptions);
+
+            } catch (e) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Ha ocurrido un error: ' + e + ' - ' + e.stack
+
+                })
             }
-            $("#tbody2").html(sOptions);
         }
 
 
         function EliminaProducto(campo) {
-            console.log("campo: " + campo);
-            Swal.fire({
-                title: '¿Desea eliminar este producto?',
-                showDenyButton: true,
-                showCancelButton: false,
-                confirmButtonText: `Aceptar`,
-                denyButtonText: `Cancelar`,
-                customClass: {
-                    confirmButton: 'swalBtnColor',
-                    denyButton: 'swalDeny'
-                },
-            }).then((result) => {
-                /* Read more about isConfirmed, isDenied below */
-                if (result.isConfirmed) {
+            try {
+                console.log("campo: " + campo);
+                Swal.fire({
+                    title: '¿Desea eliminar este producto?',
+                    showDenyButton: true,
+                    showCancelButton: false,
+                    confirmButtonText: `Aceptar`,
+                    denyButtonText: `Cancelar`,
+                    customClass: {
+                        confirmButton: 'swalBtnColor',
+                        denyButton: 'swalDeny'
+                    },
+                }).then((result) => {
+                    /* Read more about isConfirmed, isDenied below */
+                    if (result.isConfirmed) {
 
 
-                    ProdCadena.splice(campo, 1);
+                        ProdCadena.splice(campo, 1);
 
-                    RellenaTabla();
+                        RellenaTabla();
 
-                }
-            })
+                    }
+                })
+
+            } catch (e) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Ha ocurrido un error al intentar guardar ' + e + ' - ' + e.stack
+
+                })
+            }
+
 
         }
 
@@ -128,73 +149,104 @@
             $("#Busqueda").val("");
         }
         function InsertarProductoTabla() {
+            try {
 
-            if (ValidarAntesTabla()) {
+                if (ValidarAntesTabla()) {
 
-                var detalle =
-                {
-                    id: $("#id").text(),
-                    codSAP: $("#codSAP").text(),
-                    nombre: $("#Nombre").text(),
-                    cantidad: $("#cantidad").val()
+                    var detalle =
+                    {
+                        id: $("#id").text(),
+                        codSAP: $("#codSAP").text(),
+                        nombre: $("#Nombre").text(),
+                        cantidad: $("#cantidad").val()
+                    }
+                    ProdCadena.push(detalle);
+
+                    RellenaTabla();
+                    LimpiarDatos();
                 }
-                ProdCadena.push(detalle);
+            } catch (e) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Ha ocurrido un error ' + e + ' - ' + e.stack
 
-                RellenaTabla();
-                LimpiarDatos();
+                })
             }
 
         }
 
         function ValidarAntesTabla() {
-            if ($("#Nombre").text().trim() == "")
-            {
+            try {
+                if ($("#Nombre").text().trim() == "") {
+                    return false;
+                }
+                else if ($("#cantidad").val() <= 0) {
+                    return false;
+                } else {
+                    return true;
+                }
+
+            } catch (e) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Ha ocurrido un error  ' + e + ' - ' + e.stack
+
+                })
                 return false;
-            }
-            else if ($("#cantidad").val() <= 0) {
-                return false;
-            } else {
-                return true;
             }
         }
 
         function LimpiarDatos() {
-            $("#id").text("");
-            $("#codSAP").text("");
-            $("#Nombre").text("");
-            $("#cantidad").val(1);
+            try {
+                $("#id").text("");
+                $("#codSAP").text("");
+                $("#Nombre").text("");
+                $("#cantidad").val(1);
+
+            } catch (e) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Ha ocurrido un error ' + e + ' - ' + e.stack
+
+                })
+            }
         }
 
         function Generar() {
-            var idCierre = $("#idCierre").val();
+            try {
 
-            var Cadena = [];
+                var idCierre = $("#idCierre").val();
 
-            for (var i = 0; i < ProdCadena.length; i++) {
-                var det = {
-                    id: ProdCadena[i].id,
-                    idPadre: 0,
+                var Cadena = [];
 
-                    codSAP: ProdCadena[i].codSAP,
-                    Nombre: ProdCadena[i].nombre,
-                    Stock: 0,
-                    Cantidad: ProdCadena[i].cantidad
-                };
-                Cadena.push(det);
-            }
+                for (var i = 0; i < ProdCadena.length; i++) {
+                    var det = {
+                        id: ProdCadena[i].id,
+                        idPadre: 0,
+
+                        codSAP: ProdCadena[i].codSAP,
+                        Nombre: ProdCadena[i].nombre,
+                        Stock: 0,
+                        Cantidad: ProdCadena[i].cantidad
+                    };
+                    Cadena.push(det);
+                }
 
 
-            var ProductosHijos = Cadena;
+                var ProductosHijos = Cadena;
 
-            var recibido =
-            {
-                idPadre: idCierre,
-                ProductosHijos
-            }
+                var recibido =
+                {
+                    idPadre: idCierre,
+                    ProductosHijos
+                }
 
-            console.log(JSON.stringify(recibido));
+                console.log(JSON.stringify(recibido));
 
-            Swal.fire({
+                Swal.fire({
                     title: '¿Desea guardar los cambios?',
                     showDenyButton: true,
                     showCancelButton: false,
@@ -217,7 +269,7 @@
                             headers: {
                                 RequestVerificationToken: $('input:hidden[name="__RequestVerificationToken"]').val()
                             },
-                            success: function (json) {
+                            success: function(json) {
 
                                 $("#divProcesando").hide();
 
@@ -255,20 +307,28 @@
                                 }
                             },
 
-                            beforeSend: function (xhr) {
+                            beforeSend: function(xhr) {
 
                                 $("#divProcesando").modal("show");
                             },
-                            complete: function () {
+                            complete: function() {
 
                             },
-                            error: function (error) {
+                            error: function(error) {
 
                             }
                         });
                     }
                 }
-               )
+                )
+            } catch (e) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Ha ocurrido un error ' + e + ' - ' + e.stack
+
+                })
+            }
         }
 
 
@@ -276,86 +336,85 @@
     </script>
 
 }
-@using Newtonsoft.Json;
+    @using Newtonsoft.Json;
 
-<div class="row">
-    <div class="col-md-12">
-        <div class="card">
-            <div class="card-header">
-                <div class="row">
-                    <div class="col-sm-6">
-                        <h5 class="title">Editar Hijos por Producto</h5>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <h5 class="title">Editar Hijos por Producto</h5>
 
-                    </div>
+                        </div>
 
-                    <div class="col-sm-6" style="text-align: right">
+                        <div class="col-sm-6" style="text-align: right">
 
-                        <a asp-page="./Index" class="nav-link text-dark" style="text-decoration: underline;"><i class="fas fa-reply "></i>  Regresar</a>
+                            <a asp-page="./Index" class="nav-link text-dark" style="text-decoration: underline;"><i class="fas fa-reply "></i>  Regresar</a>
 
+                        </div>
                     </div>
                 </div>
+                <div class="card-body">
+
+                    <div class="row">
+                        <div class="col-md-6 pr-1">
+
+                            <div class="form-group">
+                                <label>Producto Padre</label>
+                                <input type="text" class="form-control form-control-lg" id="producto" asp-for="Input.Nombre" readonly>
+                                <input id="idProd" asp-for="Input.id" hidden />
+                            </div>
+
+
+                        </div>
+
+
+
+
+
+                    </div>
+
+
+                </div>
             </div>
-            <div class="card-body">
+        </div>
+    </div>
 
-                <div class="row">
-                    <div class="col-md-6 pr-1">
 
-                        <div class="form-group">
-                            <label>Producto Padre</label>
-                            <input type="text" class="form-control form-control-lg" id="producto" asp-for="Input.Nombre" readonly>
-                            <input id="idProd" asp-for="Input.id" hidden />
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <div class="row">
+                        <div class="col-sm-8">
+
+                            <h5 class="title"> Productos Hijos Disponibles</h5>
+                        </div>
+
+                        <div class="col-sm-3">
                         </div>
 
 
                     </div>
-
-
-
-
-
                 </div>
+                <div class="card-body">
 
+                    <div class="row">
 
-            </div>
-        </div>
-    </div>
-</div>
+                        <div class="col-sm-12">
+                            <label class="col-form-label">Producto Hijo:</label>
+                            <div class="form-group row">
+                                <input hidden id="Hijos" value="@JsonConvert.SerializeObject(Model.InputHijosAsignados)" />
+                                <input hidden id="HijosN" value="@JsonConvert.SerializeObject(Model.InputHijos)" />
 
-
-<div class="row">
-    <div class="col-md-6">
-        <div class="card">
-            <div class="card-header">
-                <div class="row">
-                    <div class="col-sm-8">
-
-                        <h5 class="title"> Productos Hijos Disponibles</h5>
-                    </div>
-
-                    <div class="col-sm-3">
-
-                    </div>
-
-
-                </div>
-            </div>
-            <div class="card-body">
-
-                <div class="row">
-
-                    <div class="col-sm-12">
-                        <label class="col-form-label">Producto Hijo:</label>
-                        <div class="form-group row">
-                            <input hidden id="Hijos" value="@JsonConvert.SerializeObject(Model.InputHijosAsignados)" />
-                            <input hidden id="HijosN" value="@JsonConvert.SerializeObject(Model.InputHijos)" />
-
-                            <input hidden id="idCierre" />
-                            <div class="col-sm-6">
-                                <input id="Busqueda" list="prodHijos" class="form-control" type="text" />
-                                <datalist id="prodHijos">
-                                    @foreach (var item in Model.InputHijos.ToList())
+                                <input hidden id="idCierre" />
+                                <div class="col-sm-6">
+                                    <input id="Busqueda" list="prodHijos" class="form-control" type="text" />
+                                    <datalist id="prodHijos">
+                                        @foreach (var item in Model.InputHijos.ToList())
                                     {
-                                         <option value="@item.id _ @item.codSAP "> @item.codSAP - @item.Nombre </option>
+                                        <option value="@item.id _ @item.codSAP "> @item.codSAP - @item.Nombre </option>
                                     }
                                 </datalist>
 
@@ -417,10 +476,6 @@
 
                     </div>
                     <div class="col-sm-6">
-
-
-
-
                     </div>
                 </div>
 
@@ -447,7 +502,6 @@
                     </div>
 
                     <div class="col-sm-4" style="text-align: right;">
-
                     </div>
                 </div>
             </div>
@@ -480,7 +534,7 @@
         </div>
         <div class="d-flex justify-content-end">
             <button onclick="javascript: Generar();" class="btn btn-rounded btn-outline-primary botonAbajo" id="GuardarCambios" title="Guardar">Guardar Cambios</button> &nbsp;
-         
+
         </div>
     </div>
 </div>

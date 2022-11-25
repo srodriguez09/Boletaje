@@ -25,6 +25,8 @@ namespace Boletaje.Pages.Llamadas
         private readonly ICrudApi<TecnicosViewModel, int> tecnicos;
         private readonly ICrudApi<StatusViewModel, int> status;
         private readonly ICrudApi<TiposCasosViewModel, int> tp;
+        private readonly ICrudApi<AsuntosViewModel, int> asuntos;
+
 
 
         [BindProperty]
@@ -60,8 +62,11 @@ namespace Boletaje.Pages.Llamadas
         [BindProperty]
         public AdjuntosViewModel[] Adjuntos { get; set; }
 
+        [BindProperty]
+        public AsuntosViewModel[] Asuntos { get; set; }
+
         public NuevoModel(ICrudApi<LlamadasViewModel, int> service, ICrudApi<ClientesViewModel, int> clientes, ICrudApi<ProductosViewModel, int> prods, ICrudApi<GarantiasViewModel, int> garantias,
-            ICrudApi<SucursalesViewModel, int> sucursales, ICrudApi<TecnicosViewModel, int> tecnicos, ICrudApi<StatusViewModel, int> status, ICrudApi<TiposCasosViewModel, int> tp)
+            ICrudApi<SucursalesViewModel, int> sucursales, ICrudApi<TecnicosViewModel, int> tecnicos, ICrudApi<StatusViewModel, int> status, ICrudApi<TiposCasosViewModel, int> tp, ICrudApi<AsuntosViewModel, int> asuntos)
         {
             this.service = service;
             this.clientes = clientes;
@@ -71,6 +76,7 @@ namespace Boletaje.Pages.Llamadas
             this.tecnicos = tecnicos;
             this.status = status;
             this.tp = tp;
+            this.asuntos = asuntos;
         }
         public async Task<IActionResult> OnGetAsync()
         {
@@ -81,6 +87,7 @@ namespace Boletaje.Pages.Llamadas
                 {
                     return RedirectToPage("/NoPermiso");
                 }
+                Asuntos = await asuntos.ObtenerLista("");
                 Clientes = await clientes.ObtenerListaEspecial("");
                 // Productos = await prods.ObtenerListaEspecial("");
                 TP = await tp.ObtenerLista("");
@@ -166,6 +173,7 @@ namespace Boletaje.Pages.Llamadas
                 
 
                 LlamadasViewModel coleccion = new LlamadasViewModel();
+                coleccion.id = 0;
                 coleccion.TipoLlamada = recibido.TipoLlamada;
                 coleccion.Status = recibido.Status;
                 coleccion.Asunto = recibido.Asunto;
