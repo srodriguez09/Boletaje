@@ -59,12 +59,12 @@
             var item = html;
 
             var opt = {
-                margin: 1,
-                pagebreak: { mode: 'avoid-all', before: '#page2el' },
+                margin: 0,
+                pagebreak: { mode:[ 'avoid-all','css', 'legacy']  },
 
                 image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: { scale: 2 },
-                jsPDF: { format: 'letter', orientation: 'portrait' }
+                html2canvas: { scale: 2,logging:true,dpi:192,letterRendering:true },
+                jsPDF: { unit:'mm',format: 'a4', orientation: 'portrait' }
             };
 
 
@@ -146,11 +146,11 @@
                                     if (!string.IsNullOrEmpty(Roles.Where(a => a == "33").FirstOrDefault()))
                                     {
 
-                                                <input type="date" class="form-control form-control-lg" id="fecsiso" placeholder="" asp-for="Input.FechaSISO">
+                                                    <input type="date" class="form-control form-control-lg" id="fecsiso" placeholder="" asp-for="Input.FechaSISO">
                                     }
                                     else
                                     {
-                                                <input type="date" class="form-control form-control-lg" id="fecsiso" placeholder="" asp-for="Input.FechaSISO" readonly>
+                                                    <input type="date" class="form-control form-control-lg" id="fecsiso" placeholder="" asp-for="Input.FechaSISO" readonly>
                                     }
 
                                 }
