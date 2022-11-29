@@ -95,7 +95,10 @@ namespace Boletaje.Pages.Reparacion
                     filtro.Codigo3 = Status.Where(a => a.idSAP == "46").FirstOrDefault() == null ? 0 : Convert.ToInt32(Status.Where(a => a.idSAP == "46").FirstOrDefault().idSAP);
 
                 }
-                InputLlamada = await serviceL.ObtenerLista("");
+                ParametrosFiltros filtro2 = new ParametrosFiltros();
+                filtro2.FechaInicial = filtro.FechaInicial;
+                filtro2.FechaFinal = filtro.FechaFinal;
+                InputLlamada = await serviceL.ObtenerLista(filtro2);
                 Objeto = await service.ObtenerLista(filtro);
                 Tecnicos = await serviceT.ObtenerLista("");
 
