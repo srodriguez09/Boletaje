@@ -15,6 +15,8 @@ namespace Boletaje.Pages.Movimientos
         private readonly ICrudApi<EncMovimientoViewModel, int> service;
         private readonly ICrudApi<ClientesViewModel, int> clientes;
         private readonly ICrudApi<LlamadasViewModel, int> serviceLlamada;
+        private readonly ICrudApi<ErroresViewModel, int> serviceErrores;
+
 
         [BindProperty]
         public LlamadasViewModel Llamada { get; set; }
@@ -25,11 +27,16 @@ namespace Boletaje.Pages.Movimientos
         [BindProperty]
         public cliente Cliente { get; set; }
 
-        public ObservarModel(ICrudApi<EncMovimientoViewModel, int> service, ICrudApi<ClientesViewModel, int> clientes, ICrudApi<LlamadasViewModel, int> serviceLlamada)
+        [BindProperty]
+        public ErroresViewModel[] Errores { get; set; }
+    
+
+        public ObservarModel(ICrudApi<EncMovimientoViewModel, int> service, ICrudApi<ClientesViewModel, int> clientes, ICrudApi<LlamadasViewModel, int> serviceLlamada, ICrudApi<ErroresViewModel, int> serviceErrores)
         {
             this.service = service;
             this.clientes = clientes;
             this.serviceLlamada = serviceLlamada;
+            this.serviceErrores = serviceErrores;
         }
 
         public async Task<IActionResult> OnGetAsync(int id)
@@ -42,6 +49,8 @@ namespace Boletaje.Pages.Movimientos
                 Llamada = await serviceLlamada.ObtenerPorDocEntry(Convert.ToInt32(Input.NumLlamada));
                 Clientes = await clientes.ObtenerListaEspecial("");
                 Cliente = Clientes.Clientes.Where(a => a.CardCode == Input.CardCode).FirstOrDefault();
+                Errores = await serviceErrores.ObtenerLista("");
+                
                 return Page();
             }
             catch (Exception ex)

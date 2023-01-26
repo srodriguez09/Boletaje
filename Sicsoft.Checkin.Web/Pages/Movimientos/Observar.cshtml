@@ -31,32 +31,35 @@
 
     <script>
         var Detalles = [];
-
+        var Errores = [];
         $(document).ready(function() {
 
             jQuery(document).ready(function($) {
                 $(document).ready(function() {
 
-            var detalles = JSON.parse($("#Detalle").val());
-                     for (var i = 0; i < detalles.length; i++) {
-                var detalle = {
-                    id: detalles[i].id,
-                    NumLinea: i + 1,
-                    idEncabezado: 0,
-                    idImpuesto: detalles[i].idImpuesto,
-                    ItemCode: detalles[i].ItemCode,
-                    ItemName: detalles[i].ItemName,
-                    PrecioUnitario: detalles[i].PrecioUnitario,
-                    Cantidad: detalles[i].Cantidad,
-                    PorDescuento: detalles[i].PorDescuento,
-                    Descuento: detalles[i].Descuento,
-                    Impuestos: detalles[i].Impuestos,
-                    TotalLinea: detalles[i].TotalLinea,
-                    Garantia: detalles[i].Garantia
-                };
-                Detalles.push(detalle);
+                    var detalles = JSON.parse($("#Detalle").val());
+                    Errores = JSON.parse($("#Errores").val());
 
-            }
+                    for (var i = 0; i < detalles.length; i++) {
+                        var detalle = {
+                            id: detalles[i].id,
+                            NumLinea: i + 1,
+                            idEncabezado: 0,
+                            idError: detalles[i].idError,
+                            idImpuesto: detalles[i].idImpuesto,
+                            ItemCode: detalles[i].ItemCode,
+                            ItemName: detalles[i].ItemName,
+                            PrecioUnitario: detalles[i].PrecioUnitario,
+                            Cantidad: detalles[i].Cantidad,
+                            PorDescuento: detalles[i].PorDescuento,
+                            Descuento: detalles[i].Descuento,
+                            Impuestos: detalles[i].Impuestos,
+                            TotalLinea: detalles[i].TotalLinea,
+                            Garantia: detalles[i].Garantia
+                        };
+                        Detalles.push(detalle);
+
+                    }
 
                 });
             });
@@ -73,13 +76,20 @@
         }
 
         function ImprimeEtiqueta(boleta, cliente) {
+            
+            var Diagnostico = "";
+
             var html = htmlOferta;
             html = html.replace("DocEntry", "@Model.Input.NumLlamada");
             html = html.replace("Fecha", '@Model.Input.Fecha.ToString("dd/MMMM/yyyy")');
             html = html.replace("NombreClienteR", "@Model.Input.CardName");
             html = html.replace("TelefonoCliente", "@Model.Llamada.NumeroPersonaContacto");
 
-            html = html.replace("Diagnosticos", "@Model.Llamada.Comentarios");
+
+            Diagnostico += "@Model.Llamada.Comentarios \n";
+            
+           
+            
 
 
             if ($("#Moneda").val() == "COL") {
@@ -105,17 +115,19 @@
 
             var inyectado = "";
 
-            for (var i = 0; i < Detalles.length; i++)
-            {
-                if(i == 0)
-                {
-                    inyectado = htmlInyectadoOferta.replace("NumLinea", (i + 1)).replace("ItemCode", Detalles[i].ItemCode ).replace("ItemName",Detalles[i].ItemName).replace("Cantidad",Detalles[i].Cantidad).replace("PrecioUnitario",Detalles[i].PrecioUnitario).replace("TotalLinea",Detalles[i].TotalLinea);
-                }else{
-                    inyectado += htmlInyectadoOferta.replace("NumLinea", (i + 1)).replace("ItemCode", Detalles[i].ItemCode ).replace("ItemName",Detalles[i].ItemName).replace("Cantidad",Detalles[i].Cantidad).replace("PrecioUnitario",Detalles[i].PrecioUnitario).replace("TotalLinea",Detalles[i].TotalLinea);
+            for (var i = 0; i < Detalles.length; i++) {
+                if (i == 0) {
+                    inyectado = htmlInyectadoOferta.replace("NumLinea", (i + 1)).replace("ItemCode", Detalles[i].ItemCode).replace("ItemName", Detalles[i].ItemName).replace("Cantidad", Detalles[i].Cantidad).replace("PrecioUnitario", Detalles[i].PrecioUnitario).replace("TotalLinea", Detalles[i].TotalLinea);
+                } else {
+                    inyectado += htmlInyectadoOferta.replace("NumLinea", (i + 1)).replace("ItemCode", Detalles[i].ItemCode).replace("ItemName", Detalles[i].ItemName).replace("Cantidad", Detalles[i].Cantidad).replace("PrecioUnitario", Detalles[i].PrecioUnitario).replace("TotalLinea", Detalles[i].TotalLinea);
 
                 }
-            }
 
+                if (Errores.find(a => a.id == Detalles[i].idError) != undefined) {
+                    Diagnostico += Errores.find(a => a.id == Detalles[0].idError).Diagnostico + " ";
+                }
+            }
+            html = html.replace("Diagnosticos",Diagnostico);
             html = html.replace("INYECTADO", inyectado);
 
 
@@ -123,13 +135,22 @@
             var item = html;
 
             var opt = {
-                margin: 1,
+                margin: 0,
                 pagebreak: { mode: 'avoid-all', before: '#page2el' },
 
                 image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: { scale: 2 },
-                jsPDF: { format: 'letter', orientation: 'portrait' }
+                html2canvas: { scale: 2, logging: true, dpi: 192, letterRendering: true },
+                jsPDF: { unit: 'mm', format: 'a3', orientation: 'portrait' }
             };
+
+            //var opt = {
+            //    margin: 1,
+            //    pagebreak: { mode: 'avoid-all', before: '#page2el' },
+
+            //    image: { type: 'jpeg', quality: 0.98 },
+            //    html2canvas: { scale: 2 },
+            //    jsPDF: { format: 'letter', orientation: 'portrait' }
+            //};
 
 
             if ("@Model.Input.TipoMovimiento" == "1" || "@Model.Input.TipoMovimiento" == "3") {
@@ -161,8 +182,10 @@
             <div class="card-header p-4">
                 <a asp-page="/Movimientos/Index" class="nav-link text-dark" style="text-decoration: underline;"><i class="fas fa-reply "></i>  Regresar</a>
                 <input hidden id="Detalle" value="@JsonConvert.SerializeObject(Model.Input.Detalle)" />
+                <input hidden id="Errores" value="@JsonConvert.SerializeObject(Model.Errores)" />
+
                 <input hidden id="idGeneral" value="@Model.Input.id" />
-                    <input hidden id="Detalle" value="@JsonConvert.SerializeObject(Model.Input.Detalle)" />
+                <input hidden id="Detalle" value="@JsonConvert.SerializeObject(Model.Input.Detalle)" />
 
 
 
@@ -180,17 +203,17 @@
                             {
                                 case 1:
                                     {
-                                                    <h3 class="text-dark mb-1">Oferta de Venta</h3>
+                                                        <h3 class="text-dark mb-1">Oferta de Venta</h3>
                                         break;
                                     }
                                 case 2:
                                     {
-                                                    <h3 class="text-dark mb-1">Entrega</h3>
+                                                        <h3 class="text-dark mb-1">Entrega</h3>
                                         break;
                                     }
                                 case 3:
                                     {
-                                                    <h3 class="text-dark mb-1">Cotización BackOffice</h3>
+                                                        <h3 class="text-dark mb-1">Cotización BackOffice</h3>
                                         break;
                                     }
                             }
@@ -243,36 +266,36 @@
                             @{
                                 foreach (var item in Model.Input.Detalle)
                                 {
-                                                <tr>
+                                                    <tr>
 
-                                                    <td align="center">@i</td>
-                                                    <td align="left" class="strong">@item.ItemCode </td>
-                                                    <td align="left"> @item.ItemName</td>
-                                                    <td align="right"> @decimal.Round(item.PrecioUnitario, 2).ToString("N", formato)</td>
-                                                    <td align="center"> @decimal.Round(item.Cantidad, 2).ToString("N", formato)</td>
-                                                    <td align="right"> @decimal.Round(item.Impuestos, 2).ToString("N", formato)</td>
-                                                    <td align="center"> @decimal.Round(item.PorDescuento, 2).ToString("N", formato) %</td>
-                                                    <td align="right"> @decimal.Round(item.Descuento, 2).ToString("N", formato)</td>
-                                                    <td align="right"> @decimal.Round(item.TotalLinea, 2).ToString("N", formato)</td>
-                                                    <td align="center">
-                                                        @if (item.Garantia)
+                                                        <td align="center">@i</td>
+                                                        <td align="left" class="strong">@item.ItemCode </td>
+                                                        <td align="left"> @item.ItemName</td>
+                                                        <td align="right"> @decimal.Round(item.PrecioUnitario, 2).ToString("N", formato)</td>
+                                                        <td align="center"> @decimal.Round(item.Cantidad, 2).ToString("N", formato)</td>
+                                                        <td align="right"> @decimal.Round(item.Impuestos, 2).ToString("N", formato)</td>
+                                                        <td align="center"> @decimal.Round(item.PorDescuento, 2).ToString("N", formato) %</td>
+                                                        <td align="right"> @decimal.Round(item.Descuento, 2).ToString("N", formato)</td>
+                                                        <td align="right"> @decimal.Round(item.TotalLinea, 2).ToString("N", formato)</td>
+                                                        <td align="center">
+                                                            @if (item.Garantia)
                                             {
 
 
-                                                            <input class="form-check-input" disabled checked type="checkbox" style="position: unset;" />
+                                                                <input class="form-check-input" disabled checked type="checkbox" style="position: unset;" />
 
-                                                            <span class="form-check-sign"></span>
+                                                                <span class="form-check-sign"></span>
                                             }
                                             else
                                             {
-                                                            <input class="form-check-input" disabled type="checkbox" style="position: unset;" />
+                                                                <input class="form-check-input" disabled type="checkbox" style="position: unset;" />
 
-                                                            <span class="form-check-sign"></span>
+                                                                <span class="form-check-sign"></span>
                                             }
 
-                                                    </td>
+                                                        </td>
 
-                                                </tr>
+                                                    </tr>
                                     i++;
                                 }
 
