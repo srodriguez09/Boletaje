@@ -58,11 +58,10 @@
             ProductosHijos = JSON.parse($("#ProductosHijos").val());
             ProductosHijosInsertar = JSON.parse($("#ProductosHijosInsertar").val());
 
-            for (var i = 0; i < ProductosHijos.length; i++)
-            {
+            for (var i = 0; i < ProductosHijos.length; i++) {
                 ProductosHijosInsertar.splice(ProductosHijosInsertar.indexOf(ProductosHijosInsertar.find(a => a.id == ProductosHijos[i].id)), 1);
             }
-            
+
 
 
             RolAceptacion = '@Model.RolAceptacion' == 'True';
@@ -109,7 +108,7 @@
                 var gananciaBruta = 0;
                 Rate = producto.Rate;
 
-               
+
 
                 gananciaBruta = parseFloat(Detalles[i].PrecioUnitario) - producto.Costo;
 
@@ -129,7 +128,7 @@
                 } else {
                     sOptions += '<td align="center"> <input class="form-control input2" value="' + Detalles[i].Cantidad + '" type="number" step="1" id="' + i + 'Cantidad" onchange="javascript: ModificaLinea(' + i + ', false)"/></td>';
 
-                   // sOptions += '<td align="center"> <p id="' + i + 'Cantidad">' + Detalles[i].Cantidad + '</p></td>';
+                    // sOptions += '<td align="center"> <p id="' + i + 'Cantidad">' + Detalles[i].Cantidad + '</p></td>';
                 }
 
                 sOptions += '<td align="center"> <select class=" form-control " id="' + i + 'impSelector" onchange="javascript: ModificaLinea(' + i + ', false)"> <option value="0"> Seleccione </option>';
@@ -215,7 +214,7 @@
             } else {
                 Subtotal = $("#" + i + "PrecioU").val() * $("#" + i + "Cantidad").val();
 
-               // Subtotal = $("#" + i + "PrecioU").val() * $("#" + i + "Cantidad").text();
+                // Subtotal = $("#" + i + "PrecioU").val() * $("#" + i + "Cantidad").text();
 
             }
 
@@ -255,7 +254,7 @@
             } else {
                 Detalles[i].Cantidad = $("#" + i + "Cantidad").val();
 
-               // Detalles[i].Cantidad = $("#" + i + "Cantidad").text();
+                // Detalles[i].Cantidad = $("#" + i + "Cantidad").text();
 
             }
             Detalles[i].PorDescuento = $("#" + i + "PorDesc").val();
@@ -944,17 +943,17 @@
                             {
                                 case 1:
                                     {
-                                                    <h3 class="text-dark mb-1">Oferta de Venta</h3>
+                                        <h3 class="text-dark mb-1">Oferta de Venta</h3>
                                         break;
                                     }
                                 case 2:
                                     {
-                                                    <h3 class="text-dark mb-1">Entrega</h3>
+                                        <h3 class="text-dark mb-1">Entrega</h3>
                                         break;
                                     }
                                 case 3:
                                     {
-                                                    <h3 class="text-dark mb-1">Cotización BackOffice</h3>
+                                        <h3 class="text-dark mb-1">Cotización BackOffice</h3>
                                         break;
                                     }
                             }

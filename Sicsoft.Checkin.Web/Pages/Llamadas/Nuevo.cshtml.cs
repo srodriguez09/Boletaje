@@ -131,10 +131,10 @@ namespace Boletaje.Pages.Llamadas
             }
             catch (ApiException ex)
             {
-                Errores error = JsonConvert.DeserializeObject<Errores>(ex.Content.ToString());
+                 
 
 
-                return new JsonResult(error);
+                return new JsonResult(ex.Content.ToString());
             }
         }
 

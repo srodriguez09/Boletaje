@@ -72,12 +72,22 @@ namespace Boletaje.Pages.Boletas
             }
             catch (ApiException ex)
             {
-                Errores error = JsonConvert.DeserializeObject<Errores>(ex.Content.ToString());
-                ModelState.AddModelError(string.Empty, error.Message);
+                
+
+                ParametrosFiltros filtro = new ParametrosFiltros();
+                filtro.Codigo1 = 1;
+                Clientes = await serviceClientes.ObtenerListaEspecial(filtro);
+                Productos = await serviceProductos.ObtenerLista("");
+
+                ModelState.AddModelError(string.Empty, ex.Content.ToString());
 
                 return Page();
             }catch(Exception ex)
             {
+                ParametrosFiltros filtro = new ParametrosFiltros();
+                filtro.Codigo1 = 1;
+                Clientes = await serviceClientes.ObtenerListaEspecial(filtro);
+                Productos = await serviceProductos.ObtenerLista("");
                 Errores error = new Errores();
                 error.Message = ex.Message;
                 ModelState.AddModelError(string.Empty, error.Message);

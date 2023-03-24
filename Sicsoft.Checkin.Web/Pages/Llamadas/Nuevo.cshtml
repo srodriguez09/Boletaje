@@ -672,7 +672,7 @@
                 Swal.fire({
                     icon: 'error',
                     title: 'Oops...',
-                    text: 'Ha ocurrido un error al intentar guardar ' + e 
+                    text: 'Ha ocurrido un error al intentar guardar ' + e
 
                 })
             }
@@ -691,8 +691,7 @@
         });
 
         function rellenaProductos(lista) {
-            try
-            {
+            try {
                 var sOptions = '';
 
                 $("#productos").html('');
@@ -703,8 +702,7 @@
                 }
                 $("#productos").html(sOptions);
 
-            }catch(e)
-            {
+            } catch (e) {
                 Swal.fire({
                     icon: 'error',
                     title: 'Oops...',
@@ -715,8 +713,7 @@
         }
 
         function cambiarProducto() {
-            try 
-            {
+            try {
                 var CardCode = $("#cardcode").val();
                 CardCode = CardCode.split("/")[0];
                 $.ajax({
@@ -748,8 +745,7 @@
                     }
                 });
 
-            }catch(e)
-            {
+            } catch (e) {
                 Swal.fire({
                     icon: 'error',
                     title: 'Oops...',
@@ -1149,18 +1145,18 @@
                         <div class="form-group">
                             <label>Asunto:</label>
 
-                             <select id="asunto" class="form-control" asp-for="Input.Asunto" required>
+                            <select id="asunto" class="form-control" asp-for="Input.Asunto" required>
 
                                 @foreach (var item in Model.Asuntos)
                                 {
-                                    
-                                        <option value="@item.Asunto">@item.Asunto</option>
 
-                                     
+                                    <option value="@item.Asunto">@item.Asunto</option>
+
+
                                 }
                             </select>
 
-                        @*    <input type="text" class="form-control form-control-lg" id="asunto" placeholder="Asunto" asp-for="Input.Asunto">*@
+                            @*    <input type="text" class="form-control form-control-lg" id="asunto" placeholder="Asunto" asp-for="Input.Asunto">*@
 
 
                         </div>

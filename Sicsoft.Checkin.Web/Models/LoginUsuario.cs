@@ -26,5 +26,7 @@ namespace Sicsoft.CostaRica.Checkin.Web.Models
         [StringLength(10)]
         public string CardCode { get; set; }
 
+        public string Bodega { get; set; }
+
     }
 }

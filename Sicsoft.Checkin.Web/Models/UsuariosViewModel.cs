@@ -24,5 +24,6 @@ namespace InversionGloblalWeb.Models
         public string Clave { get; set; }
         [StringLength(10)]
         public string CardCode { get; set; }
+        public string Bodega { get; set; }
     }
 }
