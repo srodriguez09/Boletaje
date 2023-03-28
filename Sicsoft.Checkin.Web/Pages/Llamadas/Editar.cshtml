@@ -23,6 +23,18 @@
     <script>
         var btn = document.getElementById('Guardar');
         function onGuardar() {
+            if ($("#fecsiso").val() == "" && $("#tec").val() != "2" ) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Ha ocurrido un error, por favor ingresa la Fecha SISO '
+
+                })
+                return false;
+
+
+            }
+              $("#divProcesando").modal("show");
             btn.disabled = true;
             $("#formTipos").submit();
 
@@ -146,11 +158,11 @@
                                     if (!string.IsNullOrEmpty(Roles.Where(a => a == "33").FirstOrDefault()))
                                     {
 
-                                                    <input type="date" class="form-control form-control-lg" id="fecsiso" placeholder="" asp-for="Input.FechaSISO">
+                                                        <input type="date" class="form-control form-control-lg" id="fecsiso" placeholder="" asp-for="Input.FechaSISO">
                                     }
                                     else
                                     {
-                                                    <input type="date" class="form-control form-control-lg" id="fecsiso" placeholder="" asp-for="Input.FechaSISO" readonly>
+                                                        <input type="date" class="form-control form-control-lg" id="fecsiso" placeholder="" asp-for="Input.FechaSISO" readonly>
                                     }
 
                                 }
@@ -258,7 +270,7 @@
                             </div>*@
                             <div class="form-group">
                                 <label>Técnico:</label>
-                                <select id="srt" class="form-control" asp-for="Input.Tecnico" required>
+                                <select id="tec" class="form-control" asp-for="Input.Tecnico" required>
                                     <option value="0">Seleccione</option>
                                     @foreach (var item in Model.Tecnicos)
                                     {

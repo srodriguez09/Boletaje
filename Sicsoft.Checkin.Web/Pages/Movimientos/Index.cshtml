@@ -65,7 +65,7 @@
                 input: "text",
                 inputValue: correo,
                 showCancelButton: true,
-                confirmButtonText: "Guardar",
+                confirmButtonText: "Enviar",
                 cancelButtonText: "Cancelar",
                 inputValidator: nombre => {
                     // Si el valor es válido, debes regresar undefined. Si no, una cadena
@@ -78,6 +78,7 @@
             })
                 .then(resultado => {
                     if (resultado.value) {
+                          $("#divProcesando").modal("show");
                         let nombre = resultado.value;
                         correo = nombre;
                         Reenviar();
@@ -101,6 +102,7 @@
              success: function (result) {
                  console.log(result);
                              if (result == false) {
+                                   $("#divProcesando").modal("hide");
                                  ids = 0;
                                  Swal.fire({
                                      icon: 'error',
@@ -110,6 +112,7 @@
                                  })
 
                              } else {
+                                   $("#divProcesando").modal("hide");
                                  Swal.fire({
                                      title: "Ha sido reenviado con éxito",
 

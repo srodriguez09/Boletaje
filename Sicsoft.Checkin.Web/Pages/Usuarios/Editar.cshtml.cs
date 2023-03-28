@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using InversionGloblalWeb.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Newtonsoft.Json;
 using Refit;
 using Sicsoft.Checkin.Web.Servicios;
 using Sicsoft.CostaRica.Checkin.Web.Models;
@@ -56,6 +57,14 @@ namespace InversionGloblalWeb.Pages.Usuarios
                 await service.Editar(Input);
                 return Redirect("../Index");
             }
+            catch (ApiException ex)
+            {
+                Errores error = JsonConvert.DeserializeObject<Errores>(ex.Content.ToString());
+                ModelState.AddModelError(string.Empty, error.Message);
+
+                return Page();
+            }
+         
             catch (Exception ex)
             {
 
